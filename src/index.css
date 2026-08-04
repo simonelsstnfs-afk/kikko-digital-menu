@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-serif: 'Outfit', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
