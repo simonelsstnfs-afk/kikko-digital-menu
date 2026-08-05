@@ -3,10 +3,10 @@ import { motion } from 'motion/react';
 
 export default function MenuSection() {
   return (
-    <section id="carta" className="py-24 bg-zinc-950 relative overflow-hidden">
+    <section id="carta" className="py-24 bg-[var(--color-kikko-dark)] relative overflow-hidden">
       
       {/* Sticky Category Navigation */}
-      <div className="sticky top-20 z-40 bg-zinc-950/95 backdrop-blur-md py-4 mb-16 border-b border-zinc-900">
+      <div className="sticky top-20 z-40 bg-[var(--color-kikko-dark)]/80 backdrop-blur-xl py-4 mb-16 border-b border-zinc-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ul className="flex items-center justify-start md:justify-center overflow-x-auto gap-8 no-scrollbar scroll-smooth">
             {menuData.map((category) => (

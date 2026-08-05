@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'DM Sans', sans-serif;
-  --font-serif: 'Outfit', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  
+  --color-kikko-dark: #141A0F;
+  --color-kikko-terracotta: #C2410C;
 }
 
 html {

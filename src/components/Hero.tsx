@@ -1,7 +1,7 @@
 export default function Hero() {
   return (
-    <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-zinc-950 border-b border-zinc-900 pt-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950 to-zinc-950"></div>
+    <section className="relative h-[80vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-[var(--color-kikko-dark)] border-b border-zinc-900 pt-20">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-[var(--color-kikko-dark)] to-[var(--color-kikko-dark)]"></div>
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
@@ -15,7 +15,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="#carta"
-            className="px-8 py-3.5 bg-white text-zinc-950 text-sm font-semibold uppercase tracking-wider rounded-full hover:bg-zinc-200 transition-colors w-full sm:w-auto"
+            className="px-8 py-3.5 bg-[var(--color-kikko-terracotta)] text-white text-sm font-semibold uppercase tracking-wider rounded-full hover:bg-orange-700 transition-colors w-full sm:w-auto"
           >
             Ver la Carta
           </a>
