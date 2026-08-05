@@ -26,23 +26,29 @@ export default function GoogleReviewCTA() {
 
           <div className="space-y-6 max-w-xl relative z-10 text-center md:text-left">
             <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-zinc-900 to-zinc-950 border border-[#C2410C]/40 shadow-[0_0_20px_rgba(194,65,12,0.15)] ring-1 ring-white/5">
-              <div className="flex items-center gap-1.5 text-[#C2410C]">
+              <div className="flex items-center gap-1 text-[#FBBC05]">
                 <span className="font-bold text-white text-base mr-1">4.7</span>
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-4 h-4 ${i === 4 ? 'fill-[#C2410C]/30 text-[#C2410C]/30' : 'fill-current'}`} />
+                {[...Array(4)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#FBBC05] text-[#FBBC05]" />
                 ))}
+                <div className="relative w-4 h-4">
+                  <Star className="w-4 h-4 text-zinc-700 fill-zinc-700 absolute inset-0" />
+                  <div className="absolute inset-0 overflow-hidden" style={{ width: '75%' }}>
+                    <Star className="w-4 h-4 text-[#FBBC05] fill-[#FBBC05]" />
+                  </div>
+                </div>
               </div>
               <div className="w-px h-5 bg-zinc-700"></div>
               <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">+365 {t('googleCTAReviews')}</span>
             </div>
 
-            <h3 className="text-4xl md:text-5xl font-serif font-medium text-white tracking-tight leading-tight">
+            <h3 className="text-4xl md:text-5xl font-serif font-medium text-white tracking-tight leading-normal">
               {t('googleCTAHeading').split(/(experiencia|experience|esperienza)/i).map((part, i) => 
                 /(experiencia|experience|esperienza)/i.test(part) ? (
-                  <span key={i} className="relative inline-block whitespace-nowrap">
+                  <span key={i} className="relative inline-block whitespace-nowrap uppercase pb-1 mx-1">
                     {part}
                     <span 
-                      className="absolute -bottom-2 left-0 right-0 h-[4px] rounded-full opacity-90"
+                      className="absolute bottom-0 left-0 right-0 h-[4px] rounded-full opacity-90"
                       style={{ background: 'linear-gradient(to right, #009246 33.3%, #ffffff 33.3%, #ffffff 66.6%, #ce2b37 66.6%)' }}
                     />
                   </span>
