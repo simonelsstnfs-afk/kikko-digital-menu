@@ -48,7 +48,7 @@ export default function GoogleReviewCTA() {
                   <span key={i} className="relative inline-block whitespace-nowrap uppercase mx-1">
                     {part}
                     <span 
-                      className="absolute -bottom-1 left-0 right-0 h-[4px] rounded-full opacity-90"
+                      className="absolute bottom-[4px] left-0 right-0 h-[4px] rounded-full opacity-90"
                       style={{ background: 'linear-gradient(to right, #009246 33.3%, #ffffff 33.3%, #ffffff 66.6%, #ce2b37 66.6%)' }}
                     />
                   </span>
