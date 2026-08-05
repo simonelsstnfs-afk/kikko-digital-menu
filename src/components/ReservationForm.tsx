@@ -65,14 +65,16 @@ export default function ReservationForm() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-zinc-900/40 via-zinc-950 to-zinc-950 pointer-events-none"></div>
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-zinc-500 font-medium tracking-[0.3em] uppercase text-xs mb-4">
+        <div className="text-center mb-16 relative">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/80 border border-zinc-800 text-zinc-300 text-xs font-semibold uppercase tracking-[0.2em] mb-6 shadow-xl backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-[#C2410C] animate-pulse"></span>
             {t('resSubtitle')}
-          </h2>
-          <h3 className="font-serif text-4xl md:text-5xl text-white font-medium mb-6">
+          </div>
+          <h2 className="font-serif text-5xl md:text-6xl text-white font-medium mb-6 tracking-tight">
             {t('resTitle')}
-          </h3>
-          <p className="text-zinc-400 max-w-xl mx-auto text-base">
+          </h2>
+          <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C2410C] to-transparent mx-auto mb-8 opacity-50"></div>
+          <p className="text-zinc-400 max-w-xl mx-auto text-base leading-relaxed">
             {renderDescription()}
           </p>
         </div>
