@@ -1,88 +1,53 @@
 import { MenuCategory } from './types';
-import { STARTERS, PIZZAS, RISOTTOS, SECONDI, BURGERS, DESSERTS, DRINKS, COMBOS } from './products';
+import { STARTERS, PIZZAS, PASTAS, RISOTTOS, SECONDI, BURGERS, DESSERTS, DRINKS } from './products';
 
 export const menuData: MenuCategory[] = [
   {
     id: 'entrantes',
     titleKey: 'tabStarters',
-    categoryImage: 'https://images.unsplash.com/photo-1599321955726-e048426594af?auto=format&fit=crop&q=80&w=1200&h=800',
-    items: STARTERS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/entrantes_1785956033574.jpg',
+    items: STARTERS.map(item => ({ ...item }))
   },
   {
     id: 'pizzas',
     titleKey: 'tabPizzas',
-    categoryImage: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=1200&h=800',
-    items: PIZZAS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/pizzas_1785956040596.jpg',
+    items: PIZZAS.map(item => ({ ...item }))
+  },
+  {
+    id: 'pastas',
+    titleKey: 'tabPastas',
+    categoryImage: '/pastas_1785956047802.jpg',
+    items: PASTAS.map(item => ({ ...item }))
   },
   {
     id: 'risottos',
     titleKey: 'tabRisottos',
-    items: RISOTTOS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/risottos_1785956058315.jpg',
+    items: RISOTTOS.map(item => ({ ...item }))
   },
   {
     id: 'segundos',
     titleKey: 'tabSecondi',
-    items: SECONDI.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/segundos_1785956066731.jpg',
+    items: SECONDI.map(item => ({ ...item }))
   },
   {
     id: 'hamburguesas',
     titleKey: 'tabBurgers',
-    items: BURGERS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/hamburguesas_1785956074332.jpg',
+    items: BURGERS.map(item => ({ ...item }))
   },
   {
     id: 'postres',
     titleKey: 'tabDesserts',
-    categoryImage: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&q=80&w=1200&h=800',
-    items: DESSERTS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/postres_1785956082582.jpg',
+    items: DESSERTS.map(item => ({ ...item }))
   },
   {
     id: 'bebidas',
     titleKey: 'tabDrinks',
-    items: DRINKS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
-  },
-  {
-    id: 'combos',
-    titleKey: 'tabCombos',
-    items: COMBOS.map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price
-    }))
+    categoryImage: '/bebidas_1785956091901.jpg',
+    items: DRINKS.map(item => ({ ...item }))
   }
 ];
