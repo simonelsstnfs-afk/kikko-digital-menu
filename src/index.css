@@ -11,3 +11,12 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Ocultar la barra de scroll nativa para elementos con la clase no-scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;  /* Firefox */
+}
