@@ -17,7 +17,7 @@ export default function Navbar() {
           <div className="flex justify-center items-center gap-6 sm:gap-12">
             <a
               href="#resenas"
-              className="text-zinc-400 hover:text-white font-medium text-xs sm:text-sm uppercase tracking-widest transition-colors"
+              className="px-5 sm:px-6 py-2.5 border border-[#C2410C] text-[#C2410C] hover:bg-[#C2410C] hover:text-white font-semibold text-xs sm:text-sm uppercase tracking-widest transition-colors rounded-full shadow-[0_0_15px_rgba(194,65,12,0.1)] whitespace-nowrap"
             >
               {t('menuReviews')}
             </a>
