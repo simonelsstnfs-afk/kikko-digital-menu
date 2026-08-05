@@ -11,7 +11,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-[#141A0F]/90 backdrop-blur-xl z-50 border-b border-zinc-900 transition-all">
+    <nav className="fixed top-0 w-full z-50 border-b border-zinc-900 transition-all" style={{ backgroundColor: 'rgba(20, 26, 15, 0.95)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center gap-2">
@@ -50,7 +50,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#141A0F]/95 backdrop-blur-3xl shadow-xl fixed inset-0 top-20 bottom-0 h-[calc(100vh-5rem)] overflow-y-auto">
+        <div className="md:hidden shadow-xl fixed inset-0 top-20 bottom-0 h-[calc(100vh-5rem)] overflow-y-auto" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}>
           <div className="px-4 pt-2 pb-6 space-y-2">
             {navLinks.map((link) => (
               <a
