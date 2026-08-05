@@ -25,7 +25,7 @@ export default function MenuSection() {
         });
       },
       // El margen superior compensa el navbar fijo + la propia barra sticky
-      { rootMargin: '-180px 0px -60% 0px' }
+      { rootMargin: '-220px 0px -60% 0px' }
     );
 
     menuData.forEach((category) => {
@@ -40,7 +40,7 @@ export default function MenuSection() {
     <section id="carta" className="pt-2 pb-12 md:pb-24 bg-[#141A0F] relative scroll-mt-32">
       
       {/* Sticky Category Navigation */}
-      <div className="sticky top-20 z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
+      <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
           <ul ref={scrollContainerRef} className="flex items-center justify-start md:justify-center overflow-x-auto gap-2 no-scrollbar scroll-smooth">
             {menuData.map((category) => {

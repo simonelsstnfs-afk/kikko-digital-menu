@@ -4,7 +4,7 @@ export default function Hero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden bg-[#141A0F] border-b border-zinc-900 min-h-[calc(100dvh-5rem)] py-8 mt-20">
+    <section className="relative flex items-center justify-center overflow-hidden bg-[#141A0F] border-b border-zinc-900 min-h-[calc(100dvh-7rem)] py-8 mt-28">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-[#141A0F] to-[#141A0F]"></div>
 
       {/* Content */}
