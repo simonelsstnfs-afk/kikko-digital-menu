@@ -4,12 +4,55 @@ import { useLanguage } from '../LanguageContext';
 
 export default function ReservationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    date: '',
+    time: '',
+    persons: '',
+    name: '',
+    phone: '',
+    email: ''
+  });
+  
   const { t } = useLanguage();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const baseMsg = t('bookTableMsg');
+    
+    const whatsappMessage = `${baseMsg}
+
+*Detalles de la Reserva:*
+📅 Fecha: ${formData.date}
+⏰ Hora: ${formData.time}
+👥 Personas: ${formData.persons}
+
+*Datos de contacto:*
+👤 Nombre: ${formData.name}
+📱 Teléfono: ${formData.phone}
+✉️ Email: ${formData.email}`;
+
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/34611873391?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
     setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 5000);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setFormData({
+        date: '',
+        time: '',
+        persons: '',
+        name: '',
+        phone: '',
+        email: ''
+      });
+    }, 5000);
   };
 
   return (
@@ -49,6 +92,9 @@ export default function ReservationForm() {
                   </label>
                   <input
                     type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
                     required
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 color-scheme-dark"
                     style={{ colorScheme: 'dark' }}
@@ -59,6 +105,9 @@ export default function ReservationForm() {
                     <Clock className="w-4 h-4 text-zinc-500" /> {t('resTime')}
                   </label>
                   <select
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
                     required
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
                   >
@@ -79,6 +128,9 @@ export default function ReservationForm() {
                     <Users className="w-4 h-4 text-zinc-500" /> {t('resPersons')}
                   </label>
                   <select
+                    name="persons"
+                    value={formData.persons}
+                    onChange={handleChange}
                     required
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
                   >
@@ -98,6 +150,9 @@ export default function ReservationForm() {
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     required
                     placeholder={t('resNamePl')}
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
@@ -109,6 +164,9 @@ export default function ReservationForm() {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     required
                     placeholder="+34 600 000 000"
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
@@ -120,6 +178,9 @@ export default function ReservationForm() {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     required
                     placeholder="juan@ejemplo.com"
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
