@@ -17,13 +17,13 @@ export default function Navbar() {
           <div className="flex justify-center items-center gap-6 sm:gap-12">
             <a
               href="#resenas"
-              className="px-6 sm:px-8 py-2.5 bg-[#C2410C] text-white text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors shadow-lg whitespace-nowrap"
+              className="px-6 sm:px-8 py-2.5 border border-[#C2410C] text-[#C2410C] hover:bg-[#C2410C] hover:text-white text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full transition-colors shadow-[0_0_15px_rgba(194,65,12,0.1)] whitespace-nowrap"
             >
               {t('menuReviews')}
             </a>
             <a
               href="#reservas"
-              className="px-6 sm:px-8 py-2.5 bg-[#C2410C] text-white text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors shadow-lg whitespace-nowrap"
+              className="px-6 sm:px-8 py-2.5 border border-[#C2410C] text-[#C2410C] hover:bg-[#C2410C] hover:text-white text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full transition-colors shadow-[0_0_15px_rgba(194,65,12,0.1)] whitespace-nowrap"
             >
               {t('btnBookTable')}
             </a>
