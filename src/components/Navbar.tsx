@@ -16,7 +16,7 @@ export default function Navbar() {
         <div className="flex flex-col justify-center items-center gap-3">
           <div className="flex justify-center items-center gap-6 sm:gap-12">
             <a
-              href="#footer"
+              href="#resenas"
               className="text-zinc-400 hover:text-white font-medium text-xs sm:text-sm uppercase tracking-widest transition-colors"
             >
               {t('menuReviews')}
