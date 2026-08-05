@@ -25,22 +25,34 @@ export default function GoogleReviewCTA() {
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#C2410C]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="space-y-6 max-w-xl relative z-10 text-center md:text-left">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-950 border border-zinc-800">
-              <div className="flex items-center gap-1 text-[#C2410C]">
-                <span className="font-bold text-white text-sm mr-1">4.7</span>
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-zinc-900 to-zinc-950 border border-[#C2410C]/40 shadow-[0_0_20px_rgba(194,65,12,0.15)] ring-1 ring-white/5">
+              <div className="flex items-center gap-1.5 text-[#C2410C]">
+                <span className="font-bold text-white text-base mr-1">4.7</span>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-3.5 h-3.5 ${i === 4 ? 'fill-[#C2410C]/30 text-[#C2410C]/30' : 'fill-current'}`} />
+                  <Star key={i} className={`w-4 h-4 ${i === 4 ? 'fill-[#C2410C]/30 text-[#C2410C]/30' : 'fill-current'}`} />
                 ))}
               </div>
-              <div className="w-px h-4 bg-zinc-800"></div>
-              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">+365 {t('googleCTAReviews')}</span>
+              <div className="w-px h-5 bg-zinc-700"></div>
+              <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">+365 {t('googleCTAReviews')}</span>
             </div>
 
-            <h3 className="text-3xl md:text-4xl font-serif font-medium text-white tracking-tight">
-              {t('googleCTAHeading')}
+            <h3 className="text-4xl md:text-5xl font-serif font-medium text-white tracking-tight leading-tight">
+              {t('googleCTAHeading').split(/(experiencia|experience|esperienza)/i).map((part, i) => 
+                /(experiencia|experience|esperienza)/i.test(part) ? (
+                  <span key={i} className="relative inline-block whitespace-nowrap">
+                    {part}
+                    <span 
+                      className="absolute -bottom-2 left-0 right-0 h-[4px] rounded-full opacity-90"
+                      style={{ background: 'linear-gradient(to right, #009246 33.3%, #ffffff 33.3%, #ffffff 66.6%, #ce2b37 66.6%)' }}
+                    />
+                  </span>
+                ) : (
+                  <span key={i}>{part}</span>
+                )
+              )}
             </h3>
 
-            <p className="text-zinc-400 text-base leading-relaxed">
+            <p className="text-zinc-400 text-lg leading-relaxed max-w-md mx-auto md:mx-0">
               {t('googleCTASub')}
             </p>
           </div>
