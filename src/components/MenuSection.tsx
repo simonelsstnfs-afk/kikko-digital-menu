@@ -1,24 +1,68 @@
+import { useState, useEffect, useRef } from 'react';
 import { menuData } from '../data';
 import { motion } from 'motion/react';
 
 export default function MenuSection() {
+  const [activeCategory, setActiveCategory] = useState<string>(menuData[0].id);
+  const scrollContainerRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveCategory(entry.target.id);
+            // Centrar el tab activo en la barra de navegación en móviles
+            const container = scrollContainerRef.current;
+            const activeTab = document.getElementById(`tab-${entry.target.id}`);
+            if (container && activeTab) {
+              const scrollLeft = activeTab.offsetLeft - container.clientWidth / 2 + activeTab.clientWidth / 2;
+              container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+          }
+        });
+      },
+      // El margen superior compensa el navbar fijo + la propia barra sticky
+      { rootMargin: '-180px 0px -60% 0px' }
+    );
+
+    menuData.forEach((category) => {
+      const el = document.getElementById(category.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="carta" className="pt-2 pb-12 md:pb-24 bg-[#141A0F] relative scroll-mt-32">
       
       {/* Sticky Category Navigation */}
-      <div className="sticky top-20 z-40 py-3 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex items-center justify-start md:justify-center overflow-x-auto gap-8 no-scrollbar scroll-smooth">
-            {menuData.map((category) => (
-              <li key={category.id} className="shrink-0">
-                <a
-                  href={`#${category.id}`}
-                  className="text-zinc-400 hover:text-white uppercase tracking-widest text-sm md:text-base font-semibold transition-colors whitespace-nowrap px-4"
-                >
-                  {category.title}
-                </a>
-              </li>
-            ))}
+      <div className="sticky top-20 z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
+        <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
+          <ul ref={scrollContainerRef} className="flex items-center justify-start md:justify-center overflow-x-auto gap-2 no-scrollbar scroll-smooth">
+            {menuData.map((category) => {
+              const isActive = activeCategory === category.id;
+              return (
+                <li key={category.id} id={`tab-${category.id}`} className="relative shrink-0">
+                  <a
+                    href={`#${category.id}`}
+                    className={`block px-4 py-3 uppercase tracking-widest text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
+                      isActive ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {category.title}
+                  </a>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeIndicator"
+                      className="absolute bottom-0 left-4 right-4 h-[3px] rounded-t-sm"
+                      style={{ background: 'linear-gradient(to right, #009246 33.3%, #ffffff 33.3%, #ffffff 66.6%, #ce2b37 66.6%)' }}
+                    />
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
