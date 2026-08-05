@@ -5,20 +5,9 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer id="footer" className="bg-zinc-950 text-zinc-400 pt-20 pb-10 border-t border-zinc-900">
+    <footer id="footer" className="bg-zinc-950 text-zinc-400 pt-20 pb-24 lg:pb-32 border-t border-zinc-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6 min-h-[140px] flex items-start">
-            <img 
-              src="/Kikko cara blanco.png" 
-              alt="Kikko Cara Blanco" 
-              className="w-48 h-auto object-contain"
-              onError={(e) => {
-                // Si el PNG no está, mostramos un borde de aviso temporal para no perder la altura
-                e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100"><rect width="200" height="100" fill="none" stroke="%23333" stroke-width="2"/><text x="100" y="50" font-family="sans-serif" font-size="12" fill="%23666" text-anchor="middle" dominant-baseline="middle">Logo PNG aquí</text></svg>';
-              }}
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-12 mb-16">
 
           <div>
             <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">{t('footerContact')}</h4>
@@ -75,17 +64,6 @@ export default function Footer() {
               </a>
               <a href="https://www.facebook.com/kikkopizzeria" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white hover:text-zinc-950 hover:border-white transition-colors">
                 <Facebook className="w-4 h-4" />
-              </a>
-            </div>
-            <div className="pt-4">
-              <a
-                href="https://maps.app.goo.gl/kikkoPizzeriaTenerife"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-zinc-900 border border-zinc-800 text-white font-medium text-xs uppercase tracking-widest rounded-xl hover:bg-white hover:text-zinc-950 transition-colors w-full justify-center"
-              >
-                <MapPin className="w-4 h-4" />
-                {t('googleCTABtn')}
               </a>
             </div>
           </div>
