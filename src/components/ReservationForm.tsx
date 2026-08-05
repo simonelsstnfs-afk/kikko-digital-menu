@@ -157,7 +157,6 @@ export default function ReservationForm() {
                     <option value="20:30" className="bg-zinc-900">20:30</option>
                     <option value="21:00" className="bg-zinc-900">21:00</option>
                     <option value="21:30" className="bg-zinc-900">21:30</option>
-                    <option value="22:00" className="bg-zinc-900">22:00</option>
                   </select>
                 </div>
               </div>

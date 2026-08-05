@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import MenuSection from './components/MenuSection';
 import ReservationForm from './components/ReservationForm';
+import GoogleReviewCTA from './components/GoogleReviewCTA';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Hero />
         <MenuSection />
         <ReservationForm />
+        <GoogleReviewCTA />
       </main>
       <Footer />
     </div>
