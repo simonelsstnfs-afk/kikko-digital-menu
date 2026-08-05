@@ -5,8 +5,8 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-        <img src="/logo-kikko.png" alt="Kikko Restaurante Pizzeria Italiano" className="mx-auto w-[280px] md:w-[400px] h-auto mb-8 drop-shadow-xl" />
-        <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto mb-10 font-light px-4">
+        <img src="/logo-kikko.png" alt="Kikko Restaurante Pizzeria Italiano" className="mx-auto w-[280px] md:w-[400px] h-auto mb-0 drop-shadow-xl" />
+        <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto mb-8 font-light px-4">
           Ingredientes frescos, masa madre de fermentación lenta y nuestro horno de leña tradicional.
         </p>
         <div className="flex justify-center">
