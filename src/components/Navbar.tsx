@@ -1,79 +1,22 @@
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
-
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navLinks = [
-    { name: 'Carta', href: '#carta' },
-    { name: 'Reservas', href: '#reservas' },
-    { name: 'Reseñas', href: '#footer' },
-  ];
-
   return (
     <nav className="fixed top-0 w-full z-50 border-b border-zinc-900 transition-all" style={{ backgroundColor: 'rgba(20, 26, 15, 0.95)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <div className="flex-shrink-0 flex items-center gap-2">
-            <img src="/logo.png" alt="Kikko" className="h-10 w-auto object-contain brightness-0 invert" />
-            <span className="hidden font-serif text-2xl font-bold text-white tracking-widest uppercase">Kikko</span>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-zinc-400 hover:text-white font-medium text-sm md:text-base uppercase tracking-widest transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
-            <a
-              href="#reservas"
-              className="px-6 py-2.5 bg-[#C2410C] text-white text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors"
-            >
-              Reservar
-            </a>
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-zinc-400 hover:text-white focus:outline-none p-2"
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+        <div className="flex justify-center items-center h-20 gap-12">
+          <a
+            href="#footer"
+            className="text-zinc-400 hover:text-white font-medium text-sm md:text-base uppercase tracking-widest transition-colors"
+          >
+            Reseñas
+          </a>
+          <a
+            href="#reservas"
+            className="px-8 py-2.5 bg-[#C2410C] text-white text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors shadow-lg"
+          >
+            Reservar
+          </a>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden shadow-xl fixed inset-0 top-20 bottom-0 h-[calc(100vh-5rem)] overflow-y-auto" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}>
-          <div className="px-4 pt-2 pb-6 space-y-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="block px-3 py-4 text-sm uppercase tracking-widest font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white border-b border-zinc-900/50"
-              >
-                {link.name}
-              </a>
-            ))}
-            <div className="pt-4">
-                <a
-                href="#reservas"
-                onClick={() => setIsOpen(false)}
-                className="block w-full text-center px-6 py-4 bg-[#C2410C] text-white text-base uppercase tracking-widest font-bold rounded-xl hover:bg-orange-700 transition-colors"
-              >
-                Reservar Mesa
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
