@@ -8,9 +8,7 @@ export default function ReservationForm() {
     date: '',
     time: '',
     persons: '',
-    name: '',
-    phone: '',
-    email: ''
+    name: ''
   });
   
   const { t } = useLanguage();
@@ -40,14 +38,10 @@ export default function ReservationForm() {
     const whatsappMessage = `${baseMsg}
 
 *Detalles de la Reserva:*
-📅 Fecha: ${formData.date}
-⏰ Hora: ${formData.time}
-👥 Personas: ${formData.persons}
-
-*Datos de contacto:*
 👤 Nombre: ${formData.name}
-📱 Teléfono: ${formData.phone}
-✉️ Email: ${formData.email}`;
+👥 Personas: ${formData.persons}
+📅 Fecha: ${formData.date}
+⏰ Hora: ${formData.time}`;
 
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/34611873391?text=${encodedMessage}`;
@@ -61,9 +55,7 @@ export default function ReservationForm() {
         date: '',
         time: '',
         persons: '',
-        name: '',
-        phone: '',
-        email: ''
+        name: ''
       });
     }, 5000);
   };
@@ -98,7 +90,39 @@ export default function ReservationForm() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                    <User className="w-4 h-4 text-zinc-500" /> {t('resName')}
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    placeholder={t('resNamePl')}
+                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                    <Users className="w-4 h-4 text-zinc-500" /> {t('resPersons')}
+                  </label>
+                  <select
+                    name="persons"
+                    value={formData.persons}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
+                  >
+                    <option value="" className="bg-zinc-900">{t('resQty')}</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                      <option key={num} value={num} className="bg-zinc-900">{num} {num === 1 ? t('resPerson') : t('resPeople')}</option>
+                    ))}
+                    <option value="9+" className="bg-zinc-900">{t('resMore8')}</option>
+                  </select>
+                </div>
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-zinc-500" /> {t('resDate')}
@@ -135,69 +159,6 @@ export default function ReservationForm() {
                     <option value="21:30" className="bg-zinc-900">21:30</option>
                     <option value="22:00" className="bg-zinc-900">22:00</option>
                   </select>
-                </div>
-                <div className="space-y-3">
-                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Users className="w-4 h-4 text-zinc-500" /> {t('resPersons')}
-                  </label>
-                  <select
-                    name="persons"
-                    value={formData.persons}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
-                  >
-                    <option value="" className="bg-zinc-900">{t('resQty')}</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                      <option key={num} value={num} className="bg-zinc-900">{num} {num === 1 ? t('resPerson') : t('resPeople')}</option>
-                    ))}
-                    <option value="9+" className="bg-zinc-900">{t('resMore8')}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-zinc-800/50">
-                <div className="space-y-3">
-                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <User className="w-4 h-4 text-zinc-500" /> {t('resName')}
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    placeholder={t('resNamePl')}
-                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-zinc-500" /> {t('resPhone')}
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    placeholder="+34 600 000 000"
-                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
-                  />
-                </div>
-                <div className="space-y-3 md:col-span-2">
-                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-zinc-500" /> {t('resEmail')}
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="juan@ejemplo.com"
-                    className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
-                  />
                 </div>
               </div>
 
