@@ -25,7 +25,7 @@ export default function GoogleReviewCTA() {
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#C2410C]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="space-y-6 max-w-xl relative z-10 text-center md:text-left">
-            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-zinc-900 to-zinc-950 border border-[#C2410C]/40 shadow-[0_0_20px_rgba(194,65,12,0.15)] ring-1 ring-white/5">
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-zinc-900 to-zinc-950 border border-[#FBBC05]/30 shadow-[0_0_20px_rgba(251,188,5,0.12)] ring-1 ring-white/5">
               <div className="flex items-center gap-1 text-[#FBBC05]">
                 <span className="font-bold text-white text-base mr-1">4.7</span>
                 {[...Array(4)].map((_, i) => (
@@ -45,10 +45,10 @@ export default function GoogleReviewCTA() {
             <h3 className="text-4xl md:text-5xl font-serif font-medium text-white tracking-tight leading-normal">
               {t('googleCTAHeading').split(/(experiencia|experience|esperienza)/i).map((part, i) => 
                 /(experiencia|experience|esperienza)/i.test(part) ? (
-                  <span key={i} className="relative inline-block whitespace-nowrap uppercase pb-1 mx-1">
+                  <span key={i} className="relative inline-block whitespace-nowrap uppercase mx-1">
                     {part}
                     <span 
-                      className="absolute bottom-0 left-0 right-0 h-[4px] rounded-full opacity-90"
+                      className="absolute -bottom-1 left-0 right-0 h-[4px] rounded-full opacity-90"
                       style={{ background: 'linear-gradient(to right, #009246 33.3%, #ffffff 33.3%, #ffffff 66.6%, #ce2b37 66.6%)' }}
                     />
                   </span>
