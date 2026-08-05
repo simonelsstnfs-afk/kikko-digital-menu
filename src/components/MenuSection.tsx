@@ -101,7 +101,9 @@ export default function MenuSection() {
                 className="absolute inset-0 bg-cover bg-center bg-fixed z-0"
                 style={{ backgroundImage: `url(${category.categoryImage})` }}
               />
-              <div className="absolute inset-0 bg-[#141A0F]/90 backdrop-blur-md z-0" />
+              {/* Overlay oscuro sin blur para asegurar legibilidad de textos blancos, 
+                  dejando la imagen 100% visible entre tarjetas */}
+              <div className="absolute inset-0 bg-black/60 z-0" />
               
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
