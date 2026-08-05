@@ -30,13 +30,15 @@ export default function Navbar() {
           </div>
 
           {/* Selector de idioma */}
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-1.5 bg-zinc-900/50 border border-zinc-800/60 rounded-full shadow-sm backdrop-blur-md">
             {languages.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`text-[10px] sm:text-xs font-semibold tracking-widest transition-colors uppercase ${
-                  language === lang.code ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'
+                className={`text-[10px] sm:text-xs font-semibold tracking-widest transition-all uppercase px-2 py-1 rounded-full ${
+                  language === lang.code 
+                    ? 'text-white bg-zinc-800 shadow-sm' 
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
                 }`}
               >
                 {lang.label}
