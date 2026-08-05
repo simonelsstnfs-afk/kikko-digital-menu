@@ -8,14 +8,16 @@ export default function Footer() {
     <footer id="footer" className="bg-zinc-950 text-zinc-400 pt-20 pb-10 border-t border-zinc-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="Kikko" className="h-12 w-auto object-contain brightness-0 invert" />
-              <span className="hidden font-serif text-2xl font-bold text-white tracking-widest uppercase">Kikko</span>
-            </div>
-            <p className="text-zinc-500 text-sm leading-relaxed">
-              {t('footerSub')}
-            </p>
+          <div className="space-y-6 min-h-[140px] flex items-start">
+            <img 
+              src="/Kikko cara blanco.png" 
+              alt="Kikko Cara Blanco" 
+              className="w-48 h-auto object-contain"
+              onError={(e) => {
+                // Si el PNG no está, mostramos un borde de aviso temporal para no perder la altura
+                e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100"><rect width="200" height="100" fill="none" stroke="%23333" stroke-width="2"/><text x="100" y="50" font-family="sans-serif" font-size="12" fill="%23666" text-anchor="middle" dominant-baseline="middle">Logo PNG aquí</text></svg>';
+              }}
+            />
           </div>
 
           <div>
