@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 export default function MenuSection() {
   return (
-    <section id="carta" className="pt-0 pb-12 md:pb-24 bg-[#141A0F] relative overflow-hidden scroll-mt-20">
+    <section id="carta" className="pt-2 pb-12 md:pb-24 bg-[#141A0F] relative scroll-mt-32">
       
       {/* Sticky Category Navigation */}
       <div className="sticky top-20 z-40 py-3 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
@@ -23,12 +23,12 @@ export default function MenuSection() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 space-y-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-32">
         {menuData.map((category, idx) => {
           const isEven = idx % 2 === 0;
           
           return (
-            <div key={category.id} className="scroll-mt-40 relative" id={category.id}>
+            <div key={category.id} className="scroll-mt-64 relative" id={category.id}>
               
               <div className={`relative z-10 flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 lg:gap-24 items-center`}>
                 

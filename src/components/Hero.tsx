@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden bg-[#141A0F] border-b border-zinc-900 pt-16 pb-8 mt-20">
+    <section className="relative flex items-center justify-center overflow-hidden bg-[#141A0F] border-b border-zinc-900 pt-12 pb-2 mt-20">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-[#141A0F] to-[#141A0F]"></div>
 
       {/* Content */}
