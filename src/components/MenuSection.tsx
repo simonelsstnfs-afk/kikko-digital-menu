@@ -96,17 +96,24 @@ export default function MenuSection() {
               className="scroll-mt-32 relative py-20 sm:py-32" 
               id={category.id}
             >
-              {/* Background Image with Overlay */}
+              {/* Background Image con máscara de fundido en los bordes — la imagen se desvanece
+                  a transparente en top y bottom para que no se distingan los bordes entre secciones */}
               <div 
                 className="absolute inset-0 bg-cover bg-center bg-fixed z-0"
-                style={{ backgroundImage: `url(${category.categoryImage})` }}
+                style={{
+                  backgroundImage: `url(${category.categoryImage})`,
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                }}
               />
-              {/* Overlay oscuro sin blur para asegurar legibilidad de textos blancos, 
-                  dejando la imagen 100% visible entre tarjetas */}
-              <div className="absolute inset-0 bg-black/60 z-0" />
-              {/* Desenfoque puro en los bordes para mezclar los colores de las imágenes (sin color sólido añadido) */}
-              <div className="absolute inset-x-0 top-0 h-40 sm:h-64 backdrop-blur-[64px] [mask-image:linear-gradient(to_bottom,black_0%,transparent_100%)] z-0 pointer-events-none" />
-              <div className="absolute inset-x-0 bottom-0 h-40 sm:h-64 backdrop-blur-[64px] [mask-image:linear-gradient(to_top,black_0%,transparent_100%)] z-0 pointer-events-none" />
+              {/* Overlay semitransparente para legibilidad del texto */}
+              <div 
+                className="absolute inset-0 bg-black/50 z-0"
+                style={{
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                }}
+              />
               
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
