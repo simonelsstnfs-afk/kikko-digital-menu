@@ -4,6 +4,17 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../LanguageContext';
 import { MenuItem } from '../types';
 
+const categorySubtitles: Record<string, string> = {
+  entrantes: 'Para Empezar Bien',
+  pizzas: 'Masa Madre Italiana',
+  pastas: 'Recetas Tradicionales',
+  risottos: 'Cremosos y Auténticos',
+  segundos: 'Carnes de Primera',
+  hamburguesas: 'Sabor Irresistible',
+  postres: 'El Dulce Final',
+  bebidas: 'Para Acompañar'
+};
+
 export default function MenuSection() {
   const [activeCategory, setActiveCategory] = useState<string>(menuData[0].id);
   const scrollContainerRef = useRef<HTMLUListElement>(null);
@@ -15,7 +26,6 @@ export default function MenuSection() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setActiveCategory(entry.target.id);
-            // Centrar el tab activo en la barra de navegación en móviles
             const container = scrollContainerRef.current;
             const activeTab = document.getElementById(`tab-${entry.target.id}`);
             if (container && activeTab) {
@@ -25,7 +35,6 @@ export default function MenuSection() {
           }
         });
       },
-      // El margen superior compensa el navbar fijo + la propia barra sticky
       { rootMargin: '-220px 0px -60% 0px' }
     );
 
@@ -38,7 +47,7 @@ export default function MenuSection() {
   }, []);
 
   return (
-    <section id="carta" className="pt-2 pb-12 md:pb-24 bg-[#141A0F] relative scroll-mt-32">
+    <section id="carta" className="pt-2 bg-[#141A0F] relative scroll-mt-32">
       
       {/* Sticky Category Navigation */}
       <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
@@ -70,9 +79,8 @@ export default function MenuSection() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-32">
-        {menuData.map((category, idx) => {
-          const isEven = idx % 2 === 0;
+      <div className="flex flex-col">
+        {menuData.map((category) => {
           
           // Group items by subcategory
           const groupedItems = category.items.reduce((acc, item) => {
@@ -83,72 +91,82 @@ export default function MenuSection() {
           }, {} as Record<string, MenuItem[]>);
           
           return (
-            <div key={category.id} className="scroll-mt-64 relative" id={category.id}>
+            <div 
+              key={category.id} 
+              className="scroll-mt-32 relative py-20 sm:py-32" 
+              id={category.id}
+            >
+              {/* Background Image with Overlay */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-fixed z-0"
+                style={{ backgroundImage: `url(${category.categoryImage})` }}
+              />
+              <div className="absolute inset-0 bg-[#141A0F]/90 backdrop-blur-md z-0" />
               
-              <div className={`relative z-10 flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 lg:gap-16 items-center bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 md:p-10 shadow-2xl`}>
+              <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                {/* Menu Items */}
-                <div className={`w-full ${category.categoryImage ? 'md:w-1/2' : 'max-w-3xl mx-auto'}`}>
-                  <div className={`mb-10 ${!category.categoryImage ? 'text-center' : ''}`}>
-                    <h4 className="font-serif text-4xl text-white font-bold tracking-tight">
-                      {t(category.titleKey)}
-                    </h4>
-                  </div>
-
-                  <div className="flex flex-col gap-12">
-                    {Object.entries(groupedItems).map(([sub, items]) => (
-                      <div key={sub} className="flex flex-col gap-8">
-                        {sub !== 'default' && (
-                          <h6 className="font-serif text-2xl text-zinc-400 font-medium border-b border-zinc-800/60 pb-2">
-                            {sub}
-                          </h6>
-                        )}
-                        <div className="flex flex-col gap-8">
-                          {items.map((item, itemIdx) => (
-                            <motion.div
-                              key={item.id}
-                              initial={{ opacity: 0, y: 10 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: true, margin: "-50px" }}
-                              transition={{ duration: 0.4, delay: itemIdx * 0.05 }}
-                              className="group flex flex-col gap-2"
-                            >
-                              <div className="flex justify-between items-baseline gap-4">
-                                <h5 className="font-serif text-xl text-white font-medium">
-                                  {item.name}
-                                </h5>
-                                <div className="flex-1 border-b border-zinc-700/50 border-dashed relative top-[-6px]"></div>
-                                <span className="text-zinc-200 font-semibold whitespace-nowrap text-lg">
-                                  {item.price.toFixed(2)} €
-                                </span>
-                              </div>
-                              {item.description[language as keyof typeof item.description] && (
-                                <p className={`text-zinc-400 text-sm leading-relaxed ${!category.categoryImage ? 'max-w-full' : 'max-w-[90%]'}`}>
-                                  {item.description[language as keyof typeof item.description]}
-                                </p>
-                              )}
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {/* Títulos */}
+                <div className="text-center mb-16">
+                  <motion.h4 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="font-serif text-5xl md:text-7xl text-white font-bold tracking-tight mb-2"
+                  >
+                    {t(category.titleKey)}
+                  </motion.h4>
+                  <motion.span 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="block font-serif italic text-2xl md:text-3xl text-amber-500"
+                  >
+                    {categorySubtitles[category.id] || 'Selección Premium'}
+                  </motion.span>
                 </div>
 
-                {/* Faded Category Image */}
-                {category.categoryImage && (
-                  <div className="w-full md:w-1/2 flex justify-center items-center">
-                    <div className="relative w-full aspect-[3/4] max-w-md rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/10 group">
-                      <div 
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                        style={{
-                          backgroundImage: `url(${category.categoryImage})`,
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                {/* Platos */}
+                <div className="flex flex-col gap-12">
+                  {Object.entries(groupedItems).map(([sub, items]) => (
+                    <div key={sub} className="flex flex-col gap-4">
+                      {sub !== 'default' && (
+                        <h6 className="font-serif text-3xl text-zinc-300 font-medium border-b border-zinc-700/50 pb-2 mb-4 text-center md:text-left">
+                          {sub}
+                        </h6>
+                      )}
+                      
+                      <div className="flex flex-col gap-4">
+                        {items.map((item, itemIdx) => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: 15 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ duration: 0.4, delay: itemIdx * 0.05 }}
+                            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-colors"
+                          >
+                            <div className="flex justify-between items-baseline gap-4 w-full">
+                              <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide">
+                                {item.name}
+                              </h5>
+                              <div className="flex-1 border-b-2 border-zinc-600/50 border-dotted relative top-[-6px]"></div>
+                              <span className="font-sans text-amber-400 font-bold whitespace-nowrap text-lg md:text-xl">
+                                {item.price.toFixed(2)} €
+                              </span>
+                            </div>
+                            
+                            {item.description[language as keyof typeof item.description] && (
+                              <p className="font-sans text-sm md:text-[0.9rem] text-zinc-400 font-normal leading-relaxed mt-3 w-full md:max-w-[85%]">
+                                {item.description[language as keyof typeof item.description]}
+                              </p>
+                            )}
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
                 
               </div>
             </div>
