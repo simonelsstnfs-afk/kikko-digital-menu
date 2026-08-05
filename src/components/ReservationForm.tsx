@@ -72,6 +72,11 @@ export default function ReservationForm() {
           </div>
           <h2 className="font-serif text-5xl md:text-6xl text-white font-medium mb-6 tracking-tight">
             {t('resTitle')}
+            <span className="inline-flex ml-1">
+              <span className="text-[#009246]">!</span>
+              <span className="text-white">!</span>
+              <span className="text-[#CE2B37]">!</span>
+            </span>
           </h2>
           <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C2410C] to-transparent mx-auto mb-8 opacity-50"></div>
           <p className="text-zinc-400 max-w-xl mx-auto text-base leading-relaxed">
