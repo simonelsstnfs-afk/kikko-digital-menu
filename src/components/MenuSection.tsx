@@ -148,14 +148,15 @@ export default function MenuSection() {
                             transition={{ duration: 0.4, delay: itemIdx * 0.05 }}
                             className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-colors"
                           >
-                            <div className="flex justify-between items-end gap-3 w-full">
+                            <div className="flex justify-between items-start sm:items-center gap-4 w-full">
                               <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">
                                 {item.name}
                               </h5>
-                              <div className="flex-1 border-b-2 border-white/70 border-dotted mb-[0.35rem] min-w-[20px]"></div>
-                              <span className="font-sans text-amber-400 font-bold whitespace-nowrap text-lg md:text-xl flex-shrink-0 pb-[1px]">
-                                {item.price.toFixed(2)} €
-                              </span>
+                              <div className="flex-shrink-0 px-3 py-1 rounded-full border border-white/40 bg-white/5 backdrop-blur-sm">
+                                <span className="font-sans text-white font-bold whitespace-nowrap text-[0.95rem] md:text-base">
+                                  {item.price.toFixed(2)} €
+                                </span>
+                              </div>
                             </div>
                             
                             {item.description[language as keyof typeof item.description] && (
