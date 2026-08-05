@@ -104,6 +104,8 @@ export default function MenuSection() {
               {/* Overlay oscuro sin blur para asegurar legibilidad de textos blancos, 
                   dejando la imagen 100% visible entre tarjetas */}
               <div className="absolute inset-0 bg-black/60 z-0" />
+              {/* Degradado para suavizar los bordes superior e inferior y mezclar las fotos */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#141A0F_0%,transparent_10%,transparent_90%,#141A0F_100%)] z-0 pointer-events-none" />
               
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
