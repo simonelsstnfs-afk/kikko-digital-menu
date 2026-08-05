@@ -3,7 +3,7 @@ export type Language = 'es' | 'en' | 'it';
 export const translations = {
   es: {
     heroSabor: 'Sabor',
-    digitalMenuHeroSub: 'Ingredientes frescos, masa madre de fermentación lenta y nuestro horno de leña tradicional.',
+    digitalMenuHeroSub: 'Calidad de primera en cada bocado: masa de pizza elaborada con tres harinas y más de 48 horas de fermentación, pastas 100% artesanales moldeadas a mano y pan casero recién horneado. Auténtica tradición italiana con los mejores ingredientes.',
     digitalMenuBtn: 'Ver la Carta',
     resSubtitle: 'Reserva tu mesa',
     resTitle: 'Te esperamos',
@@ -118,7 +118,7 @@ export const translations = {
   },
   en: {
     heroSabor: 'Authentic',
-    digitalMenuHeroSub: 'Fresh ingredients, slow-fermented sourdough, and our traditional wood-fired oven.',
+    digitalMenuHeroSub: 'Premium quality in every bite: pizza dough made with three flours and over 48 hours of fermentation, 100% artisanal handmade pastas, and freshly baked homemade bread. Authentic Italian tradition with the finest ingredients.',
     digitalMenuBtn: 'View Menu',
     resSubtitle: 'Book your table',
     resTitle: 'We are waiting for you',
@@ -233,7 +233,7 @@ export const translations = {
   },
   it: {
     heroSabor: 'Sapore',
-    digitalMenuHeroSub: 'Ingredienti freschi, lievito madre a lenta fermentazione e il nostro forno a legna tradizionale.',
+    digitalMenuHeroSub: 'Qualità premium in ogni boccone: impasto per pizza preparato con tre farine e oltre 48 ore di lievitazione, paste 100% artigianali modellate a mano e pane fatto in casa appena sfornato. Autentica tradizione italiana con i migliori ingredienti.',
     digitalMenuBtn: 'Vedi il Menu',
     resSubtitle: 'Prenota il tuo tavolo',
     resTitle: 'Ti aspettiamo',
