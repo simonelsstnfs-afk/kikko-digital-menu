@@ -1,8 +1,10 @@
 import { Calendar, Clock, Users, User, Phone, Mail } from 'lucide-react';
 import { useState } from 'react';
+import { useLanguage } from '../LanguageContext';
 
 export default function ReservationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,13 +19,13 @@ export default function ReservationForm() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-zinc-500 font-medium tracking-[0.3em] uppercase text-xs mb-4">
-            Reserva tu mesa
+            {t('resSubtitle')}
           </h2>
           <h3 className="font-serif text-4xl md:text-5xl text-white font-medium mb-6">
-            Te esperamos
+            {t('resTitle')}
           </h3>
           <p className="text-zinc-400 max-w-xl mx-auto text-base">
-            Completa el siguiente formulario para asegurar tu mesa en Kikko. Te enviaremos una confirmación por correo electrónico.
+            {t('resDesc')}
           </p>
         </div>
 
@@ -35,15 +37,15 @@ export default function ReservationForm() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h4 className="font-serif text-2xl font-medium text-white mb-3">¡Reserva solicitada!</h4>
-              <p className="text-zinc-400">Hemos recibido tu solicitud. Te contactaremos pronto para confirmar.</p>
+              <h4 className="font-serif text-2xl font-medium text-white mb-3">{t('resSuccess')}</h4>
+              <p className="text-zinc-400">{t('resSuccessSub')}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-zinc-500" /> Fecha
+                    <Calendar className="w-4 h-4 text-zinc-500" /> {t('resDate')}
                   </label>
                   <input
                     type="date"
@@ -54,13 +56,13 @@ export default function ReservationForm() {
                 </div>
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-zinc-500" /> Hora
+                    <Clock className="w-4 h-4 text-zinc-500" /> {t('resTime')}
                   </label>
                   <select
                     required
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
                   >
-                    <option value="" className="bg-zinc-900">Seleccionar hora</option>
+                    <option value="" className="bg-zinc-900">{t('resSelectTime')}</option>
                     <option value="13:00" className="bg-zinc-900">13:00</option>
                     <option value="13:30" className="bg-zinc-900">13:30</option>
                     <option value="14:00" className="bg-zinc-900">14:00</option>
@@ -74,17 +76,17 @@ export default function ReservationForm() {
                 </div>
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Users className="w-4 h-4 text-zinc-500" /> Personas
+                    <Users className="w-4 h-4 text-zinc-500" /> {t('resPersons')}
                   </label>
                   <select
                     required
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none"
                   >
-                    <option value="" className="bg-zinc-900">Cantidad</option>
+                    <option value="" className="bg-zinc-900">{t('resQty')}</option>
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                      <option key={num} value={num} className="bg-zinc-900">{num} {num === 1 ? 'Persona' : 'Personas'}</option>
+                      <option key={num} value={num} className="bg-zinc-900">{num} {num === 1 ? t('resPerson') : t('resPeople')}</option>
                     ))}
-                    <option value="9+" className="bg-zinc-900">Más de 8 personas</option>
+                    <option value="9+" className="bg-zinc-900">{t('resMore8')}</option>
                   </select>
                 </div>
               </div>
@@ -92,18 +94,18 @@ export default function ReservationForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-zinc-800/50">
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <User className="w-4 h-4 text-zinc-500" /> Nombre Completo
+                    <User className="w-4 h-4 text-zinc-500" /> {t('resName')}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Ej. Juan Pérez"
+                    placeholder={t('resNamePl')}
                     className="w-full px-4 py-3.5 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600"
                   />
                 </div>
                 <div className="space-y-3">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-zinc-500" /> Teléfono
+                    <Phone className="w-4 h-4 text-zinc-500" /> {t('resPhone')}
                   </label>
                   <input
                     type="tel"
@@ -114,7 +116,7 @@ export default function ReservationForm() {
                 </div>
                 <div className="space-y-3 md:col-span-2">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-zinc-500" /> Correo Electrónico
+                    <Mail className="w-4 h-4 text-zinc-500" /> {t('resEmail')}
                   </label>
                   <input
                     type="email"
@@ -130,7 +132,7 @@ export default function ReservationForm() {
                   type="submit"
                   className="w-full py-4 bg-white text-zinc-950 text-sm uppercase tracking-widest font-bold rounded-xl hover:bg-zinc-200 transition-colors focus:ring-2 focus:ring-white/50"
                 >
-                  Confirmar Reserva
+                  {t('resConfirmBtn')}
                 </button>
               </div>
             </form>

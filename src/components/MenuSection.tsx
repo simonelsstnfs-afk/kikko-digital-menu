@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { menuData } from '../data';
 import { motion } from 'motion/react';
+import { useLanguage } from '../LanguageContext';
 
 export default function MenuSection() {
   const [activeCategory, setActiveCategory] = useState<string>(menuData[0].id);
   const scrollContainerRef = useRef<HTMLUListElement>(null);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -51,7 +53,7 @@ export default function MenuSection() {
                       isActive ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'
                     }`}
                   >
-                    {category.title}
+                    {t(category.titleKey)}
                   </a>
                   {isActive && (
                     <motion.div 
@@ -80,7 +82,7 @@ export default function MenuSection() {
                 <div className={`w-full ${category.categoryImage ? 'md:w-1/2' : 'max-w-3xl mx-auto'}`}>
                   <div className={`mb-10 ${!category.categoryImage ? 'text-center' : ''}`}>
                     <h4 className="font-serif text-4xl text-white font-bold tracking-tight">
-                      {category.title}
+                      {t(category.titleKey)}
                     </h4>
                   </div>
 
@@ -104,7 +106,7 @@ export default function MenuSection() {
                           </span>
                         </div>
                         <p className={`text-zinc-400 text-sm leading-relaxed ${!category.categoryImage ? 'max-w-full' : 'max-w-[90%]'}`}>
-                          {item.description}
+                          {item.description[language]}
                         </p>
                       </motion.div>
                     ))}
