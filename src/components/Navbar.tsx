@@ -11,7 +11,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-[var(--color-kikko-dark)]/80 backdrop-blur-xl z-50 border-b border-zinc-900 transition-all">
+    <nav className="fixed top-0 w-full bg-[#141A0F]/90 backdrop-blur-xl z-50 border-b border-zinc-900 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center gap-2">
@@ -24,14 +24,14 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-zinc-400 hover:text-white font-medium text-xs uppercase tracking-widest transition-colors"
+                className="text-zinc-400 hover:text-white font-medium text-sm md:text-base uppercase tracking-widest transition-colors"
               >
                 {link.name}
               </a>
             ))}
             <a
               href="#reservas"
-              className="px-6 py-2.5 bg-[var(--color-kikko-terracotta)] text-white text-xs uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors"
+              className="px-6 py-2.5 bg-[#C2410C] text-white text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-orange-700 transition-colors"
             >
               Reservar
             </a>
@@ -50,7 +50,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[var(--color-kikko-dark)]/95 backdrop-blur-3xl shadow-xl fixed inset-0 top-20 bottom-0 h-[calc(100vh-5rem)] overflow-y-auto">
+        <div className="md:hidden bg-[#141A0F]/95 backdrop-blur-3xl shadow-xl fixed inset-0 top-20 bottom-0 h-[calc(100vh-5rem)] overflow-y-auto">
           <div className="px-4 pt-2 pb-6 space-y-2">
             {navLinks.map((link) => (
               <a
@@ -66,7 +66,7 @@ export default function Navbar() {
                 <a
                 href="#reservas"
                 onClick={() => setIsOpen(false)}
-                className="block w-full text-center px-6 py-4 bg-[var(--color-kikko-terracotta)] text-white text-sm uppercase tracking-widest font-bold rounded-xl hover:bg-orange-700 transition-colors"
+                className="block w-full text-center px-6 py-4 bg-[#C2410C] text-white text-base uppercase tracking-widest font-bold rounded-xl hover:bg-orange-700 transition-colors"
               >
                 Reservar Mesa
               </a>

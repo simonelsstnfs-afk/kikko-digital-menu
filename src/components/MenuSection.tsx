@@ -3,17 +3,17 @@ import { motion } from 'motion/react';
 
 export default function MenuSection() {
   return (
-    <section id="carta" className="py-24 bg-[var(--color-kikko-dark)] relative overflow-hidden">
+    <section id="carta" className="py-24 bg-[#141A0F] relative overflow-hidden">
       
       {/* Sticky Category Navigation */}
-      <div className="sticky top-20 z-40 bg-[var(--color-kikko-dark)]/80 backdrop-blur-xl py-4 mb-16 border-b border-zinc-900">
+      <div className="sticky top-20 z-40 bg-[#141A0F]/90 backdrop-blur-xl py-4 border-b border-zinc-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ul className="flex items-center justify-start md:justify-center overflow-x-auto gap-8 no-scrollbar scroll-smooth">
             {menuData.map((category) => (
               <li key={category.id} className="shrink-0">
                 <a
                   href={`#${category.id}`}
-                  className="text-zinc-500 hover:text-white uppercase tracking-widest text-xs font-semibold transition-colors whitespace-nowrap px-2"
+                  className="text-zinc-400 hover:text-white uppercase tracking-widest text-sm md:text-base font-semibold transition-colors whitespace-nowrap px-4"
                 >
                   {category.title}
                 </a>
@@ -23,7 +23,7 @@ export default function MenuSection() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 space-y-32">
         {menuData.map((category, idx) => {
           const isEven = idx % 2 === 0;
           
