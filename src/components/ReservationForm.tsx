@@ -60,15 +60,16 @@ export default function ReservationForm() {
     }, 5000);
   };
 
+  return (
     <section id="reservas" className="py-24 bg-zinc-950 relative scroll-mt-[10vh]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="bg-zinc-900/50 rounded-3xl p-8 md:p-12 shadow-2xl border border-zinc-800 backdrop-blur-sm flex flex-col lg:flex-row items-center justify-between gap-12 relative overflow-hidden">
+        <div className="bg-zinc-900/50 rounded-3xl p-8 md:p-12 shadow-2xl border border-zinc-800 backdrop-blur-sm flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
           
           <div className="absolute -top-24 -left-24 w-64 h-64 bg-[#C2410C]/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Text/Header Side */}
-          <div className="lg:w-5/12 text-center lg:text-left relative z-10">
+          <div className="md:w-5/12 text-center md:text-left relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-950 border border-zinc-800 text-zinc-300 text-xs font-semibold uppercase tracking-[0.2em] mb-6 shadow-xl backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-[#C2410C] animate-pulse"></span>
               {t('resSubtitle')}
@@ -81,13 +82,13 @@ export default function ReservationForm() {
                 <span className="text-[#CE2B37]">!</span>
               </span>
             </h2>
-            <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
+            <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mx-auto md:mx-0">
               {renderDescription()}
             </p>
           </div>
 
           {/* Form Side */}
-          <div className="lg:w-7/12 w-full relative z-10">
+          <div className="md:w-7/12 w-full relative z-10">
             {isSubmitted ? (
               <div className="text-center py-16 bg-zinc-950/30 rounded-2xl border border-zinc-800/50">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 text-white mb-6 border border-white/20">
