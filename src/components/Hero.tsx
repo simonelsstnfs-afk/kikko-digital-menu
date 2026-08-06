@@ -37,18 +37,29 @@ export default function Hero() {
           <img 
             src="/logo-kikko.png" 
             alt="Kikko Restaurante Pizzeria Italiano" 
-            className="w-[260px] md:w-[380px] h-auto mb-4 -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
+            className="w-[260px] md:w-[380px] h-auto -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
           />
           
           {/* Risotto Promo */}
-          <div className="flex flex-col items-center gap-1.5 mb-8 animate-fade-in">
-            <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] text-[#C2410C] bg-[#C2410C]/10 border border-[#C2410C]/20 px-3 py-1 rounded-full">
+          <a 
+            href="#carta" 
+            onClick={() => {
+              // Custom event to switch category to risottos when they click
+              window.dispatchEvent(new CustomEvent('select-category', { detail: 'risottos' }));
+            }}
+            className="group relative z-20 flex items-center gap-3 -mt-4 mb-8 px-5 py-2.5 rounded-full bg-zinc-900/40 border border-white/5 hover:bg-zinc-800/80 hover:border-[#C2410C]/40 transition-all duration-300 shadow-xl backdrop-blur-sm cursor-pointer hover:scale-105"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C2410C]">
               {t('newPromoTag')}
             </span>
-            <span className="font-[Dancing_Script] text-2xl md:text-3xl text-white/90 drop-shadow-md">
+            <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
+            <span className="font-[Dancing_Script] text-xl md:text-2xl text-zinc-200 group-hover:text-white transition-colors">
               {t('newPromoTitle')}
             </span>
-          </div>
+            <svg className="w-4 h-4 text-[#C2410C]/70 group-hover:text-[#C2410C] group-hover:translate-y-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </a>
 
           <p className="text-zinc-300 text-sm md:text-base max-w-lg mx-auto mb-8 font-light leading-relaxed">
             {t('digitalMenuHeroSub')}

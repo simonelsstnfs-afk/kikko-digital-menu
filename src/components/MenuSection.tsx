@@ -55,6 +55,22 @@ export default function MenuSection() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const handleSelectCategory = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const categoryId = customEvent.detail;
+      const el = document.getElementById(categoryId);
+      if (el) {
+        const yOffset = -220; 
+        const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+    
+    window.addEventListener('select-category', handleSelectCategory);
+    return () => window.removeEventListener('select-category', handleSelectCategory);
+  }, []);
+
   return (
     <section id="carta" className="pt-2 bg-[#141A0F] relative scroll-mt-32">
       
