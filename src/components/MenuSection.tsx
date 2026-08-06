@@ -74,24 +74,27 @@ export default function MenuSection() {
   return (
     <section id="carta" className="bg-transparent relative scroll-mt-32">
       
-      {/* Global backgrounds for MenuSection (Optimized for Mobile GPU) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
-        <div className="absolute inset-0 bg-[#141A0F]"></div>
-        {menuData.map((category) => (
-          <div
-            key={`bg-${category.id}`}
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out"
-            style={{
-              backgroundImage: `url(${category.categoryImage})`,
-              opacity: activeCategory === category.id ? 1 : 0,
-              willChange: 'opacity'
-            }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-[#141A0F]/85 backdrop-blur-[2px]"></div>
+      {/* Global backgrounds for MenuSection (Optimized for Mobile GPU using Sticky) */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <div className="absolute inset-0 bg-[#141A0F]"></div>
+          {menuData.map((category) => (
+            <div
+              key={`bg-${category.id}`}
+              className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out"
+              style={{
+                backgroundImage: `url(${category.categoryImage})`,
+                opacity: activeCategory === category.id ? 1 : 0,
+                willChange: 'opacity'
+              }}
+            />
+          ))}
+          <div className="absolute inset-0 bg-[#141A0F]/85 backdrop-blur-[2px]"></div>
+        </div>
       </div>
 
-      {/* Sticky Category Navigation */}
+      <div className="relative z-10">
+        {/* Sticky Category Navigation */}
       <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <div className="max-w-6xl mx-auto relative">
           {/* Fade-out lateral para indicar scroll en móvil */}
@@ -216,6 +219,7 @@ export default function MenuSection() {
             </div>
           );
         })}
+      </div>
       </div>
     </section>
   );
