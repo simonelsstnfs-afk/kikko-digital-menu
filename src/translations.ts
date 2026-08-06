@@ -276,7 +276,7 @@ export const translations = {
     cartTitle: 'Il Tuo Carrello',
     cartEmpty1: 'Il tuo carrello è vuoto.',
     cartEmpty2: 'Aggiungi delle deliziose pizze e piatti!',
-    cartData: 'Dettagli dell\\'ordine',
+    cartData: "Dettagli dell'ordine",
     cartName: 'Nome e cognome',
     cartAddress: 'Indirizzo di consegna',
     cartLocationBtnOn: 'Posizione allegata',
