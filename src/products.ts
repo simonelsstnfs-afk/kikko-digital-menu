@@ -37,8 +37,8 @@ export const PIZZAS: MenuItem[] = [
   { id: 'pi18', name: 'Pizza Meat Feast', description: { es: 'Mozzarella, tomate, jamón cocido, wurstel, salami picante y cebolla', en: 'Mozzarella, tomato, cooked ham, wurstel, spicy salami and onion', it: 'Mozzarella, pomodoro, prosciutto cotto, wurstel, salame piccante e cipolla' }, price: 13.00 },
   { id: 'pi19', name: 'Pizza Aurora', description: { es: 'Mozzarella, longaniza, queso ahumado', en: 'Mozzarella, sausage, smoked cheese', it: 'Mozzarella, salsiccia, provola affumicata' }, price: 10.00 },
   { id: 'pi20', name: { es: 'Pizza Marinera', en: 'Seafood Pizza', it: 'Pizza Pescatora' }, description: { es: 'Tomate, mozzarella, gambas, almejas, mejillones y perejil', en: 'Tomato, mozzarella, prawns, clams, mussels and parsley', it: 'Pomodoro, mozzarella, gamberi, vongole, cozze e prezzemolo' }, price: 15.00 },
-  { id: 'pi21', name: { es: 'Pizza sin Gluten (Suplemento)', en: 'Gluten Free Pizza (Supplement)', it: 'Pizza Senza Glutine (Supplemento)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
-  { id: 'pi22', name: { es: 'Pizza para Llevar (Suplemento)', en: 'Take Away Pizza (Supplement)', it: 'Pizza d\'Asporto (Supplemento)' }, description: { es: '', en: '', it: '' }, price: 0.50 },
+  { id: 'pi21', name: { es: 'Pizza sin Gluten (Extra)', en: 'Gluten Free Pizza (Extra)', it: 'Pizza Senza Glutine (Extra)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
+  { id: 'pi22', name: { es: 'Pizza para Llevar (Extra)', en: 'Take Away Pizza (Extra)', it: 'Pizza d\'Asporto (Extra)' }, description: { es: '', en: '', it: '' }, price: 0.50 },
 ];
 
 export const PASTAS: MenuItem[] = [
@@ -52,7 +52,7 @@ export const PASTAS: MenuItem[] = [
   { id: 'pa8', name: { es: 'Gnocco Cuatro Quesos con Guanciale', en: 'Four Cheese Gnocchi with Guanciale', it: 'Gnocchi ai Quattro Formaggi con Guanciale' }, description: { es: 'Parmesano, pecorino, queso ahumado, queso azul y guanciale', en: 'Parmesan, pecorino, smoked cheese, blue cheese and guanciale', it: 'Parmigiano, pecorino, provola affumicata, gorgonzola e guanciale' }, price: 14.00 },
   { id: 'pa9', name: { es: 'Gnocco Amatriciana', en: 'Amatriciana Gnocchi', it: 'Gnocchi all\'Amatriciana' }, description: { es: 'Salsa de tomate, guanciale y queso pecorino', en: 'Tomato sauce, guanciale and pecorino cheese', it: 'Salsa di pomodoro, guanciale e pecorino' }, price: 13.00 },
   { id: 'pa10', name: { es: 'Linguini de Tinta de Calamar', en: 'Squid Ink Linguini', it: 'Linguine al Nero di Seppia' }, description: { es: 'Con mantequilla, anchoas y burrata', en: 'With butter, anchovies and burrata', it: 'Con burro, acciughe e burrata' }, price: 14.00 },
-  { id: 'pa11', name: { es: 'Pasta sin Gluten (Suplemento)', en: 'Gluten Free Pasta (Supplement)', it: 'Pasta Senza Glutine (Supplemento)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
+  { id: 'pa11', name: { es: 'Pasta sin Gluten (Extra)', en: 'Gluten Free Pasta (Extra)', it: 'Pasta Senza Glutine (Extra)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
 ];
 
 export const RISOTTOS: MenuItem[] = [
