@@ -14,6 +14,18 @@ export default function ReservationForm() {
   const { t } = useLanguage();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (e.target.name === 'date') {
+      const dateStr = e.target.value;
+      if (dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        const selectedDate = new Date(Number(year), Number(month) - 1, Number(day));
+        if (selectedDate.getDay() === 4) { // 4 is Thursday
+          alert('Lo sentimos, los jueves estamos cerrados. Por favor, selecciona otro día.');
+          setFormData({ ...formData, date: '' });
+          return;
+        }
+      }
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -35,12 +47,21 @@ export default function ReservationForm() {
     
     const baseMsg = t('bookTableMsg');
     
+    let formattedDate = formData.date;
+    if (formData.date) {
+      const [year, month, day] = formData.date.split('-');
+      const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const dayName = days[localDate.getDay()];
+      formattedDate = `${dayName} ${day}/${month}/${year}`;
+    }
+
     const whatsappMessage = `${baseMsg}
 
 *Detalles de la Reserva:*
 👤 Nombre: ${formData.name}
 👥 Personas: ${formData.persons}
-📅 Fecha: ${formData.date}
+📅 Fecha: ${formattedDate}
 ⏰ Hora: ${formData.time}`;
 
     const encodedMessage = encodeURIComponent(whatsappMessage);
@@ -160,6 +181,8 @@ export default function ReservationForm() {
                       className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none text-sm"
                     >
                       <option value="" className="bg-zinc-900">{t('resSelectTime')}</option>
+                      <option value="12:00" className="bg-zinc-900">12:00</option>
+                      <option value="12:30" className="bg-zinc-900">12:30</option>
                       <option value="13:00" className="bg-zinc-900">13:00</option>
                       <option value="13:30" className="bg-zinc-900">13:30</option>
                       <option value="14:00" className="bg-zinc-900">14:00</option>
