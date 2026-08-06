@@ -8,7 +8,8 @@ export default function ReservationForm() {
     date: '',
     time: '',
     persons: '',
-    name: ''
+    name: '',
+    notes: ''
   });
   
   const { t } = useLanguage();
@@ -62,7 +63,7 @@ export default function ReservationForm() {
 👤 Nombre: ${formData.name}
 👥 Personas: ${formData.persons}
 📅 Fecha: ${formattedDate}
-⏰ Hora: ${formData.time}`;
+⏰ Hora: ${formData.time}${formData.notes ? `\n📝 Notas: ${formData.notes}` : ''}`;
 
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/34611873391?text=${encodedMessage}`;
@@ -195,6 +196,22 @@ export default function ReservationForm() {
                     </select>
                   </div>
                 </div>
+
+                  {/* Notas adicionales */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                      <svg className="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                      {t('resNotes')}
+                    </label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      placeholder={t('resNotesPlaceholder')}
+                      rows={2}
+                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C] transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 text-base resize-none"
+                    />
+                  </div>
 
                 <div className="pt-2">
                   <button

@@ -91,13 +91,16 @@ export default function MenuSection() {
       </div>
 
       {/* Sticky Category Navigation */}
-      <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
-        <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
-          <ul ref={scrollContainerRef} className="flex items-center justify-start md:justify-center overflow-x-auto gap-2 no-scrollbar scroll-smooth">
+      <div className="sticky top-[56px] sm:top-[64px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
+        <div className="max-w-6xl mx-auto relative">
+          {/* Fade-out lateral para indicar scroll en móvil */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#141A0F] to-transparent z-10 pointer-events-none md:hidden" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#141A0F] to-transparent z-10 pointer-events-none md:hidden" />
+          <ul ref={scrollContainerRef} role="tablist" aria-label="Categorías del menú" className="flex items-center justify-start md:justify-center overflow-x-auto gap-2 no-scrollbar scroll-smooth px-2 sm:px-6 lg:px-8">
             {menuData.map((category) => {
               const isActive = activeCategory === category.id;
               return (
-                <li key={category.id} id={`tab-${category.id}`} className="relative shrink-0">
+                <li key={category.id} id={`tab-${category.id}`} role="tab" aria-selected={activeCategory === category.id} className="relative shrink-0">
                   <a
                     href={`#${category.id}`}
                     className={`block px-4 py-3 uppercase tracking-widest text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
@@ -189,7 +192,7 @@ export default function MenuSection() {
                               <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">
                                 {typeof item.name === 'string' ? item.name : item.name[language as keyof typeof item.name] || (item.name as any)['es']}
                               </h5>
-                              <div className="flex-shrink-0 px-3 py-1 rounded-full border border-white/40 bg-white/5 backdrop-blur-sm">
+                              <div className="flex-shrink-0 px-3 py-1 rounded-full border border-white/60 bg-white/10 backdrop-blur-sm">
                                 <span className="font-sans text-white font-bold whitespace-nowrap text-[0.95rem] md:text-base">
                                   {item.price.toFixed(2)} €
                                 </span>
