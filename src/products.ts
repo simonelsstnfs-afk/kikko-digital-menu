@@ -44,14 +44,14 @@ export const PIZZAS: MenuItem[] = [
 export const PASTAS: MenuItem[] = [
   { id: 'pa1', name: 'Gnocchi Sorrentina', description: { es: 'Tomate y mozzarella', en: 'Tomato and mozzarella', it: 'Pomodoro e mozzarella' }, price: 11.00 },
   { id: 'pa2', name: 'Spaghetti Carbonara', description: { es: 'Guanciale, huevos, parmesano, pecorino y pimienta negra', en: 'Guanciale, eggs, parmesan, pecorino and black pepper', it: 'Guanciale, uova, parmigiano, pecorino e pepe nero' }, price: 14.00 },
-  { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tintura de calamares', en: 'Made with squid ink', it: 'Fatto con nero di seppia' }, price: 16.00 },
+  { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tinta de calamar', en: 'Made with squid ink', it: 'Fatto con nero di seppia' }, price: 16.00 },
   { id: 'pa4', name: { es: 'Tagliatelle Boloñesa', en: 'Tagliatelle Bolognese', it: 'Tagliatelle alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 12.00 },
   { id: 'pa5', name: { es: 'Tagliatelle con Albóndigas', en: 'Tagliatelle with Meatballs', it: 'Tagliatelle con Polpette' }, description: { es: '', en: '', it: '' }, price: 14.00 },
   { id: 'pa6', name: { es: 'Lasaña Boloñesa', en: 'Bolognese Lasagna', it: 'Lasagna alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 11.00 },
   { id: 'pa7', name: { es: 'Ravioli de Ricotta y Espinaca', en: 'Ricotta and Spinach Ravioli', it: 'Ravioli Ricotta e Spinaci' }, description: { es: 'Con mantequilla y salvia', en: 'With butter and sage', it: 'Con burro e salvia' }, price: 13.00 },
   { id: 'pa8', name: { es: 'Gnocco Cuatro Quesos con Guanciale', en: 'Four Cheese Gnocchi with Guanciale', it: 'Gnocchi ai Quattro Formaggi con Guanciale' }, description: { es: 'Parmesano, pecorino, queso ahumado, queso azul y guanciale', en: 'Parmesan, pecorino, smoked cheese, blue cheese and guanciale', it: 'Parmigiano, pecorino, provola affumicata, gorgonzola e guanciale' }, price: 14.00 },
   { id: 'pa9', name: { es: 'Gnocco Amatriciana', en: 'Amatriciana Gnocchi', it: 'Gnocchi all\'Amatriciana' }, description: { es: 'Salsa de tomate, guanciale y queso pecorino', en: 'Tomato sauce, guanciale and pecorino cheese', it: 'Salsa di pomodoro, guanciale e pecorino' }, price: 13.00 },
-  { id: 'pa10', name: { es: 'Linguini de Tinta de Calamares', en: 'Squid Ink Linguini', it: 'Linguine al Nero di Seppia' }, description: { es: 'Con mantequilla, anchoas y burrata', en: 'With butter, anchovies and burrata', it: 'Con burro, acciughe e burrata' }, price: 14.00 },
+  { id: 'pa10', name: { es: 'Linguini de Tinta de Calamar', en: 'Squid Ink Linguini', it: 'Linguine al Nero di Seppia' }, description: { es: 'Con mantequilla, anchoas y burrata', en: 'With butter, anchovies and burrata', it: 'Con burro, acciughe e burrata' }, price: 14.00 },
   { id: 'pa11', name: { es: 'Pasta sin Gluten (Suplemento)', en: 'Gluten Free Pasta (Supplement)', it: 'Pasta Senza Glutine (Supplemento)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
 ];
 
@@ -182,7 +182,7 @@ export const REVIEWS: Review[] = [
     id: "r3",
     authorName: "NSR 75cc",
     rating: 5,
-    text: "La masa de pizza increíblemente buena, el tomate riquísimo, la carbonara espectacular con su huevo y su guanchale, todos los ingredientes súper frescos y de calidad. El personal muy agradable. Muy bien de precio.",
+    text: "La masa de pizza increíblemente buena, el tomate riquísimo, la carbonara espectacular con su huevo y su guanciale, todos los ingredientes súper frescos y de calidad. El personal muy agradable. Muy bien de precio.",
     time: "Hace 9 meses",
     profilePhotoUrl: "https://ui-avatars.com/api/?name=NSR+75cc&background=3F6212&color=fff"
   },
