@@ -15,7 +15,7 @@ export default function Hero() {
         <div className="bg-zinc-950/40 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-3xl p-8 md:p-12 flex flex-col items-center">
           
           {/* Social Proof Pill */}
-          <div className="relative z-20 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/60 border border-zinc-700/50 backdrop-blur-sm shadow-xl hover:bg-zinc-800/80 transition-colors cursor-default">
+          <div className="mt-4 relative z-20 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/60 border border-zinc-700/50 backdrop-blur-sm shadow-xl hover:bg-zinc-800/80 transition-colors cursor-default">
             <div className="flex items-center gap-1 text-[#FABB05]">
               <svg className="w-4 h-4 drop-shadow-[0_0_2px_rgba(250,187,5,0.5)]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -37,7 +37,7 @@ export default function Hero() {
           <img 
             src="/logo-kikko.png" 
             alt="Kikko Restaurante Pizzeria Italiano" 
-            className="w-[260px] md:w-[380px] h-auto mb-6 -mt-8 md:-mt-12 drop-shadow-2xl relative z-10" 
+            className="w-[260px] md:w-[380px] h-auto mb-6 -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
           />
           
           <p className="text-zinc-300 text-sm md:text-base max-w-lg mx-auto mb-8 font-light leading-relaxed">
