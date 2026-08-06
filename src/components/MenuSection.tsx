@@ -141,7 +141,7 @@ export default function MenuSection() {
           return (
             <div 
               key={category.id} 
-              className="scroll-mt-32 relative py-20 sm:py-32" 
+              className="scroll-mt-[220px] relative py-20 sm:py-32" 
               id={category.id}
             >
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

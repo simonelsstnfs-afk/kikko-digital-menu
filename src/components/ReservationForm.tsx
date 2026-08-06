@@ -83,7 +83,7 @@ export default function ReservationForm() {
   };
 
   return (
-    <section id="reservas" className="py-24 bg-zinc-950 relative scroll-mt-[10vh]">
+    <section id="reservas" className="py-24 bg-zinc-950 relative scroll-mt-32">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="bg-zinc-900/50 rounded-3xl p-8 md:p-12 shadow-2xl border border-zinc-800 backdrop-blur-sm flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
