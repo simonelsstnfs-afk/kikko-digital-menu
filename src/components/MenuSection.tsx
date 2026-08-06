@@ -4,15 +4,24 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../LanguageContext';
 import { MenuItem } from '../types';
 
-const categorySubtitles: Record<string, string> = {
-  entrantes: 'Para Empezar Bien',
-  pizzas: 'Masa Madre Italiana',
-  pastas: 'Recetas Tradicionales',
-  risottos: 'Cremosos y Auténticos',
-  segundos: 'Carnes de Primera',
-  hamburguesas: 'Sabor Irresistible',
-  postres: 'El Dulce Final',
-  bebidas: 'Para Acompañar'
+const categorySubtitles: Record<string, Record<string, string>> = {
+  entrantes: { es: 'Para Empezar Bien', en: 'To Start Well', it: 'Per Iniziare Bene' },
+  pizzas: { es: 'Masa Madre Italiana', en: 'Italian Sourdough', it: 'Lievito Madre Italiano' },
+  pastas: { es: 'Recetas Tradicionales', en: 'Traditional Recipes', it: 'Ricette Tradizionali' },
+  risottos: { es: 'Cremosos y Auténticos', en: 'Creamy & Authentic', it: 'Cremosi e Autentici' },
+  segundos: { es: 'Carnes de Primera', en: 'Premium Meats', it: 'Carni di Prima Scelta' },
+  hamburguesas: { es: 'Sabor Irresistible', en: 'Irresistible Flavor', it: 'Sapore Irresistibile' },
+  postres: { es: 'El Dulce Final', en: 'The Sweet Ending', it: 'Il Dolce Finale' },
+  bebidas: { es: 'Para Acompañar', en: 'To Accompany', it: 'Per Accompagnare' }
+};
+
+const subcategoryTranslations: Record<string, Record<string, string>> = {
+  'Refrescos': { es: 'Refrescos', en: 'Soft Drinks', it: 'Bibite' },
+  'Cervezas': { es: 'Cervezas', en: 'Beers', it: 'Birre' },
+  'Vinos': { es: 'Vinos', en: 'Wines', it: 'Vini' },
+  'Cócteles': { es: 'Cócteles', en: 'Cocktails', it: 'Cocktail' },
+  'Cafés': { es: 'Cafés', en: 'Coffees', it: 'Caffè' },
+  'Amaros': { es: 'Amaros', en: 'Spirits & Liqueurs', it: 'Amari e Liquori' }
 };
 
 export default function MenuSection() {
@@ -131,7 +140,9 @@ export default function MenuSection() {
                     transition={{ delay: 0.2 }}
                     className="block font-serif italic text-2xl md:text-3xl text-amber-500"
                   >
-                    {categorySubtitles[category.id] || 'Selección Premium'}
+                    {categorySubtitles[category.id] 
+                      ? categorySubtitles[category.id][language as keyof typeof categorySubtitles[string]] || categorySubtitles[category.id]['es'] 
+                      : 'Selección Premium'}
                   </motion.span>
                 </div>
 
@@ -141,7 +152,9 @@ export default function MenuSection() {
                     <div key={sub} className="flex flex-col gap-4">
                       {sub !== 'default' && (
                         <h6 className="font-serif text-3xl text-zinc-300 font-medium border-b border-zinc-700/50 pb-2 mb-4 text-center md:text-left">
-                          {sub}
+                          {subcategoryTranslations[sub] 
+                            ? subcategoryTranslations[sub][language as keyof typeof subcategoryTranslations[string]] || subcategoryTranslations[sub]['es']
+                            : sub}
                         </h6>
                       )}
                       
