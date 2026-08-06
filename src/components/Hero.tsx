@@ -5,14 +5,16 @@ export default function Hero() {
 
   return (
     <section 
-      className="relative flex items-center justify-center overflow-hidden min-h-[100dvh] pt-28 pb-12 bg-[url('/pizzas_1785956040596.jpg')] bg-fixed bg-cover bg-center border-b border-zinc-900"
+      className="relative flex items-center justify-center overflow-hidden min-h-[100dvh] pt-28 pb-12 bg-[#141A0F]"
     >
-      {/* Overlay para oscurecer la imagen de fondo */}
-      <div className="absolute inset-0 bg-zinc-950/75"></div>
+      {/* Subtle Background Glow to enhance glassmorphism */}
+      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+        <div className="w-[600px] h-[600px] bg-[#C2410C]/5 rounded-full blur-[120px]"></div>
+      </div>
 
       {/* Content Card (Liquid Glass) */}
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto w-full">
-        <div className="bg-zinc-950/40 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-3xl p-8 md:p-12 flex flex-col items-center">
+        <div className="bg-[#1a2213]/40 backdrop-blur-md border border-white/5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] rounded-3xl p-8 md:p-12 flex flex-col items-center">
           
           {/* Social Proof Pill */}
           <div className="mt-4 relative z-20 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/60 border border-zinc-700/50 backdrop-blur-sm shadow-xl hover:bg-zinc-800/80 transition-colors cursor-default">
