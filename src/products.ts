@@ -43,7 +43,7 @@ export const PIZZAS: MenuItem[] = [
 
 export const PASTAS: MenuItem[] = [
   { id: 'pa1', name: 'Gnocchi Sorrentina', description: { es: 'Tomate y mozzarella', en: 'Tomato and mozzarella', it: 'Pomodoro e mozzarella' }, price: 11.00 },
-  { id: 'pa2', name: 'Spaghetti Carbonara', description: { es: 'Guanciale, huevos, parmesano pecorino y pimienta negra', en: 'Guanciale, eggs, parmesan, pecorino and black pepper', it: 'Guanciale, uova, parmigiano, pecorino e pepe nero' }, price: 14.00 },
+  { id: 'pa2', name: 'Spaghetti Carbonara', description: { es: 'Guanciale, huevos, parmesano, pecorino y pimienta negra', en: 'Guanciale, eggs, parmesan, pecorino and black pepper', it: 'Guanciale, uova, parmigiano, pecorino e pepe nero' }, price: 14.00 },
   { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tintura de calamares', en: 'Made with squid ink', it: 'Fatto con nero di seppia' }, price: 16.00 },
   { id: 'pa4', name: { es: 'Tagliatelle Boloñesa', en: 'Tagliatelle Bolognese', it: 'Tagliatelle alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 12.00 },
   { id: 'pa5', name: { es: 'Tagliatelle con Albóndigas', en: 'Tagliatelle with Meatballs', it: 'Tagliatelle con Polpette' }, description: { es: '', en: '', it: '' }, price: 14.00 },
@@ -59,7 +59,7 @@ export const RISOTTOS: MenuItem[] = [
   { id: 'ri1', name: { es: 'Arroz Meloso con Champiñones y Salchichas', en: 'Creamy Rice with Mushrooms and Sausages', it: 'Risotto con Funghi e Salsiccia' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 15.00 },
   { id: 'ri2', name: { es: 'Arroz Meloso con Azafrán y Osobuco', en: 'Creamy Rice with Saffron and Ossobuco', it: 'Risotto allo Zafferano con Ossobuco' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 17.00 },
   { id: 'ri3', name: { es: 'Arroz Meloso con Mariscos', en: 'Creamy Seafood Rice', it: 'Risotto ai Frutti di Mare' }, description: { es: 'Arroz marinero sin queso', en: 'Seafood rice without cheese', it: 'Risotto di mare senza formaggio' }, price: 17.00 },
-  { id: 'ri4', name: { es: 'Arroz Meloso con Alcachofas', en: 'Creamy Rice with Artichokes', it: 'Risotto ai Carciofi' }, description: { es: 'Guanciale y crema de queso azul', en: 'Guanciale and blue cheese cream', it: 'Guanciale e crema al gorgonzola' }, price: 16.00 },
+  { id: 'ri4', name: { es: 'Arroz Meloso con Alcachofas', en: 'Creamy Rice with Artichokes', it: 'Risotto ai Carciofi' }, description: { es: 'Con mantequilla, parmesano, guanciale y crema de queso azul', en: 'With butter, parmesan, guanciale and blue cheese cream', it: 'Con burro, parmigiano, guanciale e crema al gorgonzola' }, price: 16.00 },
   { id: 'ri5', name: { es: 'Arroz Meloso con Hígado de Pollo y Salvia', en: 'Creamy Rice with Chicken Liver and Sage', it: 'Risotto con Fegatini di Pollo e Salvia' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 14.00 },
 ];
 
