@@ -9,61 +9,58 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-12 mb-16">
 
-          <div>
-            <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">{t('footerContact')}</h4>
-            <ul className="space-y-4 text-sm text-zinc-500">
+          <div className="text-center md:text-left">
+            <h4 className="text-white font-semibold text-sm tracking-widest uppercase mb-6">{t('footerContact')}</h4>
+            <ul className="space-y-4 text-base text-zinc-400 inline-block text-left md:w-full">
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 mt-0.5 text-[#C2410C]" />
+                <MapPin className="w-5 h-5 mt-0.5 text-[#C2410C]" />
                 <span>C. los Ángeles, 48, 38683<br/>Puerto de Santiago, Santa Cruz de Tenerife</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-[#C2410C]" />
+                <Phone className="w-5 h-5 text-[#C2410C]" />
                 <a href="tel:611873391" className="hover:text-white transition-colors">611 87 33 91</a>
               </li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">{t('footerHours')}</h4>
-            <ul className="space-y-4 text-sm text-zinc-500">
+          <div className="text-center md:text-left">
+            <h4 className="text-white font-semibold text-sm tracking-widest uppercase mb-6">{t('footerHours')}</h4>
+            <ul className="space-y-4 text-base text-zinc-400 inline-block text-left md:w-full w-full max-w-[280px] md:max-w-none">
               <li className="flex items-start gap-3">
-                <Clock className="w-4 h-4 mt-0.5 text-[#C2410C]" />
+                <Clock className="w-5 h-5 mt-0.5 text-[#C2410C] shrink-0" />
                 <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between w-full gap-4">
                     <span>{t('footerWeek')}</span>
-                    <span className="text-white">12:30 - 21:30</span>
+                    <span className="text-white text-right">12:30 - 21:30</span>
                   </div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Clock className="w-4 h-4 mt-0.5 text-zinc-800" />
+                <Clock className="w-5 h-5 mt-0.5 text-zinc-700 shrink-0" />
                 <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between w-full gap-4">
                     <span>{t('footerThursday')}</span>
-                    <span className="text-zinc-600">{t('footerClosed')}</span>
+                    <span className="text-zinc-500 text-right">{t('footerClosed')}</span>
                   </div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Clock className="w-4 h-4 mt-0.5 text-[#C2410C]" />
+                <Clock className="w-5 h-5 mt-0.5 text-[#C2410C] shrink-0" />
                 <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between w-full gap-4">
                     <span>{t('footerWeekend')}</span>
-                    <span className="text-white">12:30 - 21:30</span>
+                    <span className="text-white text-right">12:30 - 21:30</span>
                   </div>
                 </div>
               </li>
             </ul>
           </div>
 
-          <div className="space-y-6">
-            <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">{t('footerFollow')}</h4>
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <h4 className="text-white font-semibold text-sm tracking-widest uppercase mb-2">{t('footerFollow')}</h4>
             <div className="flex space-x-4">
-              <a href="https://www.instagram.com/kikkopizzeria" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white hover:text-zinc-950 hover:border-white transition-colors">
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a href="https://www.facebook.com/kikkopizzeria" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white hover:text-zinc-950 hover:border-white transition-colors">
-                <Facebook className="w-4 h-4" />
+              <a href="https://www.instagram.com/kikko.es" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white hover:text-zinc-950 hover:border-white transition-colors">
+                <Instagram className="w-5 h-5" />
               </a>
             </div>
           </div>
