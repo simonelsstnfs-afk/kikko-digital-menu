@@ -3,7 +3,7 @@ export type Language = 'es' | 'en' | 'it';
 export const translations = {
   es: {
     heroSabor: 'Sabor',
-    digitalMenuHeroSub: 'Auténtica tradición italiana: masa de tres harinas con 48h de fermentación, pastas a mano, pan casero e ingredientes de primera calidad.',
+    digitalMenuHeroSub: 'Auténtica tradición italiana: masa de tres harinas con 48 h de fermentación, pan y pastas caseras. Ingredientes de primera calidad en cada elaboración.',
     digitalMenuBtn: 'Ver la Carta',
     resSubtitle: 'Reserva tu mesa',
     resTitle: 'Te esperamos',
@@ -112,7 +112,7 @@ export const translations = {
   },
   en: {
     heroSabor: 'Authentic',
-    digitalMenuHeroSub: 'Authentic Italian tradition: three-flour dough with 48h fermentation, handmade pastas, homemade bread, and premium ingredients.',
+    digitalMenuHeroSub: 'Authentic Italian tradition: three-flour dough with 48h fermentation, homemade bread and pastas. Premium quality ingredients in every preparation.',
     digitalMenuBtn: 'View Menu',
     resSubtitle: 'Book your table',
     resTitle: 'We are waiting for you',
@@ -221,7 +221,7 @@ export const translations = {
   },
   it: {
     heroSabor: 'Sapore',
-    digitalMenuHeroSub: 'Autentica tradizione italiana: impasto a tre farine con 48h di lievitazione, pasta fatta a mano, pane fatto in casa e ingredienti di prima qualità.',
+    digitalMenuHeroSub: 'Autentica tradizione italiana: impasto di tre farine con 48h di lievitazione, pane e paste fatte in casa. Ingredienti di prima qualità in ogni preparazione.',
     digitalMenuBtn: 'Vedi il Menu',
     resSubtitle: 'Prenota il tuo tavolo',
     resTitle: 'Ti aspettiamo',
