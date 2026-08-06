@@ -72,7 +72,7 @@ export default function MenuSection() {
   }, []);
 
   return (
-    <section id="carta" className="pt-2 bg-[#141A0F] relative scroll-mt-32">
+    <section id="carta" className="bg-[#141A0F] relative scroll-mt-32">
       
       {/* Global backgrounds for MenuSection */}
       <div className="absolute inset-0 z-0 bg-[#141A0F] pointer-events-none overflow-hidden">
