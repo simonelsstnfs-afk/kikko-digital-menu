@@ -12,7 +12,7 @@ const categorySubtitles: Record<string, Record<string, string>> = {
   segundos: { es: 'Carnes de Primera', en: 'Premium Meats', it: 'Carni di Prima Scelta' },
   hamburguesas: { es: 'Sabor Irresistible', en: 'Irresistible Flavor', it: 'Sapore Irresistibile' },
   postres: { es: 'El Dulce Final', en: 'The Sweet Ending', it: 'Il Dolce Finale' },
-  bebidas: { es: 'Para Acompañar', en: 'To Accompany', it: 'Per Accompagnare' }
+  bebidas: { es: 'Para Acompañar', en: 'To go with', it: 'Per Accompagnare' }
 };
 
 const subcategoryTranslations: Record<string, Record<string, string>> = {
