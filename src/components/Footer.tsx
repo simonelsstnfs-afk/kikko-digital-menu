@@ -35,15 +35,6 @@ export default function Footer() {
                   </div>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 mt-0.5 text-zinc-700 shrink-0" />
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full gap-4">
-                    <span>{t('footerWeekend')}</span>
-                    <span className="text-zinc-500 text-right">{t('footerClosed')}</span>
-                  </div>
-                </div>
-              </li>
             </ul>
           </div>
 
