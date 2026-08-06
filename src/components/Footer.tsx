@@ -39,17 +39,8 @@ export default function Footer() {
                 <Clock className="w-5 h-5 mt-0.5 text-zinc-700 shrink-0" />
                 <div className="flex flex-col w-full">
                   <div className="flex justify-between w-full gap-4">
-                    <span>{t('footerThursday')}</span>
-                    <span className="text-zinc-500 text-right">{t('footerClosed')}</span>
-                  </div>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 mt-0.5 text-[#C2410C] shrink-0" />
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full gap-4">
                     <span>{t('footerWeekend')}</span>
-                    <span className="text-white text-right">12:30 - 21:30</span>
+                    <span className="text-zinc-500 text-right">{t('footerClosed')}</span>
                   </div>
                 </div>
               </li>

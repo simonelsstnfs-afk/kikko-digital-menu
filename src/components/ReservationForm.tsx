@@ -16,16 +16,7 @@ export default function ReservationForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.name === 'date') {
-      const dateStr = e.target.value;
-      if (dateStr) {
-        const [year, month, day] = dateStr.split('-');
-        const selectedDate = new Date(Number(year), Number(month) - 1, Number(day));
-        if (selectedDate.getDay() === 4) { // 4 is Thursday
-          alert('Lo sentimos, los jueves estamos cerrados. Por favor, selecciona otro día.');
-          setFormData({ ...formData, date: '' });
-          return;
-        }
-      }
+      // Date restriction removed
     }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
