@@ -89,7 +89,7 @@ export default function MenuSection() {
               }}
             />
           ))}
-          <div className="absolute inset-0 bg-[#141A0F]/65 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-[#141A0F]/85 backdrop-blur-[2px]"></div>
         </div>
       </div>
 
