@@ -49,6 +49,22 @@ export default function MenuSection() {
   return (
     <section id="carta" className="pt-2 bg-[#141A0F] relative scroll-mt-32">
       
+      {/* Global backgrounds for MenuSection */}
+      <div className="absolute inset-0 z-0 bg-[#141A0F] pointer-events-none overflow-hidden">
+        {menuData.map((category) => (
+          <div
+            key={`bg-${category.id}`}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+            style={{
+              backgroundAttachment: 'fixed',
+              backgroundImage: `url(${category.categoryImage})`,
+              opacity: activeCategory === category.id ? 1 : 0,
+            }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-black/60" style={{ backgroundAttachment: 'fixed' }} />
+      </div>
+
       {/* Sticky Category Navigation */}
       <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -96,25 +112,6 @@ export default function MenuSection() {
               className="scroll-mt-32 relative py-20 sm:py-32" 
               id={category.id}
             >
-              {/* Background Image con máscara de fundido en los bordes — la imagen se desvanece
-                  a transparente en top y bottom para que no se distingan los bordes entre secciones */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-fixed z-0"
-                style={{
-                  backgroundImage: `url(${category.categoryImage})`,
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                }}
-              />
-              {/* Overlay semitransparente para legibilidad del texto */}
-              <div 
-                className="absolute inset-0 bg-black/50 z-0"
-                style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                }}
-              />
-              
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 {/* Títulos */}
@@ -160,7 +157,7 @@ export default function MenuSection() {
                           >
                             <div className="flex justify-between items-start sm:items-center gap-4 w-full">
                               <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">
-                                {item.name}
+                                {typeof item.name === 'string' ? item.name : item.name[language as keyof typeof item.name] || (item.name as any)['es']}
                               </h5>
                               <div className="flex-shrink-0 px-3 py-1 rounded-full border border-white/40 bg-white/5 backdrop-blur-sm">
                                 <span className="font-sans text-white font-bold whitespace-nowrap text-[0.95rem] md:text-base">
