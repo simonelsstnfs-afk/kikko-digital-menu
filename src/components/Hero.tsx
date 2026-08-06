@@ -39,7 +39,9 @@ export default function Hero() {
           <img 
             src="/logo-kikko.png" 
             alt="Kikko Restaurante Pizzeria Italiano" 
-            className="w-[260px] md:w-[380px] h-auto -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
+            className="w-[260px] md:w-[380px] h-auto -mt-10 md:-mt-14 drop-shadow-2xl relative z-10"
+            loading="eager"
+            fetchPriority="high"
           />
           
           {/* Risotto Promo Pill */}

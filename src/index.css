@@ -21,3 +21,19 @@ html {
   -ms-overflow-style: none;  /* IE y Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Accesibilidad: focus-visible global — anillo terracota para navegación por teclado */
+*:focus-visible {
+  outline: 2px solid #C2410C;
+  outline-offset: 2px;
+}
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -57,7 +57,7 @@ export default function Footer() {
           </div>
 
           <div className="space-y-6">
-            <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">Síguenos</h4>
+            <h4 className="text-white font-medium text-xs tracking-widest uppercase mb-6">{t('footerFollow')}</h4>
             <div className="flex space-x-4">
               <a href="https://www.instagram.com/kikkopizzeria" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white hover:text-zinc-950 hover:border-white transition-colors">
                 <Instagram className="w-4 h-4" />
