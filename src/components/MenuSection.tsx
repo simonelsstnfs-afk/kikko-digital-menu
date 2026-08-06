@@ -124,12 +124,12 @@ export default function MenuSection() {
               <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 {/* Títulos */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-16 flex flex-col items-center">
                   <motion.h4 
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="font-serif text-5xl md:text-7xl text-white font-bold tracking-tight mb-2"
+                    className="font-serif text-5xl md:text-7xl text-white font-bold tracking-tight relative z-10"
                   >
                     {t(category.titleKey)}
                   </motion.h4>
@@ -138,7 +138,7 @@ export default function MenuSection() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 }}
-                    className="block font-serif italic text-2xl md:text-3xl text-amber-500"
+                    className="block font-cursive text-3xl md:text-5xl text-amber-500 transform translate-x-12 md:translate-x-24 -mt-2 md:-mt-4"
                   >
                     {categorySubtitles[category.id] 
                       ? categorySubtitles[category.id][language as keyof typeof categorySubtitles[string]] || categorySubtitles[category.id]['es'] 
