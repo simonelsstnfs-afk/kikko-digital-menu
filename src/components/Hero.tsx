@@ -68,20 +68,12 @@ export default function Hero() {
             {t('digitalMenuHeroSub')}
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <a
-              href="#carta"
-              className="px-8 py-3.5 bg-[#C2410C] text-white text-sm font-bold uppercase tracking-widest rounded-full hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-orange-900/50 hover:-translate-y-1 inline-block w-full sm:w-auto text-center"
-            >
-              {t('digitalMenuBtn')}
-            </a>
-            <a
-              href="#reservas"
-              className="px-8 py-3.5 bg-transparent text-white text-sm font-bold uppercase tracking-widest rounded-full border border-white/40 hover:bg-white/10 hover:border-white transition-all duration-300 hover:-translate-y-1 inline-block w-full sm:w-auto text-center"
-            >
-              {t('btnBookTable')}
-            </a>
-          </div>
+          <a
+            href="#carta"
+            className="px-8 py-3.5 bg-[#C2410C] text-white text-sm font-bold uppercase tracking-widest rounded-full hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-orange-900/50 hover:-translate-y-1 inline-block"
+          >
+            {t('digitalMenuBtn')}
+          </a>
         </div>
       </div>
     </section>
