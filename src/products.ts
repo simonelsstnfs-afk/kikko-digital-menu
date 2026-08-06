@@ -31,7 +31,7 @@ export const PIZZAS: MenuItem[] = [
   { id: 'pi12', name: 'Pizza Vegetariana', description: { es: 'Tomate, mozzarella y verduras mixtas', en: 'Tomato, mozzarella and mixed vegetables', it: 'Pomodoro, mozzarella e verdure miste' }, price: 10.00 },
   { id: 'pi13', name: 'Pizza Quattro Formaggi', description: { es: 'Mozzarella, queso azul, queso ahumado y parmesano', en: 'Mozzarella, blue cheese, smoked cheese and parmesan', it: 'Mozzarella, gorgonzola, provola affumicata e parmigiano' }, price: 11.50 },
   { id: 'pi14', name: 'Pizza Hellvis', description: { es: 'Mozzarella, rúcula, pollo frito, tomate cherry y mostaza y miel', en: 'Mozzarella, arugula, fried chicken, cherry tomatoes and honey mustard', it: 'Mozzarella, rucola, pollo fritto, pomodorini e senape al miele' }, price: 13.00 },
-  { id: 'pi15', name: 'Pizza Capricciosa', description: { es: 'Tomate, mozzarella, champiñones, jamón cocido y alcachofas', en: 'Tomato, mozzarella, mushrooms, cooked ham and artichokes', it: 'Pomodoro, mozzarella, funghi, prosciutto cotto e carciofi' }, price: 10.00 },
+  { id: 'pi15', name: 'Pizza Capricciosa', description: { es: 'Tomate, mozzarella, champiñones, jamón cocido, alcachofas y aceitunas negras', en: 'Tomato, mozzarella, mushrooms, cooked ham, artichokes and black olives', it: 'Pomodoro, mozzarella, funghi, prosciutto cotto, carciofi e olive nere' }, price: 10.00 },
   { id: 'pi16', name: { es: 'Pizza Campesina', en: 'Pizza Campesina', it: 'Pizza Contadina' }, description: { es: 'Tomate, anchoas, aceitunas y orégano', en: 'Tomato, anchovies, olives and oregano', it: 'Pomodoro, acciughe, olive e origano' }, price: 8.00 },
   { id: 'pi17', name: { es: 'Pizza Rústica', en: 'Rustic Pizza', it: 'Pizza Rustica' }, description: { es: 'Mozzarella, queso ahumado, longaniza y friarelli', en: 'Mozzarella, smoked cheese, sausage and friarielli', it: 'Mozzarella, provola affumicata, salsiccia e friarielli' }, price: 12.00 },
   { id: 'pi18', name: 'Pizza Meat Feast', description: { es: 'Mozzarella, tomate, jamón cocido, wurstel, salami picante y cebolla', en: 'Mozzarella, tomato, cooked ham, wurstel, spicy salami and onion', it: 'Mozzarella, pomodoro, prosciutto cotto, wurstel, salame piccante e cipolla' }, price: 13.00 },
@@ -45,10 +45,10 @@ export const PASTAS: MenuItem[] = [
   { id: 'pa1', name: 'Gnocchi Sorrentina', description: { es: 'Tomate y mozzarella', en: 'Tomato and mozzarella', it: 'Pomodoro e mozzarella' }, price: 11.00 },
   { id: 'pa2', name: 'Spaghetti Carbonara', description: { es: 'Guanciale, huevos, parmesano, pecorino y pimienta negra', en: 'Guanciale, eggs, parmesan, pecorino and black pepper', it: 'Guanciale, uova, parmigiano, pecorino e pepe nero' }, price: 14.00 },
   { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tinta de calamar', en: 'Made with squid ink', it: 'Fatto con nero di seppia' }, price: 16.00 },
-  { id: 'pa4', name: { es: 'Tagliatelle Boloñesa', en: 'Tagliatelle Bolognese', it: 'Tagliatelle alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 12.00 },
-  { id: 'pa5', name: { es: 'Tagliatelle con Albóndigas', en: 'Tagliatelle with Meatballs', it: 'Tagliatelle con Polpette' }, description: { es: '', en: '', it: '' }, price: 14.00 },
+  { id: 'pa4', name: { es: 'Tagliatelle Boloñesa', en: 'Tagliatelle Bolognese', it: 'Tagliatelle alla Bolognese' }, description: { es: 'Con parmesano', en: 'With parmesan', it: 'Con parmigiano' }, price: 12.00 },
+  { id: 'pa5', name: { es: 'Tagliatelle con Albóndigas', en: 'Tagliatelle with Meatballs', it: 'Tagliatelle con Polpette' }, description: { es: 'Con parmesano', en: 'With parmesan', it: 'Con parmigiano' }, price: 14.00 },
   { id: 'pa6', name: { es: 'Lasaña Boloñesa', en: 'Bolognese Lasagna', it: 'Lasagna alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 11.00 },
-  { id: 'pa7', name: { es: 'Ravioli de Ricotta y Espinaca', en: 'Ricotta and Spinach Ravioli', it: 'Ravioli Ricotta e Spinaci' }, description: { es: 'Con mantequilla y salvia', en: 'With butter and sage', it: 'Con burro e salvia' }, price: 13.00 },
+  { id: 'pa7', name: { es: 'Ravioli de Ricotta y Espinaca', en: 'Ricotta and Spinach Ravioli', it: 'Ravioli Ricotta e Spinaci' }, description: { es: 'Con mantequilla, salvia y parmesano', en: 'With butter, sage and parmesan', it: 'Con burro, salvia e parmigiano' }, price: 13.00 },
   { id: 'pa8', name: { es: 'Gnocco Cuatro Quesos con Guanciale', en: 'Four Cheese Gnocchi with Guanciale', it: 'Gnocchi ai Quattro Formaggi con Guanciale' }, description: { es: 'Parmesano, pecorino, queso ahumado, queso azul y guanciale', en: 'Parmesan, pecorino, smoked cheese, blue cheese and guanciale', it: 'Parmigiano, pecorino, provola affumicata, gorgonzola e guanciale' }, price: 14.00 },
   { id: 'pa9', name: { es: 'Gnocco Amatriciana', en: 'Amatriciana Gnocchi', it: 'Gnocchi all\'Amatriciana' }, description: { es: 'Salsa de tomate, guanciale y queso pecorino', en: 'Tomato sauce, guanciale and pecorino cheese', it: 'Salsa di pomodoro, guanciale e pecorino' }, price: 13.00 },
   { id: 'pa10', name: { es: 'Linguini de Tinta de Calamar', en: 'Squid Ink Linguini', it: 'Linguine al Nero di Seppia' }, description: { es: 'Con mantequilla, anchoas y burrata', en: 'With butter, anchovies and burrata', it: 'Con burro, acciughe e burrata' }, price: 14.00 },
@@ -74,12 +74,12 @@ export const SECONDI: MenuItem[] = [
 
 export const BURGERS: MenuItem[] = [
   { id: 'bu1', name: 'Golden Burger', description: { es: 'Hamburguesa de ternera 200g, cebolla caramelizada, bacon, tomate, pepinillo y salsa burger', en: '200g beef burger, caramelized onion, bacon, tomato, pickle and burger sauce', it: 'Hamburger di manzo 200g, cipolla caramellata, bacon, pomodoro, cetriolini e salsa burger' }, price: 17.00 },
-  { id: 'bu2', name: 'Cheeseburger', description: { es: 'Hamburguesa de ternera 200g, doble queso, lechuga, tomate, ketchup', en: '200g beef burger, double cheese, lettuce, tomato, ketchup', it: 'Hamburger di manzo 200g, doppio formaggio, lattuga, pomodoro, ketchup' }, price: 14.00 },
-  { id: 'bu3', name: 'Italian Burger', description: { es: 'Hamburguesa de ternera 200g, guanciale, cebolla caramelizada, queso ahumado, lechuga y mayonesa', en: '200g beef burger, guanciale, caramelized onion, smoked cheese, lettuce and mayonnaise', it: 'Hamburger di manzo 200g, guanciale, cipolla caramellata, provola affumicata, lattuga e maionese' }, price: 16.00 },
+  { id: 'bu2', name: 'Cheeseburger', description: { es: 'Hamburguesa de ternera 200g, doble queso, rúcula, tomate, ketchup', en: '200g beef burger, double cheese, arugula, tomato, ketchup', it: 'Hamburger di manzo 200g, doppio formaggio, rucola, pomodoro, ketchup' }, price: 14.00 },
+  { id: 'bu3', name: 'Italian Burger', description: { es: 'Hamburguesa de ternera 200g, guanciale, cebolla caramelizada, queso ahumado, rúcula y mayonesa', en: '200g beef burger, guanciale, caramelized onion, smoked cheese, arugula and mayonnaise', it: 'Hamburger di manzo 200g, guanciale, cipolla caramellata, provola affumicata, rucola e maionese' }, price: 16.00 },
 ];
 
 export const DESSERTS: MenuItem[] = [
-  { id: 'de1', name: { es: 'Tarta de Chocolate con Helado de Vainilla', en: 'Chocolate Cake with Vanilla Ice Cream', it: 'Torta al Cioccolato con Gelato alla Vaniglia' }, description: { es: '', en: '', it: '' }, price: 6.00 },
+  { id: 'de1', name: { es: 'Tarta de Chocolate con Helado de Vainilla', en: 'Chocolate Cake with Vanilla Ice Cream', it: 'Torta al Cioccolato con Gelato alla Vaniglia' }, description: { es: 'Con granola de avellana', en: 'With hazelnut granola', it: 'Con granola di nocciole' }, price: 6.00 },
   { id: 'de2', name: { es: 'Focaccia con Nutella y Granola de Avellanas', en: 'Focaccia with Nutella and Hazelnut Crumble', it: 'Focaccia con Nutella e Granella di Nocciole' }, description: { es: '', en: '', it: '' }, price: 7.50 },
   { id: 'de3', name: { es: 'Tarta de Manzana con Helado de Vainilla', en: 'Apple Pie with Vanilla Ice Cream', it: 'Torta di Mele con Gelato alla Vaniglia' }, description: { es: '', en: '', it: '' }, price: 6.00 },
   { id: 'de4', name: 'Tiramisú', description: { es: '', en: '', it: '' }, price: 6.00 },
@@ -89,6 +89,7 @@ export const DESSERTS: MenuItem[] = [
 export const DRINKS: MenuItem[] = [
   // REFRESCOS
   { id: 'dr1', name: 'Coca Cola', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
+  { id: 'dr1_1', name: 'Coca Cola Zero', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr2', name: 'Sprite', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr3', name: { es: 'Fanta Limón', en: 'Fanta Lemon', it: 'Fanta al Limone' }, description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr4', name: { es: 'Fanta Naranja', en: 'Fanta Orange', it: 'Fanta all\'Arancia' }, description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
@@ -130,7 +131,6 @@ export const DRINKS: MenuItem[] = [
   { id: 'dr37', name: 'Gin Tonic', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
   { id: 'dr38', name: 'Vodka Lemon / Red Bull', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
   { id: 'dr39', name: 'Mojito', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
-  { id: 'dr40', name: 'Americano Spritz', description: { es: '', en: '', it: '' }, price: 7.00, subcategory: 'Cócteles' },
   { id: 'dr41', name: { es: 'Mojito Sin Alcohol', en: 'Virgin Mojito', it: 'Mojito Analcolico' }, description: { es: '', en: '', it: '' }, price: 5.00, subcategory: 'Cócteles' },
   // CAFÉS
   { id: 'dr42', name: { es: 'Café Espresso', en: 'Espresso', it: 'Caffè Espresso' }, description: { es: '', en: '', it: '' }, price: 1.30, subcategory: 'Cafés' },
