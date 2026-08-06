@@ -91,7 +91,7 @@ export default function MenuSection() {
       </div>
 
       {/* Sticky Category Navigation */}
-      <div className="sticky top-[56px] sm:top-[64px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
+      <div className="sticky top-[104px] sm:top-[108px] z-40 py-1 border-b border-zinc-900" style={{ backgroundColor: 'rgba(20, 26, 15, 0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <div className="max-w-6xl mx-auto relative">
           {/* Fade-out lateral para indicar scroll en móvil */}
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#141A0F] to-transparent z-10 pointer-events-none md:hidden" />

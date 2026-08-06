@@ -5,7 +5,7 @@ export default function Hero() {
 
   return (
     <section 
-      className="relative flex items-center justify-center overflow-hidden min-h-[100dvh] pt-20 pb-12 bg-[#141A0F]"
+      className="relative flex items-center justify-center overflow-hidden min-h-[100dvh] pt-28 pb-12 bg-[#141A0F]"
     >
       {/* Subtle Background Glow to enhance glassmorphism */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
