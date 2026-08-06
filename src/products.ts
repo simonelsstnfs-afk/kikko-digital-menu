@@ -90,8 +90,8 @@ export const DRINKS: MenuItem[] = [
   // REFRESCOS
   { id: 'dr1', name: 'Coca Cola', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr2', name: 'Sprite', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
-  { id: 'dr3', name: 'Fanta Limón', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
-  { id: 'dr4', name: 'Fanta Naranja', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
+  { id: 'dr3', name: { es: 'Fanta Limón', en: 'Fanta Lemon', it: 'Fanta al Limone' }, description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
+  { id: 'dr4', name: { es: 'Fanta Naranja', en: 'Fanta Orange', it: 'Fanta all\'Arancia' }, description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr5', name: 'Aquarius', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr6', name: 'Nestea', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
   { id: 'dr7', name: 'Schweppes', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Refrescos' },
