@@ -138,7 +138,7 @@ export default function MenuSection() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 }}
-                    className="block font-playfair italic text-3xl md:text-5xl text-amber-500 transform translate-x-12 md:translate-x-24 -mt-2 md:-mt-4"
+                    className="block font-cursive text-3xl md:text-5xl text-amber-500 transform translate-x-12 md:translate-x-24 -mt-2 md:-mt-4"
                   >
                     {categorySubtitles[category.id] 
                       ? categorySubtitles[category.id][language as keyof typeof categorySubtitles[string]] || categorySubtitles[category.id]['es'] 
