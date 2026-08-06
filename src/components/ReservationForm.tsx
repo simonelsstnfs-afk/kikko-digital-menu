@@ -103,7 +103,7 @@ export default function ReservationForm() {
                 <span className="text-[#CE2B37]">!</span>
               </span>
             </h2>
-            <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mx-auto md:mx-0">
+            <p className="text-zinc-400 text-lg leading-relaxed max-w-md mx-auto md:mx-0">
               {renderDescription()}
             </p>
           </div>
@@ -124,8 +124,8 @@ export default function ReservationForm() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <User className="w-3.5 h-3.5 text-zinc-500" /> {t('resName')}
+                    <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                      <User className="w-4 h-4 text-zinc-500" /> {t('resName')}
                     </label>
                     <input
                       type="text"
@@ -134,19 +134,19 @@ export default function ReservationForm() {
                       onChange={handleChange}
                       required
                       placeholder={t('resNamePl')}
-                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 text-sm"
+                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 text-base"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <Users className="w-3.5 h-3.5 text-zinc-500" /> {t('resPersons')}
+                    <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                      <Users className="w-4 h-4 text-zinc-500" /> {t('resPersons')}
                     </label>
                     <select
                       name="persons"
                       value={formData.persons}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none text-sm"
+                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none text-base"
                     >
                       <option value="" className="bg-zinc-900">{t('resQty')}</option>
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
@@ -156,8 +156,8 @@ export default function ReservationForm() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <Calendar className="w-3.5 h-3.5 text-zinc-500" /> {t('resDate')}
+                    <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                      <Calendar className="w-4 h-4 text-zinc-500" /> {t('resDate')}
                     </label>
                     <input
                       type="date"
@@ -165,20 +165,20 @@ export default function ReservationForm() {
                       value={formData.date}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 color-scheme-dark text-sm"
+                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 placeholder:text-zinc-600 color-scheme-dark text-base"
                       style={{ colorScheme: 'dark' }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <Clock className="w-3.5 h-3.5 text-zinc-500" /> {t('resTime')}
+                    <label className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                      <Clock className="w-4 h-4 text-zinc-500" /> {t('resTime')}
                     </label>
                     <select
                       name="time"
                       value={formData.time}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none text-sm"
+                      className="w-full px-4 py-3 bg-zinc-950/50 border border-zinc-800 rounded-xl focus:ring-1 focus:ring-white focus:border-white transition-colors outline-none text-zinc-300 appearance-none text-base"
                     >
                       <option value="" className="bg-zinc-900">{t('resSelectTime')}</option>
                       <option value="12:00" className="bg-zinc-900">12:00</option>
