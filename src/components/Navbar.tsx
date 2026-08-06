@@ -4,6 +4,16 @@ import { Language } from '../translations';
 export default function Navbar() {
   const { language, setLanguage, t } = useLanguage();
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Update URL hash without jumping
+      window.history.pushState(null, '', `#${id}`);
+    }
+  };
+
   const languages: { code: Language; label: string }[] = [
     { code: 'es', label: 'ES' },
     { code: 'en', label: 'EN' },
@@ -17,12 +27,14 @@ export default function Navbar() {
           <div className="flex justify-center items-center gap-6 sm:gap-12">
             <a
               href="#resenas"
+              onClick={(e) => handleNavClick(e, 'resenas')}
               className="px-6 sm:px-8 py-2.5 border border-white text-white hover:bg-white hover:text-zinc-950 text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full transition-colors shadow-[0_0_15px_rgba(255,255,255,0.05)] whitespace-nowrap"
             >
               {t('menuReviews')}
             </a>
             <a
               href="#reservas"
+              onClick={(e) => handleNavClick(e, 'reservas')}
               className="px-6 sm:px-8 py-2.5 border border-white text-white hover:bg-white hover:text-zinc-950 text-xs sm:text-sm uppercase tracking-widest font-semibold rounded-full transition-colors shadow-[0_0_15px_rgba(255,255,255,0.05)] whitespace-nowrap"
             >
               {t('btnBookTable')}

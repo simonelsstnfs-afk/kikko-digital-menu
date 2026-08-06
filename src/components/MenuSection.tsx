@@ -190,7 +190,6 @@ export default function MenuSection() {
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.4, delay: itemIdx * 0.05 }}
                             className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-colors"
-                            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 120px' }}
                           >
                             <div className="flex justify-between items-start sm:items-center gap-4 w-full">
                               <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">
