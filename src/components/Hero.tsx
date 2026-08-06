@@ -37,9 +37,19 @@ export default function Hero() {
           <img 
             src="/logo-kikko.png" 
             alt="Kikko Restaurante Pizzeria Italiano" 
-            className="w-[260px] md:w-[380px] h-auto mb-6 -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
+            className="w-[260px] md:w-[380px] h-auto mb-4 -mt-10 md:-mt-14 drop-shadow-2xl relative z-10" 
           />
           
+          {/* Risotto Promo */}
+          <div className="flex flex-col items-center gap-1.5 mb-8 animate-fade-in">
+            <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] text-[#C2410C] bg-[#C2410C]/10 border border-[#C2410C]/20 px-3 py-1 rounded-full">
+              {t('newPromoTag')}
+            </span>
+            <span className="font-[Dancing_Script] text-2xl md:text-3xl text-white/90 drop-shadow-md">
+              {t('newPromoTitle')}
+            </span>
+          </div>
+
           <p className="text-zinc-300 text-sm md:text-base max-w-lg mx-auto mb-8 font-light leading-relaxed">
             {t('digitalMenuHeroSub')}
           </p>
