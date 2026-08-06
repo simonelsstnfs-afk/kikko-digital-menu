@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 
-const GOOGLE_MAPS_REVIEW_URL = "https://search.google.com/local/writereview?placeid=ChIJ50K-Y4P7QQwR5s_2T_2W1nE";
+const GOOGLE_MAPS_REVIEW_URL = "https://www.google.com/maps/search/?api=1&query=KIKKO+Restaurante+Pizzeria+Italiano+Puerto+de+Santiago";
 
 const GoogleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
