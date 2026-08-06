@@ -72,22 +72,23 @@ export default function MenuSection() {
   }, []);
 
   return (
-    <section id="carta" className="bg-[#141A0F] relative scroll-mt-32">
+    <section id="carta" className="bg-transparent relative scroll-mt-32">
       
-      {/* Global backgrounds for MenuSection */}
-      <div className="absolute inset-0 z-0 bg-[#141A0F] pointer-events-none overflow-hidden">
+      {/* Global backgrounds for MenuSection (Optimized for Mobile GPU) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
+        <div className="absolute inset-0 bg-[#141A0F]"></div>
         {menuData.map((category) => (
           <div
             key={`bg-${category.id}`}
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out"
             style={{
-              backgroundAttachment: 'fixed',
               backgroundImage: `url(${category.categoryImage})`,
               opacity: activeCategory === category.id ? 1 : 0,
+              willChange: 'opacity'
             }}
           />
         ))}
-        <div className="absolute inset-0 bg-black/60" style={{ backgroundAttachment: 'fixed' }} />
+        <div className="absolute inset-0 bg-[#141A0F]/85 backdrop-blur-[2px]"></div>
       </div>
 
       {/* Sticky Category Navigation */}
