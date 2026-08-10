@@ -12,7 +12,7 @@ export const STARTERS: MenuItem[] = [
   { id: 's6', name: { es: 'Pollo Frito', en: 'Fried Chicken', it: 'Pollo Fritto' }, description: { es: '', en: '', it: '' }, price: 8.00 },
   { id: 's7', name: { es: 'Alitas de Pollo BBQ (6 unidades)', en: 'BBQ Chicken Wings (6 units)', it: 'Ali di Pollo BBQ (6 unità)' }, description: { es: '', en: '', it: '' }, price: 9.00 },
   { id: 's8', name: { es: '8 Nuggets con Papas Fritas', en: '8 Chicken Nuggets with French Fries', it: '8 Nuggets di Pollo con Patatine Fritte' }, description: { es: '', en: '', it: '' }, price: 10.00 },
-  { id: 's9', name: { es: 'Jalapeños (8 unidades)', en: 'Jalapeños (8 units)', it: 'Jalapeños (8 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
+  { id: 's9', name: { es: 'Jalapeños (6 unidades)', en: 'Jalapeños (6 units)', it: 'Jalapeños (6 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
   { id: 's10', name: { es: 'Chilli Cheese Bites (8 unidades)', en: 'Chilli Cheese Bites (8 units)', it: 'Chilli Cheese Bites (8 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
 ];
 
