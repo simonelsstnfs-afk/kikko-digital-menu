@@ -17,7 +17,7 @@ export const STARTERS: MenuItem[] = [
 ];
 
 export const PIZZAS: MenuItem[] = [
-  { id: 'pi1', name: 'Focaccia', description: { es: '', en: '', it: '' }, price: 4.50 },
+  { id: 'pi1', name: 'Focaccia', description: { es: '', en: '', it: '' }, price: 5.00 },
   { id: 'pi2', name: 'Pizza Margherita', description: { es: 'Tomate, mozzarella y albahaca', en: 'Tomato, mozzarella and basil', it: 'Pomodoro, mozzarella e basilico' }, price: 7.00 },
   { id: 'pi3', name: 'Pizza York', description: { es: 'Tomate, mozzarella, york', en: 'Tomato, mozzarella, ham', it: 'Pomodoro, mozzarella, prosciutto cotto' }, price: 9.00 },
   { id: 'pi4', name: 'Pizza Marinara', description: { es: 'Tomate, ajo y orégano', en: 'Tomato, garlic and oregano', it: 'Pomodoro, aglio e origano' }, price: 6.00 },
@@ -39,6 +39,7 @@ export const PIZZAS: MenuItem[] = [
   { id: 'pi20', name: { es: 'Pizza Marinera', en: 'Seafood Pizza', it: 'Pizza Pescatora' }, description: { es: 'Tomate, mozzarella, gambas, almejas, mejillones y perejil', en: 'Tomato, mozzarella, prawns, clams, mussels and parsley', it: 'Pomodoro, mozzarella, gamberi, vongole, cozze e prezzemolo' }, price: 15.00 },
   { id: 'pi21', name: { es: 'Pizza sin Gluten (Extra)', en: 'Gluten Free Pizza (Extra)', it: 'Pizza Senza Glutine (Extra)' }, description: { es: '', en: '', it: '' }, price: 2.00 },
   { id: 'pi22', name: { es: 'Pizza para Llevar (Extra)', en: 'Take Away Pizza (Extra)', it: 'Pizza d\'Asporto (Extra)' }, description: { es: '', en: '', it: '' }, price: 0.50 },
+  { id: 'pi23', name: { es: 'Ingrediente Extra', en: 'Extra Ingredient', it: 'Ingrediente Extra' }, description: { es: '', en: '', it: '' }, price: 1.50 },
 ];
 
 export const PASTAS: MenuItem[] = [
@@ -58,7 +59,7 @@ export const PASTAS: MenuItem[] = [
 export const RISOTTOS: MenuItem[] = [
   { id: 'ri1', name: { es: 'Arroz Meloso con Champiñones y Salchichas', en: 'Creamy Rice with Mushrooms and Sausages', it: 'Risotto con Funghi e Salsiccia' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 15.00 },
   { id: 'ri2', name: { es: 'Arroz Meloso con Azafrán y Osobuco', en: 'Creamy Rice with Saffron and Ossobuco', it: 'Risotto allo Zafferano con Ossobuco' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 17.00 },
-  { id: 'ri3', name: { es: 'Arroz Meloso con Mariscos', en: 'Creamy Seafood Rice', it: 'Risotto ai Frutti di Mare' }, description: { es: 'Arroz marinero sin queso', en: 'Seafood rice without cheese', it: 'Risotto di mare senza formaggio' }, price: 17.00 },
+  { id: 'ri3', name: { es: 'Arroz Meloso con Mariscos', en: 'Creamy Seafood Rice', it: 'Risotto ai Frutti di Mare' }, description: { es: 'Almejas, mejillones, gambas, calamares y perejil (sin queso parmesano)', en: 'Clams, mussels, prawns, squid and parsley (without parmesan cheese)', it: 'Vongole, cozze, gamberi, calamari e prezzemolo (senza parmigiano)' }, price: 17.00 },
   { id: 'ri4', name: { es: 'Arroz Meloso con Alcachofas', en: 'Creamy Rice with Artichokes', it: 'Risotto ai Carciofi' }, description: { es: 'Con mantequilla, parmesano, guanciale y crema de queso azul', en: 'With butter, parmesan, guanciale and blue cheese cream', it: 'Con burro, parmigiano, guanciale e crema al gorgonzola' }, price: 16.00 },
   { id: 'ri5', name: { es: 'Arroz Meloso con Hígado de Pollo y Salvia', en: 'Creamy Rice with Chicken Liver and Sage', it: 'Risotto con Fegatini di Pollo e Salvia' }, description: { es: 'Con mantequilla y queso parmesano', en: 'With butter and parmesan cheese', it: 'Con burro e parmigiano' }, price: 14.00 },
 ];
@@ -73,9 +74,9 @@ export const SECONDI: MenuItem[] = [
 ];
 
 export const BURGERS: MenuItem[] = [
-  { id: 'bu1', name: 'Golden Burger', description: { es: 'Hamburguesa de ternera 200g, cebolla caramelizada, bacon, tomate, pepinillo y salsa burger', en: '200g beef burger, caramelized onion, bacon, tomato, pickle and burger sauce', it: 'Hamburger di manzo 200g, cipolla caramellata, bacon, pomodoro, cetriolini e salsa burger' }, price: 17.00 },
-  { id: 'bu2', name: 'Cheeseburger', description: { es: 'Hamburguesa de ternera 200g, doble queso, rúcula, tomate, ketchup', en: '200g beef burger, double cheese, arugula, tomato, ketchup', it: 'Hamburger di manzo 200g, doppio formaggio, rucola, pomodoro, ketchup' }, price: 14.00 },
-  { id: 'bu3', name: 'Italian Burger', description: { es: 'Hamburguesa de ternera 200g, guanciale, cebolla caramelizada, queso ahumado, rúcula y mayonesa', en: '200g beef burger, guanciale, caramelized onion, smoked cheese, arugula and mayonnaise', it: 'Hamburger di manzo 200g, guanciale, cipolla caramellata, provola affumicata, rucola e maionese' }, price: 16.00 },
+  { id: 'bu1', name: 'Golden Burger', description: { es: 'Hamburguesa de ternera 200g, cebolla caramelizada, bacon, tomate, pepinillo y salsa burger', en: '200g beef burger, caramelized onion, bacon, tomato, pickle and burger sauce', it: 'Hamburger di manzo 200g, cipolla caramellata, bacon, pomodoro, cetriolini e salsa burger' }, price: 16.00 },
+  { id: 'bu2', name: 'Cheeseburger', description: { es: 'Hamburguesa de ternera 200g, doble queso, ketchup', en: '200g beef burger, double cheese, ketchup', it: 'Hamburger di manzo 200g, doppio formaggio, ketchup' }, price: 14.00 },
+  { id: 'bu3', name: 'Italian Burger', description: { es: 'Hamburguesa de ternera 200g, guanciale, cebolla caramelizada, queso ahumado, rúcula y mayonesa', en: '200g beef burger, guanciale, caramelized onion, smoked cheese, arugula and mayonnaise', it: 'Hamburger di manzo 200g, guanciale, cipolla caramellata, provola affumicata, rucola e maionese' }, price: 17.00 },
 ];
 
 export const DESSERTS: MenuItem[] = [
@@ -105,7 +106,7 @@ export const DRINKS: MenuItem[] = [
   { id: 'dr13', name: { es: 'Cerveza Limón', en: 'Lemon Beer', it: 'Birra al Limone' }, description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Cervezas' },
   { id: 'dr14', name: { es: 'Cerveza Sin Alcohol', en: 'Non-Alcoholic Beer', it: 'Birra Analcolica' }, description: { es: '', en: '', it: '' }, price: 3.00, subcategory: 'Cervezas' },
   { id: 'dr15', name: 'Estrella Galicia', description: { es: '', en: '', it: '' }, price: 3.00, subcategory: 'Cervezas' },
-  { id: 'dr16', name: 'Heineken', description: { es: '', en: '', it: '' }, price: 3.00, subcategory: 'Cervezas' },
+  { id: 'dr16', name: 'Heineken', description: { es: '', en: '', it: '' }, price: 2.50, subcategory: 'Cervezas' },
   { id: 'dr17', name: 'Canarias Birra Artigianale IPA', description: { es: '', en: '', it: '' }, price: 4.50, subcategory: 'Cervezas' },
   // VINOS
   { id: 'dr18', name: { es: 'Vino de la Casa (Botella)', en: 'House Wine (Bottle)', it: 'Vino della Casa (Bottiglia)' }, description: { es: '', en: '', it: '' }, price: 12.00, subcategory: 'Vinos' },
@@ -120,9 +121,9 @@ export const DRINKS: MenuItem[] = [
   { id: 'dr27', name: { es: 'Vino Rosado Puglia IGP (Copa)', en: 'Rosé Wine Puglia IGP (Glass)', it: 'Vino Rosato Puglia IGP (Calice)' }, description: { es: '', en: '', it: '' }, price: 4.00, subcategory: 'Vinos' },
   { id: 'dr28', name: { es: 'Cava Brut (Botella)', en: 'Cava Brut (Bottle)', it: 'Cava Brut (Bottiglia)' }, description: { es: '', en: '', it: '' }, price: 12.00, subcategory: 'Vinos' },
   { id: 'dr29', name: { es: 'Cava Brut (Copa)', en: 'Cava Brut (Glass)', it: 'Cava Brut (Calice)' }, description: { es: '', en: '', it: '' }, price: 4.00, subcategory: 'Vinos' },
-  { id: 'dr30', name: { es: 'Sangria Vino Tinto 1L', en: 'Red Wine Sangria 1L', it: 'Sangria di Vino Rosso 1L' }, description: { es: '', en: '', it: '' }, price: 13.00, subcategory: 'Vinos' },
+  { id: 'dr30', name: { es: 'Sangria Vino Tinto 1L', en: 'Red Wine Sangria 1L', it: 'Sangria di Vino Rosso 1L' }, description: { es: '', en: '', it: '' }, price: 15.00, subcategory: 'Vinos' },
   { id: 'dr31', name: { es: 'Sangria Vino Tinto (Copa)', en: 'Red Wine Sangria (Glass)', it: 'Sangria di Vino Rosso (Calice)' }, description: { es: '', en: '', it: '' }, price: 4.00, subcategory: 'Vinos' },
-  { id: 'dr32', name: { es: 'Sangria de Cava 1L', en: 'Cava Sangria 1L', it: 'Sangria di Cava 1L' }, description: { es: '', en: '', it: '' }, price: 15.00, subcategory: 'Vinos' },
+  { id: 'dr32', name: { es: 'Sangria de Cava 1L', en: 'Cava Sangria 1L', it: 'Sangria di Cava 1L' }, description: { es: '', en: '', it: '' }, price: 17.00, subcategory: 'Vinos' },
   { id: 'dr33', name: { es: 'Sangria de Cava (Copa)', en: 'Cava Sangria (Glass)', it: 'Sangria di Cava (Calice)' }, description: { es: '', en: '', it: '' }, price: 5.00, subcategory: 'Vinos' },
   // CÓCTELES
   { id: 'dr34', name: 'Aperol Spritz', description: { es: '', en: '', it: '' }, price: 7.00, subcategory: 'Cócteles' },
