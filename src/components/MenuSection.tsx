@@ -203,7 +203,7 @@ export default function MenuSection() {
                             </div>
                             
                             {item.description[language as keyof typeof item.description] && (
-                              <p className="font-sans text-[0.95rem] md:text-base text-zinc-400 font-normal leading-relaxed mt-3 w-full md:max-w-[85%]">
+                              <p className="font-sans text-[0.95rem] md:text-base text-white font-normal leading-relaxed mt-3 w-full md:max-w-[85%]">
                                 {item.description[language as keyof typeof item.description]}
                               </p>
                             )}
