@@ -45,7 +45,7 @@ export const PIZZAS: MenuItem[] = [
 export const PASTAS: MenuItem[] = [
   { id: 'pa1', name: 'Gnocchi Sorrentina', description: { es: 'Tomate y mozzarella', en: 'Tomato and mozzarella', it: 'Pomodoro e mozzarella' }, price: 11.00 },
   { id: 'pa2', name: 'Spaghetti Carbonara', description: { es: 'Guanciale, huevos, parmesano, pecorino y pimienta negra', en: 'Guanciale, eggs, parmesan, pecorino and black pepper', it: 'Guanciale, uova, parmigiano, pecorino e pepe nero' }, price: 14.00 },
-  { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tinta de calamar', en: 'Made with squid ink', it: 'Fatto con nero di seppia' }, price: 16.00 },
+  { id: 'pa3', name: { es: 'Spaghetti con Marisco', en: 'Seafood Spaghetti', it: 'Spaghetti allo Scoglio' }, description: { es: 'Hecho con tinta de calamar. Almejas, mejillones, gambas, calamares y perejil', en: 'Made with squid ink. Clams, mussels, prawns, squid and parsley', it: 'Fatto con nero di seppia. Vongole, cozze, gamberi, calamari e prezzemolo' }, price: 16.00 },
   { id: 'pa4', name: { es: 'Tagliatelle Boloñesa', en: 'Tagliatelle Bolognese', it: 'Tagliatelle alla Bolognese' }, description: { es: 'Con parmesano', en: 'With parmesan', it: 'Con parmigiano' }, price: 12.00 },
   { id: 'pa5', name: { es: 'Tagliatelle con Albóndigas', en: 'Tagliatelle with Meatballs', it: 'Tagliatelle con Polpette' }, description: { es: 'Con parmesano', en: 'With parmesan', it: 'Con parmigiano' }, price: 14.00 },
   { id: 'pa6', name: { es: 'Lasaña Boloñesa', en: 'Bolognese Lasagna', it: 'Lasagna alla Bolognese' }, description: { es: '', en: '', it: '' }, price: 11.00 },
@@ -127,7 +127,7 @@ export const DRINKS: MenuItem[] = [
   { id: 'dr33', name: { es: 'Sangria de Cava (Copa)', en: 'Cava Sangria (Glass)', it: 'Sangria di Cava (Calice)' }, description: { es: '', en: '', it: '' }, price: 5.00, subcategory: 'Vinos' },
   // CÓCTELES
   { id: 'dr34', name: 'Aperol Spritz', description: { es: '', en: '', it: '' }, price: 7.00, subcategory: 'Cócteles' },
-  { id: 'dr35', name: 'Campari Spritz', description: { es: '', en: '', it: '' }, price: 9.00, subcategory: 'Cócteles' },
+  { id: 'dr35', name: 'Campari Spritz', description: { es: '', en: '', it: '' }, price: 7.00, subcategory: 'Cócteles' },
   { id: 'dr36', name: 'Cuba Libre', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
   { id: 'dr37', name: 'Gin Tonic', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
   { id: 'dr38', name: 'Vodka Lemon / Red Bull', description: { es: '', en: '', it: '' }, price: 8.00, subcategory: 'Cócteles' },
