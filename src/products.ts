@@ -11,7 +11,7 @@ export const STARTERS: MenuItem[] = [
   { id: 's5', name: { es: 'Bruschetta con Ajo y Orégano', en: 'Bruschetta with Garlic and Oregano', it: 'Bruschetta con Aglio e Origano' }, description: { es: '', en: '', it: '' }, price: 5.00 },
   { id: 's6', name: { es: 'Pollo Frito', en: 'Fried Chicken', it: 'Pollo Fritto' }, description: { es: '', en: '', it: '' }, price: 8.00 },
   { id: 's7', name: { es: 'Alitas de Pollo BBQ (6 unidades)', en: 'BBQ Chicken Wings (6 units)', it: 'Ali di Pollo BBQ (6 unità)' }, description: { es: '', en: '', it: '' }, price: 9.00 },
-  { id: 's8', name: { es: '8 Nuggets con Papas Fritas', en: '8 Chicken Nuggets with French Fries', it: '8 Nuggets di Pollo con Patatine Fritte' }, description: { es: '', en: '', it: '' }, price: 10.00 },
+  { id: 's8', name: { es: 'Nuggets con Papas Fritas (8 unidades)', en: 'Chicken Nuggets with French Fries (8 units)', it: 'Nuggets di Pollo con Patatine Fritte (8 unità)' }, description: { es: '', en: '', it: '' }, price: 10.00 },
   { id: 's9', name: { es: 'Jalapeños (6 unidades)', en: 'Jalapeños (6 units)', it: 'Jalapeños (6 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
   { id: 's10', name: { es: 'Chilli Cheese Bites (8 unidades)', en: 'Chilli Cheese Bites (8 units)', it: 'Chilli Cheese Bites (8 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
 ];
@@ -74,7 +74,7 @@ export const SECONDI: MenuItem[] = [
 ];
 
 export const BURGERS: MenuItem[] = [
-  { id: 'bu1', name: 'Golden Burger', description: { es: 'Hamburguesa de ternera 200g, cebolla caramelizada, bacon, tomate, pepinillo y salsa burger', en: '200g beef burger, caramelized onion, bacon, tomato, pickle and burger sauce', it: 'Hamburger di manzo 200g, cipolla caramellata, bacon, pomodoro, cetriolini e salsa burger' }, price: 16.00 },
+  { id: 'bu1', name: 'Golden Burger', description: { es: 'Hamburguesa de ternera 200g, queso, cebolla caramelizada, bacon, tomate, pepinillo y salsa burger', en: '200g beef burger, cheese, caramelized onion, bacon, tomato, pickle and burger sauce', it: 'Hamburger di manzo 200g, formaggio, cipolla caramellata, bacon, pomodoro, cetriolini e salsa burger' }, price: 16.00 },
   { id: 'bu2', name: 'Cheeseburger', description: { es: 'Hamburguesa de ternera 200g, doble queso, ketchup', en: '200g beef burger, double cheese, ketchup', it: 'Hamburger di manzo 200g, doppio formaggio, ketchup' }, price: 14.00 },
   { id: 'bu3', name: 'Italian Burger', description: { es: 'Hamburguesa de ternera 200g, guanciale, cebolla caramelizada, queso ahumado, rúcula y mayonesa', en: '200g beef burger, guanciale, caramelized onion, smoked cheese, arugula and mayonnaise', it: 'Hamburger di manzo 200g, guanciale, cipolla caramellata, provola affumicata, rucola e maionese' }, price: 17.00 },
 ];
