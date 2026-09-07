@@ -156,32 +156,33 @@ export default function ProductModal({
   const drinkPresets = ['Refrescos', 'Cervezas', 'Vinos', 'Cócteles', 'Cafés', 'Amaros'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-700/80 rounded-2xl shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="relative w-full max-w-2xl max-h-[92dvh] flex flex-col bg-zinc-900 border border-zinc-700/80 rounded-2xl shadow-2xl overflow-hidden my-auto">
         
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/60">
-          <div>
-            <span className="text-xs uppercase tracking-wider font-semibold text-[#C2410C]">
+        {/* Header Fijo */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-zinc-800 bg-zinc-950/80 shrink-0">
+          <div className="min-w-0 pr-2">
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#C2410C] block">
               {categoryTitle}
             </span>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-base sm:text-lg font-bold text-white truncate">
               {initialProduct ? 'Editar Plato / Producto' : 'Añadir Nuevo Plato'}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
+            title="Cerrar modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        {/* Formulario con Scroll Interno */}
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
           {error && (
-            <div className="flex items-center gap-2 p-3 text-sm text-red-400 bg-red-950/40 border border-red-800/50 rounded-lg">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 p-3 text-xs sm:text-sm text-red-400 bg-red-950/40 border border-red-800/50 rounded-xl">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -189,7 +190,7 @@ export default function ProductModal({
           {/* Banner informativo de traducción automática */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#141A0F] border border-[#C2410C]/40 rounded-xl">
             <div className="flex items-center gap-2 text-xs text-zinc-300">
-              <Sparkles className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
               <span>
                 <strong>Traducción automática activa:</strong> escribe en español y traduce con un clic o al guardar.
               </span>
@@ -198,7 +199,7 @@ export default function ProductModal({
               type="button"
               disabled={isTranslating || !nameEs.trim()}
               onClick={handleAutoTranslate}
-              className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
+              className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 translationDone
                   ? 'bg-emerald-600 text-white'
                   : 'bg-zinc-800 hover:bg-[#C2410C] text-white disabled:opacity-40 disabled:hover:bg-zinc-800'
@@ -225,10 +226,10 @@ export default function ProductModal({
 
           {/* Nombre */}
           <div className="space-y-3">
-            <label className="block text-sm font-semibold text-zinc-200">
+            <label className="block text-xs sm:text-sm font-semibold text-zinc-200">
               Nombre del Producto <span className="text-red-400">*</span>
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
               <div>
                 <span className="block text-xs text-zinc-400 mb-1">Español (ES) *</span>
                 <input
@@ -237,7 +238,7 @@ export default function ProductModal({
                   placeholder="Ej. Pizza Burrata"
                   value={nameEs}
                   onChange={(e) => setNameEs(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                  className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
               <div>
@@ -247,7 +248,7 @@ export default function ProductModal({
                   placeholder="Auto al guardar o clic"
                   value={nameEn}
                   onChange={(e) => setNameEn(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                  className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
               <div>
@@ -257,16 +258,16 @@ export default function ProductModal({
                   placeholder="Auto al guardar o clic"
                   value={nameIt}
                   onChange={(e) => setNameIt(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                  className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
             </div>
           </div>
 
           {/* Precio y Disponibilidad */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-semibold text-zinc-200 mb-1">
+              <label className="block text-xs sm:text-sm font-semibold text-zinc-200 mb-1">
                 Precio (€) <span className="text-red-400">*</span>
               </label>
               <div className="relative">
@@ -276,21 +277,21 @@ export default function ProductModal({
                   placeholder="Ej. 12.50"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-3 py-2 pr-8 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors font-mono"
+                  className="w-full px-3 py-2 pr-8 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors font-mono"
                 />
                 <span className="absolute right-3 top-2 text-sm text-zinc-500 font-bold">€</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-zinc-200 mb-1">
+              <label className="block text-xs sm:text-sm font-semibold text-zinc-200 mb-1">
                 Estado / Disponibilidad
               </label>
               <div className="flex items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={() => setAvailable(!available)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer shrink-0 ${
                     available ? 'bg-emerald-600' : 'bg-zinc-700'
                   }`}
                 >
@@ -300,7 +301,7 @@ export default function ProductModal({
                     }`}
                   />
                 </button>
-                <span className={`text-sm font-medium ${available ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                <span className={`text-xs sm:text-sm font-medium ${available ? 'text-emerald-400' : 'text-zinc-500'}`}>
                   {available ? 'Disponible en Carta' : 'Agotado Temporalmente'}
                 </span>
               </div>
@@ -309,7 +310,7 @@ export default function ProductModal({
 
           {/* Subcategoría (útil para Bebidas o agrupaciones) */}
           <div>
-            <label className="block text-sm font-semibold text-zinc-200 mb-1">
+            <label className="block text-xs sm:text-sm font-semibold text-zinc-200 mb-1">
               Subcategoría (Opcional)
             </label>
             <input
@@ -317,7 +318,7 @@ export default function ProductModal({
               placeholder="Ej. Refrescos, Cervezas, Vinos, Especialidades..."
               value={subcategory}
               onChange={(e) => setSubcategory(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+              className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
             />
             {isDrinkCategory && (
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -326,7 +327,7 @@ export default function ProductModal({
                     key={preset}
                     type="button"
                     onClick={() => setSubcategory(preset)}
-                    className="text-[11px] px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
                   >
                     + {preset}
                   </button>
@@ -337,7 +338,7 @@ export default function ProductModal({
 
           {/* Descripción / Ingredientes */}
           <div className="space-y-3">
-            <label className="block text-sm font-semibold text-zinc-200">
+            <label className="block text-xs sm:text-sm font-semibold text-zinc-200">
               Descripción e Ingredientes (Opcional)
             </label>
             <div>
@@ -347,10 +348,10 @@ export default function ProductModal({
                 placeholder="Ej. Tomate cherry confitado, albahaca fresca, mozzarella di bufala y aceite de oliva virgen extra..."
                 value={descEs}
                 onChange={(e) => setDescEs(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               <div>
                 <span className="block text-xs text-zinc-400 mb-1">Inglés (EN)</span>
                 <textarea
@@ -358,7 +359,7 @@ export default function ProductModal({
                   placeholder="Auto al guardar o clic"
                   value={descEn}
                   onChange={(e) => setDescEn(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                  className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
               <div>
@@ -368,25 +369,25 @@ export default function ProductModal({
                   placeholder="Auto al guardar o clic"
                   value={descIt}
                   onChange={(e) => setDescIt(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-[#C2410C] transition-colors"
+                  className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
             </div>
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-4 border-t border-zinc-800 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm font-semibold text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer text-center"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isTranslating}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-[#C2410C] hover:bg-orange-700 disabled:opacity-50 rounded-lg shadow-lg hover:shadow-orange-950/50 transition-all cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#C2410C] hover:bg-orange-700 disabled:opacity-50 rounded-xl shadow-lg hover:shadow-orange-950/50 transition-all cursor-pointer text-center"
             >
               {isTranslating ? (
                 <>
