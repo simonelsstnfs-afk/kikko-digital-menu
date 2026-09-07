@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Reorder, useDragControls } from 'motion/react';
 import { useMenuData } from '../../context/MenuDataContext';
 import { MenuItem } from '../../types';
 import ProductModal from './ProductModal';
+import { translateText } from '../../utils/translateService';
 import {
   Lock,
   LogOut,
@@ -285,16 +286,44 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   const [productToDelete, setProductToDelete] = useState<{ categoryId: string; item: MenuItem } | null>(null);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
-  // Estado del formulario de la píldora de novedad
+  // Estado del formulario de la píldora de novedad (Soporte multilingüe ES, EN, IT)
   const [pillActive, setPillActive] = useState(promoPill.active);
   const [pillTag, setPillTag] = useState(
     typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Novedad'
   );
+  const [pillTagEn, setPillTagEn] = useState(
+    typeof promoPill.tag === 'object' ? promoPill.tag?.en || '' : ''
+  );
+  const [pillTagIt, setPillTagIt] = useState(
+    typeof promoPill.tag === 'object' ? promoPill.tag?.it || '' : ''
+  );
+
   const [pillTitle, setPillTitle] = useState(
     typeof promoPill.title === 'string' ? promoPill.title : promoPill.title?.es || 'Risottos Auténticos'
   );
+  const [pillTitleEn, setPillTitleEn] = useState(
+    typeof promoPill.title === 'object' ? promoPill.title?.en || '' : ''
+  );
+  const [pillTitleIt, setPillTitleIt] = useState(
+    typeof promoPill.title === 'object' ? promoPill.title?.it || '' : ''
+  );
+
   const [pillCategory, setPillCategory] = useState(promoPill.targetCategory || 'risottos');
   const [promoSavedSuccess, setPromoSavedSuccess] = useState(false);
+  const [previewLang, setPreviewLang] = useState<'es' | 'en' | 'it'>('es');
+  const [isTranslatingPill, setIsTranslatingPill] = useState(false);
+  const [pillTranslateDone, setPillTranslateDone] = useState(false);
+
+  useEffect(() => {
+    setPillActive(promoPill.active);
+    setPillTag(typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Novedad');
+    setPillTagEn(typeof promoPill.tag === 'object' ? promoPill.tag?.en || '' : '');
+    setPillTagIt(typeof promoPill.tag === 'object' ? promoPill.tag?.it || '' : '');
+    setPillTitle(typeof promoPill.title === 'string' ? promoPill.title : promoPill.title?.es || 'Risottos Auténticos');
+    setPillTitleEn(typeof promoPill.title === 'object' ? promoPill.title?.en || '' : '');
+    setPillTitleIt(typeof promoPill.title === 'object' ? promoPill.title?.it || '' : '');
+    setPillCategory(promoPill.targetCategory || 'risottos');
+  }, [promoPill]);
 
   // Cambio de PIN
   const [newPin, setNewPin] = useState('');
@@ -399,20 +428,76 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     setPinInput('');
   };
 
-  // Guardar píldora de novedad
-  const handleSavePromoPill = (e: React.FormEvent) => {
+  // Auto-traducir campos de la píldora a inglés e italiano
+  const handleAutoTranslatePill = async () => {
+    if (!pillTitle.trim()) return;
+    setIsTranslatingPill(true);
+    try {
+      const [tTagEn, tTagIt, tTitleEn, tTitleIt] = await Promise.all([
+        pillTag.trim() ? translateText(pillTag.trim(), 'en') : Promise.resolve(''),
+        pillTag.trim() ? translateText(pillTag.trim(), 'it') : Promise.resolve(''),
+        translateText(pillTitle.trim(), 'en'),
+        translateText(pillTitle.trim(), 'it')
+      ]);
+
+      if (tTagEn) setPillTagEn(tTagEn);
+      if (tTagIt) setPillTagIt(tTagIt);
+      if (tTitleEn) setPillTitleEn(tTitleEn);
+      if (tTitleIt) setPillTitleIt(tTitleIt);
+      setPillTranslateDone(true);
+      setTimeout(() => setPillTranslateDone(false), 3000);
+    } catch (e) {
+      console.warn('Error traduciendo píldora:', e);
+    } finally {
+      setIsTranslatingPill(false);
+    }
+  };
+
+  // Guardar píldora de novedad con auto-traducción si faltan campos en otros idiomas
+  const handleSavePromoPill = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsTranslatingPill(true);
+
+    let finalTagEn = pillTagEn.trim();
+    let finalTagIt = pillTagIt.trim();
+    let finalTitleEn = pillTitleEn.trim();
+    let finalTitleIt = pillTitleIt.trim();
+
+    // Auto-completar traducciones faltantes al vuelo antes de guardar
+    if (!finalTitleEn || !finalTitleIt || !finalTagEn || !finalTagIt) {
+      try {
+        const [tTagEn, tTagIt, tTitleEn, tTitleIt] = await Promise.all([
+          !finalTagEn && pillTag.trim() ? translateText(pillTag.trim(), 'en') : Promise.resolve(finalTagEn),
+          !finalTagIt && pillTag.trim() ? translateText(pillTag.trim(), 'it') : Promise.resolve(finalTagIt),
+          !finalTitleEn && pillTitle.trim() ? translateText(pillTitle.trim(), 'en') : Promise.resolve(finalTitleEn),
+          !finalTitleIt && pillTitle.trim() ? translateText(pillTitle.trim(), 'it') : Promise.resolve(finalTitleIt)
+        ]);
+        if (tTagEn) finalTagEn = tTagEn;
+        if (tTagIt) finalTagIt = tTagIt;
+        if (tTitleEn) finalTitleEn = tTitleEn;
+        if (tTitleIt) finalTitleIt = tTitleIt;
+
+        setPillTagEn(finalTagEn);
+        setPillTagIt(finalTagIt);
+        setPillTitleEn(finalTitleEn);
+        setPillTitleIt(finalTitleIt);
+      } catch (err) {
+        console.warn('Error auto-traduciendo píldora al guardar:', err);
+      }
+    }
+    setIsTranslatingPill(false);
+
     updatePromoPill({
       active: pillActive,
       tag: {
-        es: pillTag,
-        en: typeof promoPill.tag === 'object' ? promoPill.tag.en : pillTag,
-        it: typeof promoPill.tag === 'object' ? promoPill.tag.it : pillTag
+        es: pillTag.trim(),
+        en: finalTagEn || pillTag.trim(),
+        it: finalTagIt || pillTag.trim()
       },
       title: {
-        es: pillTitle,
-        en: typeof promoPill.title === 'object' ? promoPill.title.en : pillTitle,
-        it: typeof promoPill.title === 'object' ? promoPill.title.it : pillTitle
+        es: pillTitle.trim(),
+        en: finalTitleEn || pillTitle.trim(),
+        it: finalTitleIt || pillTitle.trim()
       },
       targetCategory: pillCategory
     });
@@ -983,19 +1068,54 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               </p>
             </div>
 
-            {/* Live Preview de la Píldora */}
+            {/* Live Preview de la Píldora con selector de idiomas */}
             <div className="space-y-2">
-              <label className="block text-xs uppercase font-semibold text-zinc-400 tracking-wider">
-                Vista Previa en Vivo (Hero)
-              </label>
+              <div className="flex items-center justify-between gap-2">
+                <label className="block text-xs uppercase font-semibold text-zinc-400 tracking-wider">
+                  Vista Previa en Vivo (Hero)
+                </label>
+                <div className="flex items-center gap-1 bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewLang('es')}
+                    className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
+                      previewLang === 'es' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                    }`}
+                    title="Ver cómo lo verán en Español"
+                  >
+                    🇪🇸 ES
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewLang('en')}
+                    className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
+                      previewLang === 'en' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                    }`}
+                    title="Ver cómo lo verán en Inglés"
+                  >
+                    🇬🇧 EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewLang('it')}
+                    className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
+                      previewLang === 'it' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                    }`}
+                    title="Ver cómo lo verán en Italiano"
+                  >
+                    🇮🇹 IT
+                  </button>
+                </div>
+              </div>
+
               <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[100px] text-center">
                 {pillActive ? (
                   <div className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-zinc-950/80 border border-[#C2410C]/60 shadow-[0_0_15px_rgba(194,65,12,0.4)] backdrop-blur-md max-w-full">
                     <span className="text-[10px] font-black uppercase tracking-widest text-[#C2410C] shrink-0">
-                      {pillTag}:
+                      {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}:
                     </span>
                     <span className="text-[10px] sm:text-[11px] text-zinc-100 uppercase tracking-wider font-semibold truncate">
-                      {pillTitle}
+                      {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
                     </span>
                     <span className="text-xs text-[#C2410C] font-bold shrink-0">↓</span>
                   </div>
@@ -1030,34 +1150,138 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                 </button>
               </div>
 
-              {/* Texto de la Etiqueta (Tag) */}
-              <div>
-                <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1.5 tracking-wider">
-                  Etiqueta Destacada (Tag)
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. NOVEDAD, PROMO, SUGERENCIA..."
-                  value={pillTag}
-                  onChange={(e) => setPillTag(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
-                />
+              {/* Botón de Auto-Traducción Inteligente */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/60 border border-zinc-800">
+                <div>
+                  <span className="text-xs font-semibold text-zinc-200 block">
+                    Traducción Automática
+                  </span>
+                  <span className="text-[11px] text-zinc-500">
+                    Genera inglés e italiano con un solo clic.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAutoTranslatePill}
+                  disabled={isTranslatingPill || !pillTitle.trim()}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-950/40 hover:bg-amber-950/80 border border-amber-800/60 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                  title="Traducir etiqueta y mensaje automáticamente"
+                >
+                  {isTranslatingPill ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                      <span>Traduciendo...</span>
+                    </>
+                  ) : pillTranslateDone ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>¡Traducido!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Auto Traducir</span>
+                    </>
+                  )}
+                </button>
               </div>
 
-              {/* Título / Mensaje */}
-              <div>
-                <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1.5 tracking-wider">
-                  Texto Principal de la Novedad
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. RISOTTOS AUTÉNTICOS, NUEVA PIZZA TRUFADA..."
-                  value={pillTitle}
-                  onChange={(e) => setPillTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
-                />
+              {/* Campos en Español */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-950/60 border border-zinc-800/80 space-y-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#C2410C] block">
+                  🇪🇸 Español (Principal)
+                </span>
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
+                    Etiqueta (Tag)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. NOVEDAD, PROMO..."
+                    value={pillTag}
+                    onChange={(e) => setPillTag(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
+                    Texto Principal de la Novedad
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. RISOTTOS AUTÉNTICOS, NUEVA PIZZA TRUFADA..."
+                    value={pillTitle}
+                    onChange={(e) => setPillTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
+                  />
+                </div>
+              </div>
+
+              {/* Campos en Inglés e Italiano */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Inglés */}
+                <div className="p-3.5 rounded-xl bg-zinc-950/40 border border-zinc-800 space-y-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300 block">
+                    🇬🇧 English
+                  </span>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Tag
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. NEW, SPECIAL..."
+                      value={pillTagEn}
+                      onChange={(e) => setPillTagEn(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Message
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. AUTHENTIC RISOTTOS..."
+                      value={pillTitleEn}
+                      onChange={(e) => setPillTitleEn(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                </div>
+
+                {/* Italiano */}
+                <div className="p-3.5 rounded-xl bg-zinc-950/40 border border-zinc-800 space-y-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300 block">
+                    🇮🇹 Italiano
+                  </span>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Tag
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. NOVITÀ, PROMO..."
+                      value={pillTagIt}
+                      onChange={(e) => setPillTagIt(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Messaggio
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. RISOTTI AUTENTICI..."
+                      value={pillTitleIt}
+                      onChange={(e) => setPillTitleIt(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Categoría a la que desplaza al hacer clic */}
@@ -1081,15 +1305,23 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               {promoSavedSuccess && (
                 <div className="flex items-center gap-2 p-3 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 rounded-xl">
                   <Check className="w-4 h-4 shrink-0" />
-                  <span>¡Píldora de novedad actualizada correctamente!</span>
+                  <span>¡Píldora de novedad actualizada y traducida correctamente!</span>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-[#C2410C] hover:bg-orange-700 text-white font-bold rounded-xl shadow-lg transition-all cursor-pointer text-xs sm:text-sm uppercase tracking-wider"
+                disabled={isTranslatingPill}
+                className="w-full py-3.5 bg-[#C2410C] hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg transition-all cursor-pointer text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
               >
-                Guardar Configuración de la Píldora
+                {isTranslatingPill ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Guardando y traduciendo...</span>
+                  </>
+                ) : (
+                  <span>Guardar Configuración de la Píldora</span>
+                )}
               </button>
             </form>
           </div>
