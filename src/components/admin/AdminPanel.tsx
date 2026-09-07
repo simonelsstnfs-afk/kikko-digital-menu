@@ -26,7 +26,8 @@ import {
   Copy,
   ExternalLink,
   FileSpreadsheet,
-  Loader2
+  Loader2,
+  HelpCircle
 } from 'lucide-react';
 
 const DEFAULT_PIN = 'kikko2026';
@@ -877,7 +878,15 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
 
                   {lastSyncedAt && (
                     <span className="text-[11px] text-zinc-500 ml-auto">
-                      Última sincr: {lastSyncedAt.toLocaleTimeString()}
+                      Última sincr:{' '}
+                      {(() => {
+                        try {
+                          const d = lastSyncedAt instanceof Date ? lastSyncedAt : new Date(lastSyncedAt);
+                          return isNaN(d.getTime()) ? '' : d.toLocaleTimeString();
+                        } catch {
+                          return '';
+                        }
+                      })()}
                     </span>
                   )}
                 </div>

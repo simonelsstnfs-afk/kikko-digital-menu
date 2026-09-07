@@ -11,6 +11,7 @@ import ReservationForm from './components/ReservationForm';
 import GoogleReviewCTA from './components/GoogleReviewCTA';
 import Footer from './components/Footer';
 import AdminPanel from './components/admin/AdminPanel';
+import AdminErrorBoundary from './components/admin/AdminErrorBoundary';
 import { MenuDataProvider } from './context/MenuDataContext';
 
 function AppContent() {
@@ -50,14 +51,16 @@ function AppContent() {
   }, [isAdminView]);
 
   if (isAdminView) {
+    const handleBack = () => {
+      window.history.pushState({}, '', '/');
+      setIsAdminView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
-      <AdminPanel
-        onBackToMenu={() => {
-          window.history.pushState({}, '', '/');
-          setIsAdminView(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      <AdminErrorBoundary onBackToMenu={handleBack}>
+        <AdminPanel onBackToMenu={handleBack} />
+      </AdminErrorBoundary>
     );
   }
 

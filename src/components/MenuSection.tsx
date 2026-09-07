@@ -179,7 +179,7 @@ export default function MenuSection() {
 
                 {/* Platos */}
                 <div className="flex flex-col gap-12">
-                  {Object.entries(groupedItems).map(([sub, items]) => (
+                  {Object.entries(groupedItems).map(([sub, items]: [string, MenuItem[]]) => (
                     <div key={sub} className="flex flex-col gap-4">
                       {sub !== 'default' && (
                         <h6 className="font-serif text-3xl text-zinc-300 font-medium border-b border-zinc-700/50 pb-2 mb-4 text-center md:text-left">

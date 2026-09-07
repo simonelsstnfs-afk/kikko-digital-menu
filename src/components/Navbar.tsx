@@ -1,3 +1,4 @@
+import React from 'react';
 import { useLanguage } from '../LanguageContext';
 import { Language } from '../translations';
 

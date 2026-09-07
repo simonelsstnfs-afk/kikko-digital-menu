@@ -1,5 +1,5 @@
 import { Calendar, Clock, Users, User, Phone, Mail } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
 
 export default function ReservationForm() {
