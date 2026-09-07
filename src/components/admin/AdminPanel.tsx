@@ -26,8 +26,7 @@ import {
   Copy,
   ExternalLink,
   FileSpreadsheet,
-  Loader2,
-  HelpCircle
+  Loader2
 } from 'lucide-react';
 
 const DEFAULT_PIN = 'kikko2026';

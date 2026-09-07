@@ -1,6 +1,7 @@
 import { MenuCategory, PromoPillConfig } from '../types';
 
 export const GOOGLE_SHEETS_URL_STORAGE_KEY = 'kikko_google_sheets_url_v1';
+export const DEFAULT_GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwg8LkEU_r4YU610af0mnzwV2jsnZZTfo0Z4bZKWsuxdayPubJGjArqcjdei-Ydi7j5/exec';
 
 export function getStoredSheetsUrl(): string {
   try {
@@ -13,7 +14,10 @@ export function getStoredSheetsUrl(): string {
   }
   // Fallback a variable de entorno de Vite si existe
   const envUrl = (import.meta as any).env?.VITE_GOOGLE_SHEETS_URL;
-  return (envUrl && typeof envUrl === 'string') ? envUrl.trim() : '';
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    return envUrl.trim();
+  }
+  return DEFAULT_GOOGLE_SHEETS_URL;
 }
 
 export function saveStoredSheetsUrl(url: string): void {

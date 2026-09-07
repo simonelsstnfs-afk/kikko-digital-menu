@@ -139,12 +139,12 @@ export default function MenuSection() {
           
           // Group items by subcategory (filtrando platos no disponibles)
           const visibleItems = category.items.filter(item => item.available !== false);
-          const groupedItems: Record<string, MenuItem[]> = visibleItems.reduce((acc: Record<string, MenuItem[]>, item) => {
+          const groupedItems = visibleItems.reduce((acc, item) => {
             const sub = item.subcategory || 'default';
             if (!acc[sub]) acc[sub] = [];
             acc[sub].push(item);
             return acc;
-          }, {});
+          }, {} as Record<string, MenuItem[]>);
           
           return (
             <div 
