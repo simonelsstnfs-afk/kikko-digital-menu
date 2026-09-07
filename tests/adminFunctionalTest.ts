@@ -139,9 +139,32 @@ async function runAdminFunctionalTests() {
   );
 
   // -------------------------------------------------------------
-  // TEST 4: INTEGRIDAD DE COPIA DE SEGURIDAD (EXPORTACIÓN / IMPORTACIÓN)
+  // TEST 4: REORDENACIÓN DE PLATOS (DRAG & DROP / REORDER EN CATEGORÍA)
   // -------------------------------------------------------------
-  console.log('\n🔹 4. Probando Sistema de Backup y Restauración...');
+  console.log('\n🔹 4. Probando Reordenación de Platos (Drag & Drop / Reorder)...');
+  const originalOrderIds = targetCategory.items.map(i => i.id);
+  const reorderedItems = [...targetCategory.items];
+  // Mover el último elemento (el recién creado) al primer lugar (#1)
+  const movedItem = reorderedItems.pop()!;
+  reorderedItems.unshift(movedItem);
+  targetCategory.items = reorderedItems;
+
+  assert(
+    targetCategory.items[0].id === createdId,
+    'Plato movido a la primera posición (#1) mediante reordenación',
+    `Nuevo primer plato: "${typeof targetCategory.items[0].name === 'string' ? targetCategory.items[0].name : targetCategory.items[0].name.es}"`
+  );
+
+  assert(
+    targetCategory.items[1].id === originalOrderIds[0],
+    'El orden relativo de los demás platos se preserva íntegramente',
+    `Segundo plato: "${typeof targetCategory.items[1].name === 'string' ? targetCategory.items[1].name : targetCategory.items[1].name.es}"`
+  );
+
+  // -------------------------------------------------------------
+  // TEST 5: INTEGRIDAD DE COPIA DE SEGURIDAD (EXPORTACIÓN / IMPORTACIÓN)
+  // -------------------------------------------------------------
+  console.log('\n🔹 5. Probando Sistema de Backup y Restauración...');
   const testPromo: PromoPillConfig = {
     active: true,
     tag: { es: 'Novedad', en: 'New', it: 'Novità' },
@@ -167,9 +190,9 @@ async function runAdminFunctionalTests() {
   );
 
   // -------------------------------------------------------------
-  // TEST 5: ELIMINACIÓN SEGURA DE PLATO (CRUD: DELETE)
+  // TEST 6: ELIMINACIÓN SEGURA DE PLATO (CRUD: DELETE)
   // -------------------------------------------------------------
-  console.log('\n🔹 5. Probando Eliminación de Plato (CRUD: Delete)...');
+  console.log('\n🔹 6. Probando Eliminación de Plato (CRUD: Delete)...');
   const indexToDelete = targetCategory.items.findIndex(i => i.id === createdId);
   if (indexToDelete !== -1) {
     targetCategory.items.splice(indexToDelete, 1);

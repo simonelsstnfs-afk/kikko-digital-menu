@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Reorder, useDragControls } from 'motion/react';
 import { useMenuData } from '../../context/MenuDataContext';
 import { MenuItem } from '../../types';
 import ProductModal from './ProductModal';
@@ -28,11 +29,208 @@ import {
   FileSpreadsheet,
   Loader2,
   HelpCircle,
-  FlaskConical
+  FlaskConical,
+  GripVertical,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 const DEFAULT_PIN = 'kikko2026';
 const PIN_STORAGE_KEY = 'kikko_admin_pin_v1';
+
+interface DraggableProductItemProps {
+  item: MenuItem;
+  index: number;
+  totalItems: number;
+  categoryId: string;
+  editingPriceId: string | null;
+  tempPrice: string;
+  setEditingPriceId: (id: string | null) => void;
+  setTempPrice: (price: string) => void;
+  handleSavePrice: (categoryId: string, itemId: string) => void;
+  toggleItemAvailable: (categoryId: string, itemId: string) => void;
+  setEditingProduct: (item: MenuItem) => void;
+  setIsModalOpen: (open: boolean) => void;
+  setProductToDelete: (prod: { categoryId: string; item: MenuItem } | null) => void;
+  handleMoveItem: (categoryId: string, index: number, direction: 'up' | 'down') => void;
+}
+
+function DraggableProductItem({
+  item,
+  index,
+  totalItems,
+  categoryId,
+  editingPriceId,
+  tempPrice,
+  setEditingPriceId,
+  setTempPrice,
+  handleSavePrice,
+  toggleItemAvailable,
+  setEditingProduct,
+  setIsModalOpen,
+  setProductToDelete,
+  handleMoveItem
+}: DraggableProductItemProps) {
+  const dragControls = useDragControls();
+  const displayName = typeof item.name === 'string' ? item.name : item.name.es;
+  const isAvailable = item.available !== false;
+
+  return (
+    <Reorder.Item
+      value={item}
+      dragListener={false}
+      dragControls={dragControls}
+      className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all ${
+        isAvailable
+          ? 'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700 shadow-sm'
+          : 'bg-zinc-950/70 border-zinc-800/50 opacity-65'
+      }`}
+    >
+      {/* Controles de orden + Información del Plato */}
+      <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+        {/* Agarre de arrastre táctil y flechas arriba/abajo */}
+        <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 pt-0.5 sm:pt-0">
+          <button
+            type="button"
+            onPointerDown={(e) => dragControls.start(e)}
+            className="p-1.5 sm:p-2 text-zinc-500 hover:text-white cursor-grab active:cursor-grabbing touch-none rounded-lg hover:bg-zinc-800/80 transition-colors flex items-center justify-center"
+            title="Mantén pulsado y arrastra para reordenar"
+            aria-label="Arrastrar plato"
+          >
+            <GripVertical className="w-4 h-4" />
+          </button>
+
+          <div className="flex flex-col">
+            <button
+              type="button"
+              disabled={index === 0}
+              onClick={() => handleMoveItem(categoryId, index, 'up')}
+              className="p-1 text-zinc-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none hover:bg-zinc-800 rounded transition-colors cursor-pointer"
+              title="Subir una posición"
+              aria-label="Subir posición"
+            >
+              <ChevronUp className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              disabled={index === totalItems - 1}
+              onClick={() => handleMoveItem(categoryId, index, 'down')}
+              className="p-1 text-zinc-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none hover:bg-zinc-800 rounded transition-colors cursor-pointer"
+              title="Bajar una posición"
+              aria-label="Bajar posición"
+            >
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Información del Plato */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] font-mono font-semibold text-zinc-500 bg-zinc-800/80 px-1.5 py-0.5 rounded border border-zinc-700/50 select-none">
+              #{index + 1}
+            </span>
+            <h4 className="text-sm sm:text-base font-bold text-white tracking-wide break-words">
+              {displayName}
+            </h4>
+            {item.subcategory && (
+              <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 shrink-0">
+                {item.subcategory}
+              </span>
+            )}
+            {!isAvailable && (
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800 shrink-0">
+                Agotado
+              </span>
+            )}
+          </div>
+
+          {item.description?.es && (
+            <p className="text-xs text-zinc-400 mt-1 line-clamp-2 break-words">
+              {item.description.es}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Controles de Precio y Acciones */}
+      <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 pt-2.5 sm:pt-0 border-t border-zinc-800/70 sm:border-t-0 shrink-0 pl-11 sm:pl-0">
+        {/* Edición rápida de precio */}
+        <div className="flex items-center">
+          {editingPriceId === item.id ? (
+            <div className="flex items-center gap-1">
+              <input
+                type="text"
+                autoFocus
+                value={tempPrice}
+                onChange={(e) => setTempPrice(e.target.value)}
+                className="w-18 px-2 py-1 text-base sm:text-sm bg-black border border-[#C2410C] rounded text-white font-mono text-right"
+              />
+              <button
+                type="button"
+                onClick={() => handleSavePrice(categoryId, item.id)}
+                className="p-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded cursor-pointer"
+                title="Guardar precio"
+              >
+                <Check className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingPriceId(item.id);
+                setTempPrice(item.price.toFixed(2));
+              }}
+              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-mono font-bold text-xs sm:text-sm transition-colors cursor-pointer group flex items-center gap-1.5"
+              title="Toca para cambiar precio rápido"
+            >
+              <span>{item.price.toFixed(2)} €</span>
+              <Edit2 className="w-3 h-3 text-zinc-500 group-hover:text-[#C2410C] transition-colors" />
+            </button>
+          )}
+        </div>
+
+        {/* Acciones secundarias (Visibilidad, Edición completa, Borrado) */}
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => toggleItemAvailable(categoryId, item.id)}
+            className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+              isAvailable
+                ? 'text-emerald-400 bg-emerald-950/20 hover:bg-emerald-950/50 border-emerald-800/50'
+                : 'text-zinc-500 bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
+            }`}
+            title={isAvailable ? 'Marcar como agotado' : 'Marcar como disponible'}
+          >
+            {isAvailable ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setEditingProduct(item);
+              setIsModalOpen(true);
+            }}
+            className="p-2 text-zinc-400 hover:text-white bg-zinc-800/60 hover:bg-zinc-800 rounded-lg border border-zinc-700/60 transition-colors cursor-pointer"
+            title="Editar detalles del plato"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setProductToDelete({ categoryId, item })}
+            className="p-2 text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/50 rounded-lg border border-red-900/40 transition-colors cursor-pointer"
+            title="Eliminar plato"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </Reorder.Item>
+  );
+}
 
 interface AdminPanelProps {
   onBackToMenu: () => void;
@@ -59,7 +257,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     importBackup,
     isSandboxMode,
     toggleSandboxMode,
-    exitSandboxMode
+    exitSandboxMode,
+    reorderItems
   } = useMenuData();
 
   // Autenticación por PIN
@@ -248,6 +447,18 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
       deleteProduct(productToDelete.categoryId, productToDelete.item.id);
       setProductToDelete(null);
     }
+  };
+
+  // Mover producto arriba/abajo manualmente
+  const handleMoveItem = (categoryId: string, index: number, direction: 'up' | 'down') => {
+    const category = categories.find(c => c.id === categoryId);
+    if (!category) return;
+    const items = [...category.items];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= items.length) return;
+    const [moved] = items.splice(index, 1);
+    items.splice(targetIndex, 0, moved);
+    reorderItems(categoryId, items);
   };
 
   // Exportar backup
@@ -577,14 +788,64 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               </div>
             </div>
 
-            {/* Lista de Productos Mobile First */}
-            <div className="grid grid-cols-1 gap-2.5 sm:gap-3">
-              {filteredItems.length === 0 ? (
-                <div className="text-center py-12 bg-zinc-900/30 rounded-2xl border border-zinc-800/60 p-4">
-                  <p className="text-zinc-500 text-sm">No se encontraron productos en esta categoría.</p>
+            {/* Consejo interactivo de ordenación */}
+            {!searchTerm.trim() && (currentCategoryData?.items?.length || 0) > 1 && (
+              <div className="flex items-center justify-between gap-2 p-2.5 px-3 bg-zinc-900/60 border border-zinc-800/80 rounded-xl text-xs text-zinc-400">
+                <div className="flex items-center gap-2 min-w-0">
+                  <GripVertical className="w-4 h-4 text-[#C2410C] shrink-0" />
+                  <span className="truncate">
+                    <strong className="text-white font-medium">Reordenar:</strong> Arrastra con <span className="font-mono text-zinc-300">⋮⋮</span> o pulsa las flechas <span className="font-mono text-zinc-300">↑↓</span>.
+                  </span>
                 </div>
-              ) : (
-                filteredItems.map((item) => {
+                <span className="hidden sm:inline-block text-[11px] text-emerald-400 font-medium shrink-0">
+                  ✓ Actualiza la carta web
+                </span>
+              </div>
+            )}
+
+            {/* Aviso si el usuario está filtrando por texto */}
+            {searchTerm.trim() && (
+              <div className="flex items-center gap-2 p-2.5 bg-amber-950/40 border border-amber-800/50 rounded-xl text-xs text-amber-300">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>El reordenamiento manual está pausado mientras buscas. Borra el buscador para arrastrar platos.</span>
+              </div>
+            )}
+
+            {/* Lista de Productos Mobile First con Reorder */}
+            {filteredItems.length === 0 ? (
+              <div className="text-center py-12 bg-zinc-900/30 rounded-2xl border border-zinc-800/60 p-4">
+                <p className="text-zinc-500 text-sm">No se encontraron productos en esta categoría.</p>
+              </div>
+            ) : !searchTerm.trim() ? (
+              <Reorder.Group
+                axis="y"
+                values={currentCategoryData.items}
+                onReorder={(newItems) => reorderItems(currentCategoryData.id, newItems)}
+                className="grid grid-cols-1 gap-2.5 sm:gap-3"
+              >
+                {currentCategoryData.items.map((item, index) => (
+                  <DraggableProductItem
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    totalItems={currentCategoryData.items.length}
+                    categoryId={currentCategoryData.id}
+                    editingPriceId={editingPriceId}
+                    tempPrice={tempPrice}
+                    setEditingPriceId={setEditingPriceId}
+                    setTempPrice={setTempPrice}
+                    handleSavePrice={handleSavePrice}
+                    toggleItemAvailable={toggleItemAvailable}
+                    setEditingProduct={setEditingProduct}
+                    setIsModalOpen={setIsModalOpen}
+                    setProductToDelete={setProductToDelete}
+                    handleMoveItem={handleMoveItem}
+                  />
+                ))}
+              </Reorder.Group>
+            ) : (
+              <div className="grid grid-cols-1 gap-2.5 sm:gap-3">
+                {filteredItems.map((item) => {
                   const displayName = typeof item.name === 'string' ? item.name : item.name.es;
                   const isAvailable = item.available !== false;
 
@@ -624,7 +885,6 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
 
                       {/* Controles de Precio y Acciones */}
                       <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 pt-2.5 sm:pt-0 border-t border-zinc-800/70 sm:border-t-0 shrink-0">
-                        
                         {/* Edición rápida de precio */}
                         <div className="flex items-center">
                           {editingPriceId === item.id ? (
@@ -637,6 +897,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                                 className="w-18 px-2 py-1 text-base sm:text-sm bg-black border border-[#C2410C] rounded text-white font-mono text-right"
                               />
                               <button
+                                type="button"
                                 onClick={() => handleSavePrice(currentCategoryData.id, item.id)}
                                 className="p-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded cursor-pointer"
                                 title="Guardar precio"
@@ -646,6 +907,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             </div>
                           ) : (
                             <button
+                              type="button"
                               onClick={() => {
                                 setEditingPriceId(item.id);
                                 setTempPrice(item.price.toFixed(2));
@@ -661,8 +923,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
 
                         {/* Acciones secundarias (Visibilidad, Edición completa, Borrado) */}
                         <div className="flex items-center gap-1.5">
-                          {/* Toggle de Disponibilidad */}
                           <button
+                            type="button"
                             onClick={() => toggleItemAvailable(currentCategoryData.id, item.id)}
                             className={`p-2 rounded-lg border transition-colors cursor-pointer ${
                               isAvailable
@@ -674,8 +936,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             {isAvailable ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                           </button>
 
-                          {/* Editar Plato Completo */}
                           <button
+                            type="button"
                             onClick={() => {
                               setEditingProduct(item);
                               setIsModalOpen(true);
@@ -686,8 +948,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             <Edit2 className="w-4 h-4" />
                           </button>
 
-                          {/* Eliminar */}
                           <button
+                            type="button"
                             onClick={() => setProductToDelete({ categoryId: currentCategoryData.id, item })}
                             className="p-2 text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/50 rounded-lg border border-red-900/40 transition-colors cursor-pointer"
                             title="Eliminar plato"
@@ -695,13 +957,12 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-
                       </div>
                     </div>
                   );
-                })
-              )}
-            </div>
+                })}
+              </div>
+            )}
           </div>
         )}
 

@@ -28,6 +28,7 @@ interface MenuDataContextType {
   resetToDefaults: () => void;
   exportBackup: () => string;
   importBackup: (jsonString: string) => boolean;
+  reorderItems: (categoryId: string, newItems: MenuItem[]) => void;
   isSandboxMode: boolean;
   toggleSandboxMode: () => void;
   exitSandboxMode: () => void;
@@ -341,6 +342,19 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     triggerAutoSaveToSheets(categories, updatedPill);
   };
 
+  // Reordenar productos dentro de una categoría
+  const reorderItems = (categoryId: string, newItems: MenuItem[]) => {
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: newItems
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
+  };
+
   // Restablecer valores de fábrica
   const resetToDefaults = () => {
     const factoryCategories = JSON.parse(JSON.stringify(initialMenuData));
@@ -403,7 +417,8 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         importBackup,
         isSandboxMode,
         toggleSandboxMode,
-        exitSandboxMode
+        exitSandboxMode,
+        reorderItems
       }}
     >
       {children}
