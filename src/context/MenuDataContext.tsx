@@ -1,10 +1,24 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { MenuCategory, MenuItem, PromoPillConfig } from '../types';
 import { menuData as initialMenuData } from '../data';
+import {
+  fetchMenuFromSheets,
+  sendMenuToSheets,
+  getStoredSheetsUrl,
+  saveStoredSheetsUrl
+} from '../services/googleSheetsService';
+
+export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error';
 
 interface MenuDataContextType {
   categories: MenuCategory[];
   promoPill: PromoPillConfig;
+  syncStatus: SyncStatus;
+  lastSyncedAt: Date | null;
+  sheetsUrl: string;
+  setSheetsUrl: (url: string) => void;
+  syncWithSheets: () => Promise<boolean>;
+  pushToSheets: () => Promise<boolean>;
   updatePrice: (categoryId: string, itemId: string, newPrice: number) => void;
   addProduct: (categoryId: string, item: Omit<MenuItem, 'id'>) => void;
   updateProduct: (categoryId: string, itemId: string, updated: Partial<MenuItem>) => void;
@@ -53,7 +67,22 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     return defaultPromoPill;
   });
 
-  // Guardar en localStorage ante cambios
+  const [sheetsUrl, setSheetsUrlState] = useState<string>(() => getStoredSheetsUrl());
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+
+  // Referencia a estado actual para evitar condiciones de carrera en sincronización
+  const latestDataRef = useRef({ categories, promoPill });
+  useEffect(() => {
+    latestDataRef.current = { categories, promoPill };
+  }, [categories, promoPill]);
+
+  const setSheetsUrl = (url: string) => {
+    setSheetsUrlState(url);
+    saveStoredSheetsUrl(url);
+  };
+
+  // 1. Guardar en localStorage de inmediato ante cualquier cambio
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
@@ -70,19 +99,109 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     }
   }, [promoPill]);
 
+  // 2. Al arrancar la app, intentar descargar datos frescos desde Google Sheets en segundo plano
+  useEffect(() => {
+    if (!sheetsUrl) return;
+
+    let isMounted = true;
+    (async () => {
+      try {
+        const remoteData = await fetchMenuFromSheets(sheetsUrl);
+        if (isMounted && remoteData && remoteData.categories?.length) {
+          setCategories(remoteData.categories);
+          if (remoteData.promoPill) {
+            setPromoPill(remoteData.promoPill);
+          }
+          setLastSyncedAt(new Date());
+          setSyncStatus('saved');
+        }
+      } catch (err) {
+        console.warn('No se pudo sincronizar inicialmente desde Google Sheets:', err);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [sheetsUrl]);
+
+  // Función para forzar sincronización manual (descargar de Sheets)
+  const syncWithSheets = async (): Promise<boolean> => {
+    if (!sheetsUrl) return false;
+    setSyncStatus('syncing');
+    try {
+      const remoteData = await fetchMenuFromSheets(sheetsUrl);
+      if (remoteData && remoteData.categories?.length) {
+        setCategories(remoteData.categories);
+        if (remoteData.promoPill) {
+          setPromoPill(remoteData.promoPill);
+        }
+        setLastSyncedAt(new Date());
+        setSyncStatus('saved');
+        return true;
+      }
+      setSyncStatus('error');
+      return false;
+    } catch (e) {
+      setSyncStatus('error');
+      return false;
+    }
+  };
+
+  // Función para subir datos a Sheets
+  const pushToSheets = async (): Promise<boolean> => {
+    if (!sheetsUrl) return false;
+    setSyncStatus('syncing');
+    try {
+      const res = await sendMenuToSheets(
+        latestDataRef.current.categories,
+        latestDataRef.current.promoPill,
+        sheetsUrl
+      );
+      if (res.success) {
+        setSyncStatus('saved');
+        setLastSyncedAt(new Date());
+        return true;
+      }
+      setSyncStatus('error');
+      return false;
+    } catch (e) {
+      setSyncStatus('error');
+      return false;
+    }
+  };
+
+  // Helper para auto-guardar en Google Sheets tras una acción CRUD si hay URL configurada
+  const triggerAutoSaveToSheets = (newCats: MenuCategory[], newPill: PromoPillConfig) => {
+    if (!sheetsUrl) return;
+    setSyncStatus('syncing');
+    sendMenuToSheets(newCats, newPill, sheetsUrl)
+      .then((res) => {
+        if (res.success) {
+          setSyncStatus('saved');
+          setLastSyncedAt(new Date());
+        } else {
+          setSyncStatus('error');
+        }
+      })
+      .catch(() => {
+        setSyncStatus('error');
+      });
+  };
+
   // Modificar precio rápido
   const updatePrice = (categoryId: string, itemId: string, newPrice: number) => {
-    setCategories(prev =>
-      prev.map(cat => {
-        if (cat.id !== categoryId) return cat;
-        return {
-          ...cat,
-          items: cat.items.map(item =>
-            item.id === itemId ? { ...item, price: Number(newPrice) } : item
-          )
-        };
-      })
-    );
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: cat.items.map(item =>
+          item.id === itemId ? { ...item, price: Number(newPrice) } : item
+        )
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
   };
 
   // Añadir nuevo producto
@@ -94,71 +213,73 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       available: itemData.available ?? true
     };
 
-    setCategories(prev =>
-      prev.map(cat => {
-        if (cat.id !== categoryId) return cat;
-        return {
-          ...cat,
-          items: [newItem, ...cat.items]
-        };
-      })
-    );
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: [newItem, ...cat.items]
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
   };
 
   // Modificar producto existente
-  const updateProduct = (categoryId: string, itemId: string, updated: Partial<MenuItem>) => {
-    setCategories(prev =>
-      prev.map(cat => {
-        if (cat.id !== categoryId) return cat;
-        return {
-          ...cat,
-          items: cat.items.map(item => {
-            if (item.id !== itemId) return item;
-            return {
-              ...item,
-              ...updated,
-              id: item.id
-            };
-          })
-        };
-      })
-    );
+  const updateProduct = (categoryId: string, itemId: string, itemUpdates: Partial<MenuItem>) => {
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: cat.items.map(item => {
+          if (item.id !== itemId) return item;
+          return {
+            ...item,
+            ...itemUpdates,
+            id: item.id
+          };
+        })
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
   };
 
   // Eliminar producto
   const deleteProduct = (categoryId: string, itemId: string) => {
-    setCategories(prev =>
-      prev.map(cat => {
-        if (cat.id !== categoryId) return cat;
-        return {
-          ...cat,
-          items: cat.items.filter(item => item.id !== itemId)
-        };
-      })
-    );
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: cat.items.filter(item => item.id !== itemId)
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
   };
 
   // Alternar disponibilidad (Agotado / Disponible)
   const toggleItemAvailable = (categoryId: string, itemId: string) => {
-    setCategories(prev =>
-      prev.map(cat => {
-        if (cat.id !== categoryId) return cat;
-        return {
-          ...cat,
-          items: cat.items.map(item =>
-            item.id === itemId ? { ...item, available: item.available === false ? true : false } : item
-          )
-        };
-      })
-    );
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return {
+        ...cat,
+        items: cat.items.map(item =>
+          item.id === itemId ? { ...item, available: item.available === false ? true : false } : item
+        )
+      };
+    });
+    setCategories(updated);
+    triggerAutoSaveToSheets(updated, promoPill);
   };
 
   // Actualizar píldora de novedad
   const updatePromoPill = (config: Partial<PromoPillConfig>) => {
-    setPromoPill(prev => ({
-      ...prev,
+    const updatedPill = {
+      ...promoPill,
       ...config
-    }));
+    };
+    setPromoPill(updatedPill);
+    triggerAutoSaveToSheets(categories, updatedPill);
   };
 
   // Restablecer valores de fábrica
@@ -168,6 +289,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     setPromoPill(defaultPromoPill);
     localStorage.removeItem(STORAGE_KEY_CATEGORIES);
     localStorage.removeItem(STORAGE_KEY_PROMO_PILL);
+    triggerAutoSaveToSheets(factoryCategories, defaultPromoPill);
   };
 
   // Exportar backup
@@ -190,6 +312,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         if (parsed.promoPill) {
           setPromoPill(parsed.promoPill);
         }
+        triggerAutoSaveToSheets(parsed.categories, parsed.promoPill || promoPill);
         return true;
       }
       return false;
@@ -204,6 +327,12 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       value={{
         categories,
         promoPill,
+        syncStatus,
+        lastSyncedAt,
+        sheetsUrl,
+        setSheetsUrl,
+        syncWithSheets,
+        pushToSheets,
         updatePrice,
         addProduct,
         updateProduct,

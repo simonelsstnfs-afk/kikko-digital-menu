@@ -19,7 +19,14 @@ import {
   Sliders,
   Eye,
   EyeOff,
-  AlertTriangle
+  AlertTriangle,
+  Cloud,
+  CloudOff,
+  RefreshCw,
+  Copy,
+  ExternalLink,
+  FileSpreadsheet,
+  Loader2
 } from 'lucide-react';
 
 const DEFAULT_PIN = 'kikko2026';
@@ -33,6 +40,12 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   const {
     categories,
     promoPill,
+    syncStatus,
+    lastSyncedAt,
+    sheetsUrl,
+    setSheetsUrl,
+    syncWithSheets,
+    pushToSheets,
     updatePrice,
     addProduct,
     updateProduct,
@@ -82,6 +95,86 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   // Cambio de PIN
   const [newPin, setNewPin] = useState('');
   const [pinChangeMsg, setPinChangeMsg] = useState('');
+
+  // Estado de configuración de Google Sheets
+  const [inputSheetsUrl, setInputSheetsUrl] = useState(sheetsUrl || '');
+  const [sheetsActionLoading, setSheetsActionLoading] = useState(false);
+  const [sheetsFeedback, setSheetsFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [showScriptModal, setShowScriptModal] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
+
+  // Manejador guardar y conectar Google Sheets
+  const handleConnectSheets = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanUrl = inputSheetsUrl.trim();
+    if (!cleanUrl) {
+      setSheetsUrl('');
+      setSheetsFeedback({ type: 'success', text: 'Desconectado de Google Sheets (Modo local activo).' });
+      setTimeout(() => setSheetsFeedback(null), 4000);
+      return;
+    }
+
+    if (!cleanUrl.includes('script.google.com') || !cleanUrl.endsWith('/exec')) {
+      setSheetsFeedback({
+        type: 'error',
+        text: 'La URL debe ser de Google Apps Script y terminar en "/exec" (ej. https://script.google.com/macros/s/.../exec).'
+      });
+      return;
+    }
+
+    setSheetsActionLoading(true);
+    setSheetsFeedback(null);
+    setSheetsUrl(cleanUrl);
+
+    // Intentar sincronizar subiendo el menú actual para inicializar la hoja
+    try {
+      const ok = await pushToSheets();
+      if (ok) {
+        setSheetsFeedback({
+          type: 'success',
+          text: '¡Conexión exitosa! La carta se ha sincronizado con Google Sheets. Los clientes verán los cambios en tiempo real.'
+        });
+      } else {
+        setSheetsFeedback({
+          type: 'error',
+          text: 'No se pudo comunicar con Google Sheets. Asegúrate de haber seleccionado "Cualquiera" en los permisos de la Aplicación Web.'
+        });
+      }
+    } catch (err: any) {
+      setSheetsFeedback({ type: 'error', text: err.message || 'Error de conexión.' });
+    } finally {
+      setSheetsActionLoading(false);
+      setTimeout(() => setSheetsFeedback(null), 6000);
+    }
+  };
+
+  // Forzar descarga de Google Sheets
+  const handlePullFromSheets = async () => {
+    setSheetsActionLoading(true);
+    setSheetsFeedback(null);
+    try {
+      const ok = await syncWithSheets();
+      if (ok) {
+        setSheetsFeedback({ type: 'success', text: '¡Carta actualizada desde Google Sheets con éxito!' });
+      } else {
+        setSheetsFeedback({ type: 'error', text: 'No se pudieron descargar los datos de la hoja.' });
+      }
+    } catch (err: any) {
+      setSheetsFeedback({ type: 'error', text: err.message || 'Error de sincronización.' });
+    } finally {
+      setSheetsActionLoading(false);
+      setTimeout(() => setSheetsFeedback(null), 4000);
+    }
+  };
+
+  // Copiar código del script al portapapeles
+  const handleCopyScript = () => {
+    const scriptCode = `// Pega este código en Extensiones > Apps Script de tu Google Sheets:
+// Puedes ver el código completo en el archivo google-apps-script.js del proyecto.`;
+    navigator.clipboard.writeText(scriptCode);
+    setCopiedScript(true);
+    setTimeout(() => setCopiedScript(false), 3000);
+  };
 
   // Manejador de Login PIN
   const handleLogin = (e: React.FormEvent) => {
@@ -284,6 +377,17 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-[#C2410C]/20 text-[#C2410C] font-semibold border border-[#C2410C]/30 uppercase tracking-wider">
                 Admin
               </span>
+              {sheetsUrl ? (
+                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800 font-medium">
+                  <Cloud className="w-3 h-3" />
+                  <span>{syncStatus === 'syncing' ? 'Sincronizando...' : 'Nube Conectada'}</span>
+                </span>
+              ) : (
+                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 font-medium">
+                  <CloudOff className="w-3 h-3" />
+                  <span>Modo Local</span>
+                </span>
+              )}
             </h1>
           </div>
 
@@ -657,6 +761,163 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-6">
             
+            {/* Sincronización en la Nube con Google Sheets */}
+            <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400">
+                    <FileSpreadsheet className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <span>Base de Datos Google Sheets</span>
+                    </h3>
+                    <p className="text-xs text-zinc-400">
+                      Sincroniza los platos y precios en la nube para que se vean en los móviles de todas las mesas.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Estado de conexión */}
+                <div>
+                  {sheetsUrl ? (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+                      <Cloud className="w-3.5 h-3.5" />
+                      <span>{syncStatus === 'syncing' ? 'Sincronizando...' : 'Conectado a la Nube'}</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700">
+                      <CloudOff className="w-3.5 h-3.5" />
+                      <span>Modo Local (Sin Nube)</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Formulario de URL */}
+              <form onSubmit={handleConnectSheets} className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs uppercase font-semibold text-zinc-300 tracking-wider">
+                      URL de la Aplicación Web (Google Apps Script)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowScriptModal(!showScriptModal)}
+                      className="text-xs text-[#C2410C] hover:text-orange-400 font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5" />
+                      <span>{showScriptModal ? 'Ocultar Guía' : '¿Cómo obtener esta URL?'}</span>
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://script.google.com/macros/s/.../exec"
+                      value={inputSheetsUrl}
+                      onChange={(e) => setInputSheetsUrl(e.target.value)}
+                      className="flex-1 px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-xl text-white text-xs font-mono focus:outline-none focus:border-[#C2410C]"
+                    />
+                    <button
+                      type="submit"
+                      disabled={sheetsActionLoading}
+                      className="px-5 py-2.5 bg-[#C2410C] hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0"
+                    >
+                      {sheetsActionLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Guardando...</span>
+                        </>
+                      ) : (
+                        <span>Conectar y Probar</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {sheetsFeedback && (
+                  <div className={`p-3 text-xs rounded-xl border flex items-center gap-2 ${
+                    sheetsFeedback.type === 'success'
+                      ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800'
+                      : 'bg-red-950/40 text-red-400 border-red-800'
+                  }`}>
+                    {sheetsFeedback.type === 'success' ? <Check className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                    <span>{sheetsFeedback.text}</span>
+                  </div>
+                )}
+              </form>
+
+              {/* Botones de acción manual si está conectado */}
+              {sheetsUrl && (
+                <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-zinc-800/80">
+                  <button
+                    type="button"
+                    disabled={sheetsActionLoading}
+                    onClick={handlePullFromSheets}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${sheetsActionLoading ? 'animate-spin' : ''}`} />
+                    <span>Descargar menú desde Sheets</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={sheetsActionLoading}
+                    onClick={async () => {
+                      setSheetsActionLoading(true);
+                      await pushToSheets();
+                      setSheetsActionLoading(false);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Cloud className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Subir cambios a Sheets</span>
+                  </button>
+
+                  {lastSyncedAt && (
+                    <span className="text-[11px] text-zinc-500 ml-auto">
+                      Última sincr: {lastSyncedAt.toLocaleTimeString()}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Guía desplegable de Google Sheets */}
+              {showScriptModal && (
+                <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4 text-xs text-zinc-300">
+                  <h4 className="font-bold text-white text-sm">
+                    Guía rápida para conectar Google Sheets (2 minutos):
+                  </h4>
+                  <ol className="list-decimal list-inside space-y-1.5 text-zinc-300 leading-relaxed">
+                    <li>Abre <a href="https://drive.google.com" target="_blank" rel="noreferrer" className="text-[#C2410C] underline font-semibold">Google Drive</a> y crea una nueva <strong>Hoja de cálculo de Google</strong>.</li>
+                    <li>Nómbrala como quieras (ej. <em>"Kikko Menú Base de Datos"</em>).</li>
+                    <li>En el menú superior, ve a <strong>Extensiones &gt; Apps Script</strong>.</li>
+                    <li>Borra el código que haya y pega el script de sincronización oficial.</li>
+                    <li>Haz clic en el botón azul <strong>Implementar &gt; Nueva implementación</strong>.</li>
+                    <li>Selecciona el tipo <strong>Aplicación web</strong> (icono de engranaje).</li>
+                    <li>En <em>"Quién tiene acceso"</em> selecciona <strong>"Cualquiera"</strong> (imprescindible para que los comensales lean la carta sin login).</li>
+                    <li>Pulsa <strong>Implementar</strong>, concede los permisos de Google y copia la URL terminada en <code>/exec</code>.</li>
+                  </ol>
+
+                  <div className="pt-2 flex flex-wrap items-center gap-3">
+                    <a
+                      href="https://drive.google.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-semibold text-xs transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Abrir Google Drive</span>
+                    </a>
+                    <span className="text-[11px] text-zinc-500">
+                      El código del script está en <code>google-apps-script.js</code> en la raíz del proyecto.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Copias de seguridad */}
             <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 md:p-8 space-y-6">
               <div>
