@@ -27,7 +27,8 @@ import {
   ExternalLink,
   FileSpreadsheet,
   Loader2,
-  HelpCircle
+  HelpCircle,
+  FlaskConical
 } from 'lucide-react';
 
 const DEFAULT_PIN = 'kikko2026';
@@ -55,7 +56,10 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     updatePromoPill,
     resetToDefaults,
     exportBackup,
-    importBackup
+    importBackup,
+    isSandboxMode,
+    toggleSandboxMode,
+    exitSandboxMode
   } = useMenuData();
 
   // Autenticación por PIN
@@ -408,8 +412,21 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
             </div>
           </div>
 
-          {/* Lado Derecho: Logout */}
-          <div className="flex items-center shrink-0">
+          {/* Lado Derecho: Sandbox Toggle + Logout */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              onClick={toggleSandboxMode}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
+                isSandboxMode
+                  ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)] font-bold'
+                  : 'text-zinc-400 hover:text-amber-400 bg-zinc-800/60 hover:bg-zinc-800 border-zinc-700/60'
+              }`}
+              title={isSandboxMode ? 'Desactivar Modo Pruebas' : 'Activar Modo Pruebas (Sandbox seguro)'}
+            >
+              <FlaskConical className={`w-3.5 h-3.5 shrink-0 ${isSandboxMode ? 'animate-bounce' : ''}`} />
+              <span className="hidden sm:inline">{isSandboxMode ? 'Modo Pruebas' : 'Probar'}</span>
+            </button>
+
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-red-400 hover:bg-zinc-800/80 rounded-lg transition-colors cursor-pointer"
@@ -477,6 +494,26 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
           </nav>
         </div>
       </div>
+
+      {/* Banner de Modo Sandbox / Pruebas Activo */}
+      {isSandboxMode && (
+        <div className="bg-amber-950/95 border-b border-amber-500/60 px-3 sm:px-6 py-2.5 backdrop-blur-md sticky top-[106px] sm:top-[122px] z-25 shadow-lg">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs text-amber-200">
+              <FlaskConical className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+              <span>
+                <strong>MODO PRUEBAS / SANDBOX ACTIVO:</strong> Puedes agregar platos, editar precios y generar traducciones. Los comensales y Google Sheets <strong>NO</strong> se modificarán.
+              </span>
+            </div>
+            <button
+              onClick={exitSandboxMode}
+              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-lg transition-colors cursor-pointer text-center shrink-0"
+            >
+              Salir y Restaurar Carta Real
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Contenido Principal */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
@@ -966,6 +1003,56 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                       Script en <code>google-apps-script.js</code> en la raíz.
                     </span>
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Entorno de Pruebas Seguro (Sandbox) */}
+            <div className={`border rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 transition-all ${
+              isSandboxMode
+                ? 'bg-amber-950/30 border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.15)]'
+                : 'bg-zinc-900/60 border-zinc-800'
+            }`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-xl border shrink-0 ${
+                    isSandboxMode
+                      ? 'bg-amber-950/80 border-amber-600/60 text-amber-400'
+                      : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                  }`}>
+                    <FlaskConical className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span>Modo Sandbox / Pruebas Seguras</span>
+                      {isSandboxMode && (
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-black font-extrabold">
+                          Activo
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Prueba a añadir platos, cambiar precios y generar traducciones sin alterar la base de datos de los clientes en las mesas.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={toggleSandboxMode}
+                  className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shrink-0 text-center ${
+                    isSandboxMode
+                      ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-lg'
+                      : 'bg-zinc-800 hover:bg-amber-500 hover:text-black text-white border border-zinc-700'
+                  }`}
+                >
+                  {isSandboxMode ? 'Desactivar y Restaurar' : 'Activar Modo Sandbox'}
+                </button>
+              </div>
+
+              {isSandboxMode && (
+                <div className="p-3.5 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-200 leading-relaxed">
+                  🛡️ <strong>Aislamiento total activo:</strong> Los cambios que hagas se guardan exclusivamente en esta sesión de tu navegador. Las sincronizaciones automáticas hacia Google Sheets están pausadas. Al pulsar en <em>"Desactivar y Restaurar"</em>, el menú regresará de inmediato a los datos reales de producción.
                 </div>
               )}
             </div>

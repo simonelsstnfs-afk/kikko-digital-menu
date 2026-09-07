@@ -28,6 +28,9 @@ interface MenuDataContextType {
   resetToDefaults: () => void;
   exportBackup: () => string;
   importBackup: (jsonString: string) => boolean;
+  isSandboxMode: boolean;
+  toggleSandboxMode: () => void;
+  exitSandboxMode: () => void;
 }
 
 const defaultPromoPill: PromoPillConfig = {
@@ -71,6 +74,56 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
 
+  // Modo Sandbox / Pruebas (aísla cambios en sesión sin alterar producción)
+  const [isSandboxMode, setIsSandboxMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return sessionStorage.getItem('kikko_sandbox_mode') === 'true';
+  });
+
+  const sandboxRealBackupRef = useRef<{ categories: MenuCategory[]; promoPill: PromoPillConfig } | null>(null);
+
+  const toggleSandboxMode = () => {
+    if (!isSandboxMode) {
+      sandboxRealBackupRef.current = {
+        categories: JSON.parse(JSON.stringify(categories)),
+        promoPill: JSON.parse(JSON.stringify(promoPill))
+      };
+      try {
+        sessionStorage.setItem('kikko_sandbox_backup', JSON.stringify(sandboxRealBackupRef.current));
+        sessionStorage.setItem('kikko_sandbox_mode', 'true');
+      } catch (e) {}
+      setIsSandboxMode(true);
+    } else {
+      exitSandboxMode();
+    }
+  };
+
+  const exitSandboxMode = () => {
+    try {
+      let savedBackup = sandboxRealBackupRef.current;
+      if (!savedBackup && typeof window !== 'undefined') {
+        const stored = sessionStorage.getItem('kikko_sandbox_backup');
+        if (stored) savedBackup = JSON.parse(stored);
+      }
+      if (savedBackup) {
+        setCategories(savedBackup.categories);
+        setPromoPill(savedBackup.promoPill);
+      } else if (sheetsUrl) {
+        fetchMenuFromSheets(sheetsUrl).then(remote => {
+          if (remote?.categories?.length) {
+            setCategories(remote.categories);
+            if (remote.promoPill) setPromoPill(remote.promoPill);
+          }
+        });
+      }
+      sessionStorage.removeItem('kikko_sandbox_mode');
+      sessionStorage.removeItem('kikko_sandbox_backup');
+    } catch (e) {
+      console.warn('Error restaurando estado al salir de sandbox:', e);
+    }
+    setIsSandboxMode(false);
+  };
+
   // Referencia a estado actual para evitar condiciones de carrera en sincronización
   const latestDataRef = useRef({ categories, promoPill });
   useEffect(() => {
@@ -82,22 +135,24 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     saveStoredSheetsUrl(url);
   };
 
-  // 1. Guardar en localStorage de inmediato ante cualquier cambio
+  // 1. Guardar en localStorage de inmediato ante cualquier cambio (si no está en sandbox)
   useEffect(() => {
+    if (isSandboxMode) return;
     try {
       localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
     } catch (e) {
       console.error('Error saving categories to localStorage:', e);
     }
-  }, [categories]);
+  }, [categories, isSandboxMode]);
 
   useEffect(() => {
+    if (isSandboxMode) return;
     try {
       localStorage.setItem(STORAGE_KEY_PROMO_PILL, JSON.stringify(promoPill));
     } catch (e) {
       console.error('Error saving promo pill to localStorage:', e);
     }
-  }, [promoPill]);
+  }, [promoPill, isSandboxMode]);
 
   // 2. Al arrancar la app, intentar descargar datos frescos desde Google Sheets en segundo plano
   useEffect(() => {
@@ -151,6 +206,10 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
   // Función para subir datos a Sheets
   const pushToSheets = async (): Promise<boolean> => {
     if (!sheetsUrl) return false;
+    if (isSandboxMode) {
+      console.info('Modo Sandbox activo: pushToSheets simulado con éxito (sin alterar Google Sheets).');
+      return true;
+    }
     setSyncStatus('syncing');
     try {
       const res = await sendMenuToSheets(
@@ -173,7 +232,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
 
   // Helper para auto-guardar en Google Sheets tras una acción CRUD si hay URL configurada
   const triggerAutoSaveToSheets = (newCats: MenuCategory[], newPill: PromoPillConfig) => {
-    if (!sheetsUrl) return;
+    if (!sheetsUrl || isSandboxMode) return;
     setSyncStatus('syncing');
     sendMenuToSheets(newCats, newPill, sheetsUrl)
       .then((res) => {
@@ -341,7 +400,10 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         updatePromoPill,
         resetToDefaults,
         exportBackup,
-        importBackup
+        importBackup,
+        isSandboxMode,
+        toggleSandboxMode,
+        exitSandboxMode
       }}
     >
       {children}
