@@ -82,11 +82,16 @@ export default function ProductModal({
     setError('');
     try {
       const res = await autoTranslateProduct(nameEs, descEs);
-      setNameEn(res.name.en);
-      setNameIt(res.name.it);
+      if (!res.success) {
+        setError('No se pudo completar la traducción automática con el servidor. Los textos existentes se han mantenido intactos.');
+        return;
+      }
+
+      if (res.name.en) setNameEn(res.name.en);
+      if (res.name.it) setNameIt(res.name.it);
       if (descEs.trim()) {
-        setDescEn(res.description.en);
-        setDescIt(res.description.it);
+        if (res.description.en) setDescEn(res.description.en);
+        if (res.description.it) setDescIt(res.description.it);
       }
       setTranslationDone(true);
       setTimeout(() => setTranslationDone(false), 3000);
@@ -115,15 +120,15 @@ export default function ProductModal({
     let finalDescEn = descEn.trim();
     let finalDescIt = descIt.trim();
 
-    // Traducción automática al vuelo si el usuario dejó vacíos inglés o italiano
+    // Traducción automática al vuelo solo si el usuario dejó vacíos inglés o italiano
     if (!finalNameEn || !finalNameIt || (descEs.trim() && (!finalDescEn || !finalDescIt))) {
       setIsTranslating(true);
       try {
         const auto = await autoTranslateProduct(nameEs, descEs);
-        if (!finalNameEn) finalNameEn = auto.name.en;
-        if (!finalNameIt) finalNameIt = auto.name.it;
-        if (!finalDescEn && descEs.trim()) finalDescEn = auto.description.en;
-        if (!finalDescIt && descEs.trim()) finalDescIt = auto.description.it;
+        if (!finalNameEn && auto.name.en) finalNameEn = auto.name.en;
+        if (!finalNameIt && auto.name.it) finalNameIt = auto.name.it;
+        if (!finalDescEn && descEs.trim() && auto.description.en) finalDescEn = auto.description.en;
+        if (!finalDescIt && descEs.trim() && auto.description.it) finalDescIt = auto.description.it;
       } catch (err) {
         console.warn('Error auto-traduciendo al guardar:', err);
       } finally {
