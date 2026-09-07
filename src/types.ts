@@ -8,6 +8,14 @@ export interface MenuItem {
   };
   price: number;
   subcategory?: string;
+  available?: boolean;
+}
+
+export interface PromoPillConfig {
+  active: boolean;
+  tag: { es: string; en: string; it: string } | string;
+  title: { es: string; en: string; it: string } | string;
+  targetCategory: string;
 }
 
 export interface MenuCategory {
@@ -25,3 +33,4 @@ export interface Review {
   time: string;
   profilePhotoUrl: string;
 }
+

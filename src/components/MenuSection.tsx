@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { menuData } from '../data';
 import { motion } from 'motion/react';
 import { useLanguage } from '../LanguageContext';
+import { useMenuData } from '../context/MenuDataContext';
 import { MenuItem } from '../types';
 
 const categorySubtitles: Record<string, Record<string, string>> = {
@@ -25,9 +25,16 @@ const subcategoryTranslations: Record<string, Record<string, string>> = {
 };
 
 export default function MenuSection() {
-  const [activeCategory, setActiveCategory] = useState<string>(menuData[0].id);
+  const { categories } = useMenuData();
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || 'entrantes');
   const scrollContainerRef = useRef<HTMLUListElement>(null);
   const { t, language } = useLanguage();
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.some(c => c.id === activeCategory)) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories, activeCategory]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -47,13 +54,13 @@ export default function MenuSection() {
       { rootMargin: '-220px 0px -60% 0px' }
     );
 
-    menuData.forEach((category) => {
+    categories.forEach((category) => {
       const el = document.getElementById(category.id);
       if (el) observer.observe(el);
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [categories]);
 
   useEffect(() => {
     const handleSelectCategory = (e: Event) => {
@@ -78,7 +85,7 @@ export default function MenuSection() {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <div className="absolute inset-0 bg-[#141A0F]"></div>
-          {menuData.map((category) => (
+          {categories.map((category) => (
             <div
               key={`bg-${category.id}`}
               className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out"
@@ -101,7 +108,7 @@ export default function MenuSection() {
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#141A0F] to-transparent z-10 pointer-events-none md:hidden" />
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#141A0F] to-transparent z-10 pointer-events-none md:hidden" />
           <ul ref={scrollContainerRef} role="tablist" aria-label="Categorías del menú" className="flex items-center justify-start md:justify-center overflow-x-auto gap-2 no-scrollbar scroll-smooth px-2 sm:px-6 lg:px-8">
-            {menuData.map((category) => {
+            {categories.map((category) => {
               const isActive = activeCategory === category.id;
               return (
                 <li key={category.id} id={`tab-${category.id}`} role="tab" aria-selected={activeCategory === category.id} className="relative shrink-0">
@@ -128,10 +135,11 @@ export default function MenuSection() {
       </div>
 
       <div className="flex flex-col">
-        {menuData.map((category) => {
+        {categories.map((category) => {
           
-          // Group items by subcategory
-          const groupedItems = category.items.reduce((acc, item) => {
+          // Group items by subcategory (filtrando platos no disponibles)
+          const visibleItems = category.items.filter(item => item.available !== false);
+          const groupedItems = visibleItems.reduce((acc, item) => {
             const sub = item.subcategory || 'default';
             if (!acc[sub]) acc[sub] = [];
             acc[sub].push(item);

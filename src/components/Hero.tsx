@@ -1,7 +1,19 @@
 import { useLanguage } from '../LanguageContext';
+import { useMenuData } from '../context/MenuDataContext';
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { promoPill } = useMenuData();
+
+  const pillTag = typeof promoPill.tag === 'string'
+    ? promoPill.tag
+    : promoPill.tag[language] || promoPill.tag['es'] || t('newPromoTag');
+
+  const pillTitle = typeof promoPill.title === 'string'
+    ? promoPill.title
+    : promoPill.title[language] || promoPill.title['es'] || t('newPromoTitle');
+
+  const targetCategory = promoPill.targetCategory || 'risottos';
 
   return (
     <section 
@@ -44,25 +56,27 @@ export default function Hero() {
             fetchPriority="high"
           />
           
-          {/* Risotto Promo Pill */}
-          <a 
-            href="#carta" 
-            onClick={(e) => {
-              e.preventDefault();
-              window.dispatchEvent(new CustomEvent('select-category', { detail: 'risottos' }));
-            }}
-            className="group relative z-20 flex items-center justify-center gap-1.5 -mt-6 md:-mt-8 mb-8 px-4 py-1.5 rounded-full bg-zinc-950/80 border border-[#C2410C]/60 hover:bg-zinc-900 hover:border-[#C2410C] transition-all duration-300 shadow-[0_0_15px_rgba(194,65,12,0.4)] hover:shadow-[0_0_25px_rgba(194,65,12,0.7)] backdrop-blur-md cursor-pointer hover:-translate-y-0.5"
-          >
-            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#C2410C] whitespace-nowrap">
-              {t('newPromoTag')}:
-            </span>
-            <span className="text-[10px] md:text-[11px] text-zinc-100 uppercase tracking-wider font-semibold whitespace-nowrap">
-              {t('newPromoTitle')}
-            </span>
-            <svg className="w-3.5 h-3.5 text-[#C2410C] group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-            </svg>
-          </a>
+          {/* Dynamic Promo Pill */}
+          {promoPill.active !== false && (
+            <a 
+              href="#carta" 
+              onClick={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent('select-category', { detail: targetCategory }));
+              }}
+              className="group relative z-20 flex items-center justify-center gap-1.5 -mt-6 md:-mt-8 mb-8 px-4 py-1.5 rounded-full bg-zinc-950/80 border border-[#C2410C]/60 hover:bg-zinc-900 hover:border-[#C2410C] transition-all duration-300 shadow-[0_0_15px_rgba(194,65,12,0.4)] hover:shadow-[0_0_25px_rgba(194,65,12,0.7)] backdrop-blur-md cursor-pointer hover:-translate-y-0.5"
+            >
+              <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#C2410C] whitespace-nowrap">
+                {pillTag}:
+              </span>
+              <span className="text-[10px] md:text-[11px] text-zinc-100 uppercase tracking-wider font-semibold whitespace-nowrap">
+                {pillTitle}
+              </span>
+              <svg className="w-3.5 h-3.5 text-[#C2410C] group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
+          )}
 
           <p className="text-zinc-300 text-sm md:text-base max-w-lg mx-auto mb-8 font-light leading-relaxed">
             {t('digitalMenuHeroSub')}
