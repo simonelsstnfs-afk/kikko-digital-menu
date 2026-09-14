@@ -196,12 +196,15 @@ export default function DynamicIsland() {
               aria-label="Abrir detalle de la promoción"
             >
               <div
-                className="italian-flag-border"
+                className="relative p-[2.5px] rounded-full overflow-hidden"
                 style={{
                   boxShadow: '0 14px 40px rgba(0,0,0,0.98), 0 0 20px rgba(0,146,70,0.3)'
                 }}
               >
-                <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
+                {/* Borde animado fluido con bandera de Italia */}
+                <div className="island-flag-spinner" />
+
+                <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
                   {/* Sello / Medallón Pop-Art B&W con Borde Blanco Puro Minimalista */}
                   <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                     <img
@@ -260,12 +263,15 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className="relative w-full max-w-sm sm:max-w-md rounded-3xl italian-flag-card-border text-left"
+              className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden p-[2.5px] text-left"
               style={{
                 boxShadow: '0 25px 60px rgba(0,0,0,0.98), 0 0 35px rgba(0,146,70,0.35)'
               }}
             >
-              <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
+              {/* Borde animado fluido con bandera de Italia */}
+              <div className="island-flag-card-spinner" />
+
+              <div className="relative z-10 rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
                 {/* Cabecera de la tarjeta: Medallón B&W de Kikko con Borde Blanco + Badge + Botón Cerrar */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">

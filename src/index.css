@@ -59,29 +59,23 @@ html {
 }
 
 /* Dynamic Island: Borde en Movimiento Bandera de Italia */
-@keyframes italianFlagRotate {
+@keyframes islandFlagSpin {
   0% {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
-.italian-flag-border {
-  position: relative;
-  overflow: hidden;
-  border-radius: 9999px;
-  padding: 2px;
-}
-
-.italian-flag-border::before {
-  content: '';
+.island-flag-spinner {
   position: absolute;
-  top: -150%;
-  left: -150%;
-  width: 400%;
-  height: 400%;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
   background: conic-gradient(
     from 0deg,
     #009246 0deg 60deg,
@@ -91,25 +85,21 @@ html {
     #ffffff 240deg 300deg,
     #ce2b37 300deg 360deg
   );
-  animation: italianFlagRotate 4s linear infinite;
-  z-index: 0;
+  animation: islandFlagSpin 3.5s linear infinite !important;
+  -webkit-animation: islandFlagSpin 3.5s linear infinite !important;
   will-change: transform;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.italian-flag-card-border {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.5rem;
-  padding: 2.5px;
-}
-
-.italian-flag-card-border::before {
-  content: '';
+.island-flag-card-spinner {
   position: absolute;
-  top: -150%;
-  left: -150%;
-  width: 400%;
-  height: 400%;
+  top: 50%;
+  left: 50%;
+  width: 750px;
+  height: 750px;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
   background: conic-gradient(
     from 0deg,
     #009246 0deg 60deg,
@@ -119,9 +109,11 @@ html {
     #ffffff 240deg 300deg,
     #ce2b37 300deg 360deg
   );
-  animation: italianFlagRotate 4s linear infinite;
-  z-index: 0;
+  animation: islandFlagSpin 4.5s linear infinite !important;
+  -webkit-animation: islandFlagSpin 4.5s linear infinite !important;
   will-change: transform;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .metallic-inner {
@@ -130,12 +122,9 @@ html {
   background-color: #141A0F;
 }
 
-/* Respetar preferencias de movimiento reducido */
+/* Respetar preferencias de movimiento reducido sin bloquear componentes interactivos */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  html {
     scroll-behavior: auto !important;
   }
 }

@@ -1376,8 +1376,9 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[120px] text-center relative overflow-hidden">
                 {pillActive ? (
                   previewMode === 'compact' ? (
-                    <div className="italian-flag-border shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
-                      <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
+                    <div className="relative p-[2px] rounded-full overflow-hidden shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
+                      <div className="island-flag-spinner" />
+                      <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
                         <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                           <img
                             src="/kikko-mascot-face.png"
@@ -1417,8 +1418,9 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                       </div>
                     </div>
                   ) : (
-                    <div className="w-full max-w-sm rounded-3xl italian-flag-card-border text-left shadow-2xl">
-                      <div className="metallic-inner rounded-[22px] p-5 bg-[#141A0F] flex flex-col gap-3.5">
+                    <div className="relative w-full max-w-sm rounded-3xl overflow-hidden p-[2px] text-left shadow-2xl">
+                      <div className="island-flag-card-spinner" />
+                      <div className="relative z-10 rounded-[22px] p-5 bg-[#141A0F] flex flex-col gap-3.5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
