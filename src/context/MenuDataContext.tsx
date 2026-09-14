@@ -1,12 +1,28 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { MenuCategory, MenuItem, PromoPillConfig } from '../types';
 import { menuData as initialMenuData } from '../data';
+import { detectAllergensFromText } from '../allergens';
 import {
   fetchMenuFromSheets,
   sendMenuToSheets,
   getStoredSheetsUrl,
   saveStoredSheetsUrl
 } from '../services/googleSheetsService';
+
+export function ensureAllergensInCategories(cats: MenuCategory[]): MenuCategory[] {
+  return cats.map(cat => ({
+    ...cat,
+    items: cat.items.map(item => {
+      if (item.allergens && Array.isArray(item.allergens) && item.allergens.length > 0) {
+        return item;
+      }
+      return {
+        ...item,
+        allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, cat.id)
+      };
+    })
+  }));
+}
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error';
 
@@ -58,12 +74,12 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
       if (saved) {
-        return JSON.parse(saved);
+        return ensureAllergensInCategories(JSON.parse(saved));
       }
     } catch (e) {
       console.error('Error loading categories from localStorage:', e);
     }
-    return JSON.parse(JSON.stringify(initialMenuData));
+    return ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
   });
 
   const [promoPill, setPromoPill] = useState<PromoPillConfig>(() => {
@@ -195,7 +211,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     try {
       const remoteData = await fetchMenuFromSheets(sheetsUrl);
       if (remoteData && remoteData.categories?.length) {
-        setCategories(remoteData.categories);
+        setCategories(ensureAllergensInCategories(remoteData.categories));
         if (remoteData.promoPill) {
           setPromoPill(remoteData.promoPill);
         }
@@ -364,7 +380,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
 
   // Restablecer valores de fábrica
   const resetToDefaults = () => {
-    const factoryCategories = JSON.parse(JSON.stringify(initialMenuData));
+    const factoryCategories = ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
     setCategories(factoryCategories);
     setPromoPill(defaultPromoPill);
     localStorage.removeItem(STORAGE_KEY_CATEGORIES);
@@ -388,11 +404,12 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed && Array.isArray(parsed.categories)) {
-        setCategories(parsed.categories);
+        const sanitizedCats = ensureAllergensInCategories(parsed.categories);
+        setCategories(sanitizedCats);
         if (parsed.promoPill) {
           setPromoPill(parsed.promoPill);
         }
-        triggerAutoSaveToSheets(parsed.categories, parsed.promoPill || promoPill);
+        triggerAutoSaveToSheets(sanitizedCats, parsed.promoPill || promoPill);
         return true;
       }
       return false;

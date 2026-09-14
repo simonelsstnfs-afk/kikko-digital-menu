@@ -3,6 +3,9 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../LanguageContext';
 import { useMenuData } from '../context/MenuDataContext';
 import { MenuItem } from '../types';
+import AllergenBadge from './AllergenBadge';
+import AllergenGuideModal from './AllergenGuideModal';
+import { Info } from 'lucide-react';
 
 const categorySubtitles: Record<string, Record<string, string>> = {
   entrantes: { es: 'Para Empezar Bien', en: 'To Start Well', it: 'Per Iniziare Bene' },
@@ -24,9 +27,16 @@ const subcategoryTranslations: Record<string, Record<string, string>> = {
   'Amaros': { es: 'Amaros', en: 'Spirits & Liqueurs', it: 'Amari e Liquori' }
 };
 
+const allergenGuideButtonText: Record<string, string> = {
+  es: '¿Alergias o intolerancias? Consulta nuestra Guía de Alérgenos',
+  en: 'Allergies or intolerances? View our Allergen Guide',
+  it: 'Allergie o intolleranze? Consulta la nostra Guida agli Allergeni'
+};
+
 export default function MenuSection() {
   const { categories } = useMenuData();
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || 'entrantes');
+  const [isAllergenGuideOpen, setIsAllergenGuideOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLUListElement>(null);
   const { t, language } = useLanguage();
 
@@ -134,6 +144,18 @@ export default function MenuSection() {
         </div>
       </div>
 
+      {/* Acceso a la Guía Oficial de Alérgenos */}
+      <div className="max-w-4xl mx-auto px-4 pt-4 sm:pt-6 pb-2 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsAllergenGuideOpen(true)}
+          className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 hover:border-amber-500/60 text-amber-300 text-xs sm:text-sm font-medium transition-all shadow-sm active:scale-95 cursor-pointer"
+        >
+          <Info className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+          <span>{allergenGuideButtonText[language as keyof typeof allergenGuideButtonText] || allergenGuideButtonText.es}</span>
+        </button>
+      </div>
+
       <div className="flex flex-col">
         {categories.map((category) => {
           
@@ -201,9 +223,18 @@ export default function MenuSection() {
                             className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-all scroll-mt-[250px]"
                           >
                             <div className="flex justify-between items-start sm:items-center gap-4 w-full">
-                              <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">
-                                {typeof item.name === 'string' ? item.name : item.name[language as keyof typeof item.name] || (item.name as any)['es']}
-                              </h5>
+                              <div className="flex items-center flex-wrap gap-2.5 max-w-[75%]">
+                                <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide leading-tight">
+                                  {typeof item.name === 'string' ? item.name : item.name[language as keyof typeof item.name] || (item.name as any)['es']}
+                                </h5>
+                                {item.allergens && item.allergens.length > 0 && (
+                                  <div className="inline-flex items-center gap-1.5 flex-wrap">
+                                    {item.allergens.map((algId) => (
+                                      <AllergenBadge key={algId} allergenId={algId} size="sm" />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                               <div className="flex-shrink-0 px-3 py-1 rounded-full border border-white/60 bg-white/10 backdrop-blur-sm">
                                 <span className="font-sans text-white font-bold whitespace-nowrap text-[0.95rem] md:text-base">
                                   {item.price.toFixed(2)} €
@@ -229,6 +260,11 @@ export default function MenuSection() {
         })}
       </div>
       </div>
+
+      <AllergenGuideModal
+        isOpen={isAllergenGuideOpen}
+        onClose={() => setIsAllergenGuideOpen(false)}
+      />
     </section>
   );
 }

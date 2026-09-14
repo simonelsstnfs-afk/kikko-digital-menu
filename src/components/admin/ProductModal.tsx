@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MenuItem } from '../../types';
-import { X, Save, AlertCircle, Sparkles, Loader2, Check } from 'lucide-react';
+import { X, Save, AlertCircle, Sparkles, Loader2, Check, Wand2, Trash2 } from 'lucide-react';
 import { autoTranslateProduct } from '../../utils/translateService';
+import { ALLERGENS, detectAllergensFromText } from '../../allergens';
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function ProductModal({
   const [price, setPrice] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [available, setAvailable] = useState(true);
+  const [selectedAllergens, setSelectedAllergens] = useState<string[]>([]);
   const [error, setError] = useState('');
 
   const [isTranslating, setIsTranslating] = useState(false);
@@ -55,6 +57,7 @@ export default function ProductModal({
       setPrice(initialProduct.price !== undefined ? initialProduct.price.toString() : '');
       setSubcategory(initialProduct.subcategory || '');
       setAvailable(initialProduct.available !== false);
+      setSelectedAllergens(initialProduct.allergens || []);
     } else {
       setNameEs('');
       setNameEn('');
@@ -65,10 +68,26 @@ export default function ProductModal({
       setPrice('');
       setSubcategory('');
       setAvailable(true);
+      setSelectedAllergens([]);
     }
     setError('');
     setTranslationDone(false);
   }, [initialProduct, isOpen]);
+
+  const toggleAllergen = (id: string) => {
+    setSelectedAllergens(prev =>
+      prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]
+    );
+  };
+
+  const handleSuggestAllergens = () => {
+    const detected = detectAllergensFromText(nameEs, descEs, categoryTitle.toLowerCase());
+    setSelectedAllergens(detected);
+  };
+
+  const handleClearAllergens = () => {
+    setSelectedAllergens([]);
+  };
 
   if (!isOpen) return null;
 
@@ -153,7 +172,8 @@ export default function ProductModal({
       description: descObj,
       price: numPrice,
       subcategory: subcategory.trim() || undefined,
-      available
+      available,
+      allergens: selectedAllergens
     });
     onClose();
   };
@@ -377,6 +397,83 @@ export default function ProductModal({
                   className="w-full px-3 py-2 text-base sm:text-sm bg-zinc-950 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-[#C2410C] transition-colors"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Selector de Alérgenos Oficiales */}
+          <div className="space-y-3 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-2">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-bold text-white tracking-wide">
+                  Alérgenos del Plato
+                </label>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-amber-400 font-medium border border-amber-500/20">
+                  {selectedAllergens.length} seleccionados
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleSuggestAllergens}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer active:scale-95"
+                  title="Detectar alérgenos automáticamente según nombre e ingredientes"
+                >
+                  <Wand2 className="w-3.5 h-3.5" />
+                  <span>Sugerir con IA</span>
+                </button>
+                {selectedAllergens.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAllergens}
+                    className="flex items-center gap-1 px-2 py-1 text-xs text-zinc-400 hover:text-red-400 hover:bg-red-950/30 rounded-lg transition-colors cursor-pointer"
+                    title="Desmarcar todos los alérgenos"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span>Limpiar</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-400">
+              Haz clic sobre los alérgenos presentes o utiliza la sugerencia con IA para autocompletar:
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {ALLERGENS.map((allergen) => {
+                const isSelected = selectedAllergens.includes(allergen.id);
+                return (
+                  <button
+                    key={allergen.id}
+                    type="button"
+                    onClick={() => toggleAllergen(allergen.id)}
+                    className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                      isSelected
+                        ? 'border-amber-500/80 bg-amber-500/15 text-white shadow-sm ring-1 ring-amber-500/30'
+                        : 'border-zinc-800/80 bg-zinc-950/50 hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                    }`}
+                  >
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-black/40 border border-white/10 p-0.5">
+                      <img
+                        src={allergen.iconUrl}
+                        alt={allergen.name.es}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-xs font-medium truncate leading-tight">
+                        {allergen.name.es}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 leading-none">
+                        #{allergen.number}
+                      </span>
+                    </div>
+                    {isSelected && (
+                      <Check className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
