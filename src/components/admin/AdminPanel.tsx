@@ -1377,8 +1377,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                 {pillActive ? (
                   previewMode === 'compact' ? (
                     <div className="metallic-conic-border metallic-border-dish p-[1.5px] rounded-full shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
-                      <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
-                        <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
+                      <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
                           <img
                             src="/kikko-mascot-face.png"
                             alt="Kikko Pizzeria"
@@ -1418,10 +1418,10 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     </div>
                   ) : (
                     <div className="w-full max-w-sm rounded-3xl p-[2px] metallic-conic-border metallic-border-dish text-left shadow-2xl">
-                      <div className="metallic-inner rounded-[22px] p-5 bg-[#09090b] flex flex-col gap-3.5">
+                      <div className="metallic-inner rounded-[22px] p-5 bg-[#141A0F] flex flex-col gap-3.5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
+                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
                               <img
                                 src="/kikko-mascot-face.png"
                                 alt="Kikko Pizzeria"

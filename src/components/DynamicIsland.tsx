@@ -201,9 +201,9 @@ export default function DynamicIsland() {
                   boxShadow: `0 14px 40px rgba(0,0,0,0.98), 0 0 24px ${visuals.glowColor}`
                 }}
               >
-                <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
+                <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
                   {/* Sello / Medallón Pop-Art B&W con el Imagotipo Oficial de Kikko */}
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
                     <img
                       src="/kikko-mascot-face.png"
                       alt="Kikko Pizzeria"
@@ -265,11 +265,11 @@ export default function DynamicIsland() {
                 boxShadow: `0 25px 60px rgba(0,0,0,0.98), 0 0 35px ${visuals.glowColor}`
               }}
             >
-              <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#09090b] flex flex-col gap-4">
+              <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
                 {/* Cabecera de la tarjeta: Medallón B&W de Kikko + Badge + Botón Cerrar */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
                       <img
                         src="/kikko-mascot-face.png"
                         alt="Kikko Pizzeria"
