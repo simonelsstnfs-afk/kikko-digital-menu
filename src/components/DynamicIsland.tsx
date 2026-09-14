@@ -196,14 +196,14 @@ export default function DynamicIsland() {
               aria-label="Abrir detalle de la promoción"
             >
               <div
-                className={`metallic-conic-border ${visuals.metallicClass} p-[1.5px] rounded-full`}
+                className="italian-flag-border"
                 style={{
-                  boxShadow: `0 14px 40px rgba(0,0,0,0.98), 0 0 24px ${visuals.glowColor}`
+                  boxShadow: '0 14px 40px rgba(0,0,0,0.98), 0 0 20px rgba(0,146,70,0.3)'
                 }}
               >
                 <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
-                  {/* Sello / Medallón Pop-Art B&W con el Imagotipo Oficial de Kikko */}
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
+                  {/* Sello / Medallón Pop-Art B&W con Borde Blanco Puro Minimalista */}
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                     <img
                       src="/kikko-mascot-face.png"
                       alt="Kikko Pizzeria"
@@ -252,7 +252,7 @@ export default function DynamicIsland() {
               </div>
             </motion.button>
           ) : (
-            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Imagotipo B&W --- */
+            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Bandera de Italia --- */
             <motion.div
               key="expanded-card"
               layoutId="dynamic-island-container"
@@ -260,16 +260,16 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className={`relative w-full max-w-sm sm:max-w-md rounded-3xl p-[2px] metallic-conic-border ${visuals.metallicClass} text-left`}
+              className="relative w-full max-w-sm sm:max-w-md rounded-3xl italian-flag-card-border text-left"
               style={{
-                boxShadow: `0 25px 60px rgba(0,0,0,0.98), 0 0 35px ${visuals.glowColor}`
+                boxShadow: '0 25px 60px rgba(0,0,0,0.98), 0 0 35px rgba(0,146,70,0.35)'
               }}
             >
               <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
-                {/* Cabecera de la tarjeta: Medallón B&W de Kikko + Badge + Botón Cerrar */}
+                {/* Cabecera de la tarjeta: Medallón B&W de Kikko con Borde Blanco + Badge + Botón Cerrar */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-[#141A0F] shrink-0">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                       <img
                         src="/kikko-mascot-face.png"
                         alt="Kikko Pizzeria"

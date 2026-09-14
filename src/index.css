@@ -58,39 +58,70 @@ html {
   z-index: 25;
 }
 
-/* Dynamic Island Atelier Gourmet: Borde Metálico Dinámico */
-@keyframes metallicRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Dynamic Island: Borde en Movimiento Bandera de Italia */
+@keyframes italianFlagRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-.metallic-conic-border {
+.italian-flag-border {
   position: relative;
   overflow: hidden;
+  border-radius: 9999px;
+  padding: 2px;
 }
 
-.metallic-conic-border::before {
+.italian-flag-border::before {
   content: '';
   position: absolute;
-  inset: -150%;
-  animation: metallicRotate 7s linear infinite;
+  top: -150%;
+  left: -150%;
+  width: 400%;
+  height: 400%;
+  background: conic-gradient(
+    from 0deg,
+    #009246 0deg 60deg,
+    #ffffff 60deg 120deg,
+    #ce2b37 120deg 180deg,
+    #009246 180deg 240deg,
+    #ffffff 240deg 300deg,
+    #ce2b37 300deg 360deg
+  );
+  animation: italianFlagRotate 4s linear infinite;
   z-index: 0;
+  will-change: transform;
 }
 
-.metallic-border-dish::before {
-  background: conic-gradient(from 0deg, #d97706, #fbbf24, #92400e, #f59e0b, #d97706);
+.italian-flag-card-border {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  padding: 2.5px;
 }
 
-.metallic-border-promo_2x1::before {
-  background: conic-gradient(from 0deg, #dc2626, #f97316, #b91c1c, #ea580c, #dc2626);
-}
-
-.metallic-border-discount::before {
-  background: conic-gradient(from 0deg, #059669, #34d399, #047857, #10b981, #059669);
-}
-
-.metallic-border-event::before {
-  background: conic-gradient(from 0deg, #7c3aed, #fbbf24, #6d28d9, #a855f7, #7c3aed);
+.italian-flag-card-border::before {
+  content: '';
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 400%;
+  height: 400%;
+  background: conic-gradient(
+    from 0deg,
+    #009246 0deg 60deg,
+    #ffffff 60deg 120deg,
+    #ce2b37 120deg 180deg,
+    #009246 180deg 240deg,
+    #ffffff 240deg 300deg,
+    #ce2b37 300deg 360deg
+  );
+  animation: italianFlagRotate 4s linear infinite;
+  z-index: 0;
+  will-change: transform;
 }
 
 .metallic-inner {
