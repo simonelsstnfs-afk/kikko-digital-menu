@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Reorder, useDragControls } from 'motion/react';
+import { motion, Reorder, useDragControls } from 'motion/react';
 import { useMenuData } from '../../context/MenuDataContext';
 import { MenuItem, PromoType, PromoTargetType } from '../../types';
 import ProductModal from './ProductModal';
@@ -1375,9 +1375,24 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               {/* Contenedor de la Vista Previa */}
               <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[120px] text-center relative overflow-hidden">
                 {pillActive ? (
-                  previewMode === 'compact' ? (
+                   previewMode === 'compact' ? (
                     <div className="relative p-[2px] rounded-full overflow-hidden shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
-                      <div className="island-flag-spinner" />
+                      <motion.div
+                        aria-hidden="true"
+                        className="absolute pointer-events-none"
+                        style={{
+                          width: '500px',
+                          height: '500px',
+                          top: '50%',
+                          left: '50%',
+                          marginLeft: '-250px',
+                          marginTop: '-250px',
+                          background: 'conic-gradient(from 0deg, #009246 0deg 57deg, #ffffff 60deg 117deg, #ce2b37 120deg 177deg, #009246 180deg 237deg, #ffffff 240deg 297deg, #ce2b37 300deg 357deg, #009246 360deg)',
+                          willChange: 'transform',
+                        }}
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ repeat: Infinity, duration: 3.5, ease: 'linear' }}
+                      />
                       <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
                         <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                           <img
@@ -1419,7 +1434,22 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     </div>
                   ) : (
                     <div className="relative w-full max-w-sm rounded-3xl overflow-hidden p-[2px] text-left shadow-2xl">
-                      <div className="island-flag-card-spinner" />
+                      <motion.div
+                        aria-hidden="true"
+                        className="absolute pointer-events-none"
+                        style={{
+                          width: '700px',
+                          height: '700px',
+                          top: '50%',
+                          left: '50%',
+                          marginLeft: '-350px',
+                          marginTop: '-350px',
+                          background: 'conic-gradient(from 0deg, #009246 0deg 57deg, #ffffff 60deg 117deg, #ce2b37 120deg 177deg, #009246 180deg 237deg, #ffffff 240deg 297deg, #ce2b37 300deg 357deg, #009246 360deg)',
+                          willChange: 'transform',
+                        }}
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ repeat: Infinity, duration: 4.5, ease: 'linear' }}
+                      />
                       <div className="relative z-10 rounded-[22px] p-5 bg-[#141A0F] flex flex-col gap-3.5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">

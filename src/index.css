@@ -58,73 +58,15 @@ html {
   z-index: 25;
 }
 
-/* Dynamic Island: Borde en Movimiento Bandera de Italia */
-@keyframes islandFlagSpin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-.island-flag-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 500px;
-  height: 500px;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  background: conic-gradient(
-    from 0deg,
-    #009246 0deg 60deg,
-    #ffffff 60deg 120deg,
-    #ce2b37 120deg 180deg,
-    #009246 180deg 240deg,
-    #ffffff 240deg 300deg,
-    #ce2b37 300deg 360deg
-  );
-  animation: islandFlagSpin 3.5s linear infinite !important;
-  -webkit-animation: islandFlagSpin 3.5s linear infinite !important;
-  will-change: transform;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.island-flag-card-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 750px;
-  height: 750px;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  background: conic-gradient(
-    from 0deg,
-    #009246 0deg 60deg,
-    #ffffff 60deg 120deg,
-    #ce2b37 120deg 180deg,
-    #009246 180deg 240deg,
-    #ffffff 240deg 300deg,
-    #ce2b37 300deg 360deg
-  );
-  animation: islandFlagSpin 4.5s linear infinite !important;
-  -webkit-animation: islandFlagSpin 4.5s linear infinite !important;
-  will-change: transform;
-  pointer-events: none;
-  z-index: 0;
-}
-
 .metallic-inner {
   position: relative;
   z-index: 1;
   background-color: #141A0F;
 }
 
-/* Respetar preferencias de movimiento reducido sin bloquear componentes interactivos */
+/* Respetar preferencias de movimiento reducido de forma segura sin romper micro-interacciones de marca */
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto !important;
+    scroll-behavior: auto;
   }
 }
