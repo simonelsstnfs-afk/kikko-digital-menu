@@ -6,6 +6,7 @@
 import { autoTranslateProduct } from '../src/utils/translateService';
 import { menuData as initialMenuData } from '../src/data';
 import { MenuItem, MenuCategory, PromoPillConfig } from '../src/types';
+import { ALLERGENS, detectAllergensFromText } from '../src/allergens';
 
 async function runAdminFunctionalTests() {
   console.log('\n======================================================');
@@ -208,6 +209,58 @@ async function runAdminFunctionalTests() {
   assert(
     itemAfterDelete === undefined,
     'Confirmación de que el plato no existe en la categoría tras borrado'
+  );
+
+  // -------------------------------------------------------------
+  // TEST 7: SISTEMA OFICIAL DE ALÉRGENOS (CATÁLOGO + DETECCIÓN + PERSISTENCIA)
+  // -------------------------------------------------------------
+  console.log('\n🔹 7. Probando Sistema de Alérgenos...');
+
+  assert(
+    ALLERGENS.length === 14,
+    'Catálogo maestro contiene los 14 alérgenos oficiales de la UE',
+    `Total registrados: ${ALLERGENS.length}`
+  );
+
+  const testPizzaDish = {
+    name: 'Pizza Carbonara Autentica',
+    description: 'Masa madre, mozzarella fiordilatte, guanciale crujiente, yema de huevo y pecorino romano.'
+  };
+  const detectedAllergens = detectAllergensFromText(testPizzaDish.name, testPizzaDish.description, 'pizzas');
+
+  assert(
+    detectedAllergens.includes('gluten') && detectedAllergens.includes('lacteos') && detectedAllergens.includes('huevos'),
+    'Motor heurístico detecta gluten, lácteos y huevos en Pizza Carbonara',
+    `Alérgenos detectados: [${detectedAllergens.join(', ')}]`
+  );
+
+  // Test de Entrantes: Croquetas y Bruschetta sin descripción explícita
+  const croquetasDetected = detectAllergensFromText('Croquetas Mixtas Pollo y Jamón (6 unidades)', '', 'entrantes');
+  assert(
+    croquetasDetected.includes('gluten') && croquetasDetected.includes('lacteos') && croquetasDetected.includes('huevos'),
+    'Motor heurístico detecta alérgenos culinarios en Croquetas (gluten, lácteos, huevos) aun sin descripción',
+    `Croquetas detectadas: [${croquetasDetected.join(', ')}]`
+  );
+
+  const bruschettaDetected = detectAllergensFromText('Bruschetta con Tomate', '', 'entrantes');
+  assert(
+    bruschettaDetected.includes('gluten'),
+    'Motor heurístico detecta gluten en Bruschetta por ser preparación a base de pan',
+    `Bruschetta detectada: [${bruschettaDetected.join(', ')}]`
+  );
+
+  const dishWithAllergens: MenuItem = {
+    id: 'test_dish_alg',
+    name: { es: 'Calamares Fritos', en: 'Fried Squids', it: 'Calamari Fritti' },
+    description: { es: 'Calamares con harina de sémola', en: 'Squids with semolina flour', it: 'Calamari con semola' },
+    price: 14.5,
+    allergens: ['gluten', 'moluscos']
+  };
+
+  assert(
+    Array.isArray(dishWithAllergens.allergens) && dishWithAllergens.allergens.length === 2,
+    'Plato almacena y persiste array de alérgenos correctamente',
+    `Alérgenos asignados: ${dishWithAllergens.allergens?.join(', ')}`
   );
 
   // -------------------------------------------------------------

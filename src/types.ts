@@ -9,9 +9,10 @@ export interface MenuItem {
   price: number;
   subcategory?: string;
   available?: boolean;
+  allergens?: string[];
 }
 
-export type PromoType = 'dish' | 'promo_2x1' | 'discount' | 'special_event' | 'custom';
+export type PromoType = 'dish' | 'promo_2x1' | 'discount' | 'special_event' | 'custom' | 'promo_new' | 'dish_suggestion' | 'event';
 export type PromoTargetType = 'dish' | 'category' | 'none';
 
 export interface PromoPillConfig {

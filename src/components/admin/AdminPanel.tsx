@@ -4,6 +4,7 @@ import { useMenuData } from '../../context/MenuDataContext';
 import { MenuItem, PromoType, PromoTargetType } from '../../types';
 import ProductModal from './ProductModal';
 import { translateText } from '../../utils/translateService';
+import { getAllergen } from '../../allergens';
 import {
   Lock,
   LogOut,
@@ -43,6 +44,7 @@ const DEFAULT_PIN = 'kikko2026';
 const PIN_STORAGE_KEY = 'kikko_admin_pin_v1';
 
 interface DraggableProductItemProps {
+  key?: React.Key;
   item: MenuItem;
   index: number;
   totalItems: number;
@@ -153,6 +155,25 @@ function DraggableProductItem({
             <p className="text-xs text-zinc-400 mt-1 line-clamp-2 break-words">
               {item.description.es}
             </p>
+          )}
+
+          {item.allergens && item.allergens.length > 0 && (
+            <div className="flex items-center gap-1.5 flex-wrap mt-2">
+              {item.allergens.map((algId) => {
+                const alg = getAllergen(algId);
+                if (!alg) return null;
+                return (
+                  <span
+                    key={algId}
+                    title={alg.name.es}
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-zinc-800 border border-zinc-700/60 text-[10px] text-zinc-300 font-medium"
+                  >
+                    <img src={alg.iconUrl} alt={alg.name.es} className="w-3.5 h-3.5 object-contain" />
+                    <span>{alg.name.es}</span>
+                  </span>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -1109,6 +1130,25 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                           <p className="text-xs text-zinc-400 mt-1 line-clamp-2 break-words">
                             {item.description.es}
                           </p>
+                        )}
+
+                        {item.allergens && item.allergens.length > 0 && (
+                          <div className="flex items-center gap-1.5 flex-wrap mt-2">
+                            {item.allergens.map((algId) => {
+                              const alg = getAllergen(algId);
+                              if (!alg) return null;
+                              return (
+                                <span
+                                  key={algId}
+                                  title={alg.name.es}
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-zinc-800 border border-zinc-700/60 text-[10px] text-zinc-300 font-medium"
+                                >
+                                  <img src={alg.iconUrl} alt={alg.name.es} className="w-3.5 h-3.5 object-contain" />
+                                  <span>{alg.name.es}</span>
+                                </span>
+                              );
+                            })}
+                          </div>
                         )}
                       </div>
 
