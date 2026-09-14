@@ -202,10 +202,10 @@ export default function DynamicIsland() {
                 }}
               >
                 <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
-                  {/* Sello / Medallón de Oro con el Imagotipo Oficial de Kikko */}
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                  {/* Sello / Medallón Pop-Art B&W con el Imagotipo Oficial de Kikko */}
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
                     <img
-                      src="/kikko-mascot-gold.png"
+                      src="/kikko-mascot-face.png"
                       alt="Kikko Pizzeria"
                       className="w-full h-full object-cover scale-110"
                       loading="eager"
@@ -252,7 +252,7 @@ export default function DynamicIsland() {
               </div>
             </motion.button>
           ) : (
-            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Imagotipo --- */
+            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Imagotipo B&W --- */
             <motion.div
               key="expanded-card"
               layoutId="dynamic-island-container"
@@ -266,12 +266,12 @@ export default function DynamicIsland() {
               }}
             >
               <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#09090b] flex flex-col gap-4">
-                {/* Cabecera de la tarjeta: Medallón de Kikko + Badge + Botón Cerrar */}
+                {/* Cabecera de la tarjeta: Medallón B&W de Kikko + Badge + Botón Cerrar */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
                       <img
-                        src="/kikko-mascot-gold.png"
+                        src="/kikko-mascot-face.png"
                         alt="Kikko Pizzeria"
                         className="w-full h-full object-cover scale-110"
                       />

@@ -1378,9 +1378,9 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   previewMode === 'compact' ? (
                     <div className="metallic-conic-border metallic-border-dish p-[1.5px] rounded-full shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
                       <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
-                        <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
                           <img
-                            src="/kikko-mascot-gold.png"
+                            src="/kikko-mascot-face.png"
                             alt="Kikko Pizzeria"
                             className="w-full h-full object-cover scale-110"
                           />
@@ -1421,9 +1421,9 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                       <div className="metallic-inner rounded-[22px] p-5 bg-[#09090b] flex flex-col gap-3.5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-md bg-black shrink-0">
                               <img
-                                src="/kikko-mascot-gold.png"
+                                src="/kikko-mascot-face.png"
                                 alt="Kikko Pizzeria"
                                 className="w-full h-full object-cover scale-110"
                               />
