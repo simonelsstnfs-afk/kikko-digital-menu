@@ -201,23 +201,8 @@ export default function DynamicIsland() {
                   boxShadow: '0 14px 40px rgba(0,0,0,0.98), 0 0 20px rgba(0,146,70,0.3)'
                 }}
               >
-                {/* Borde animado bandera de Italia (Framer Motion continuo a 360deg) */}
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute pointer-events-none"
-                  style={{
-                    width: '600px',
-                    height: '600px',
-                    top: '50%',
-                    left: '50%',
-                    marginLeft: '-300px',
-                    marginTop: '-300px',
-                    background: 'conic-gradient(from 0deg, #009246 0deg 57deg, #ffffff 60deg 117deg, #ce2b37 120deg 177deg, #009246 180deg 237deg, #ffffff 240deg 297deg, #ce2b37 300deg 357deg, #009246 360deg)',
-                    willChange: 'transform',
-                  }}
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ repeat: Infinity, duration: 3.5, ease: 'linear' }}
-                />
+                {/* Borde animado bandera de Italia (CSS Puro con rotación continua inmediata a 7s) */}
+                <div className="italian-flag-spinner" aria-hidden="true" />
 
                 <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
                   {/* Sello / Medallón Pop-Art B&W con Borde Blanco Puro Minimalista */}
@@ -283,23 +268,8 @@ export default function DynamicIsland() {
                 boxShadow: '0 25px 60px rgba(0,0,0,0.98), 0 0 35px rgba(0,146,70,0.35)'
               }}
             >
-              {/* Borde animado bandera de Italia para tarjeta (Framer Motion) */}
-              <motion.div
-                aria-hidden="true"
-                className="absolute pointer-events-none"
-                style={{
-                  width: '800px',
-                  height: '800px',
-                  top: '50%',
-                  left: '50%',
-                  marginLeft: '-400px',
-                  marginTop: '-400px',
-                  background: 'conic-gradient(from 0deg, #009246 0deg 57deg, #ffffff 60deg 117deg, #ce2b37 120deg 177deg, #009246 180deg 237deg, #ffffff 240deg 297deg, #ce2b37 300deg 357deg, #009246 360deg)',
-                  willChange: 'transform',
-                }}
-                animate={{ rotate: [0, 360] }}
-                transition={{ repeat: Infinity, duration: 4.5, ease: 'linear' }}
-              />
+              {/* Borde animado bandera de Italia para tarjeta (CSS Puro con rotación 9s) */}
+              <div className="italian-flag-card-spinner" aria-hidden="true" />
 
               <div className="relative z-10 rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
                 {/* Cabecera de la tarjeta: Medallón B&W de Kikko con Borde Blanco + Badge + Botón Cerrar */}

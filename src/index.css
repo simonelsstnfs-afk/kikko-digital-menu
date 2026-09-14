@@ -58,6 +58,78 @@ html {
   z-index: 25;
 }
 
+/* Dynamic Island: Rotación Fiel al Diseño Original (7s) con Bandera de Italia (Verde - Blanco en el medio - Rojo) */
+@keyframes italianFlagRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes italianFlagRotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.italian-flag-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 650px;
+  height: 650px;
+  margin-top: -325px;
+  margin-left: -325px;
+  background: conic-gradient(
+    from 0deg,
+    #141A0F 0deg 25deg,
+    #009246 27deg 73deg,
+    #ffffff 75deg 120deg,
+    #ce2b37 122deg 168deg,
+    #141A0F 170deg 205deg,
+    #009246 207deg 253deg,
+    #ffffff 255deg 300deg,
+    #ce2b37 302deg 348deg,
+    #141A0F 350deg 360deg
+  );
+  animation: italianFlagRotate 7s linear infinite !important;
+  -webkit-animation: italianFlagRotate 7s linear infinite !important;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.italian-flag-card-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  margin-top: -450px;
+  margin-left: -450px;
+  background: conic-gradient(
+    from 0deg,
+    #141A0F 0deg 25deg,
+    #009246 27deg 73deg,
+    #ffffff 75deg 120deg,
+    #ce2b37 122deg 168deg,
+    #141A0F 170deg 205deg,
+    #009246 207deg 253deg,
+    #ffffff 255deg 300deg,
+    #ce2b37 302deg 348deg,
+    #141A0F 350deg 360deg
+  );
+  animation: italianFlagRotate 9s linear infinite !important;
+  -webkit-animation: italianFlagRotate 9s linear infinite !important;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .metallic-inner {
   position: relative;
   z-index: 1;
