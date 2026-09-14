@@ -110,6 +110,12 @@ export const translations = {
     cartPickupOption: 'Recoger en tienda',
     cartDeliveryType: 'Tipo de pedido',
     cartMinOrder: 'El pedido mínimo es de',
+    dynamicIslandViewDish: 'Ver en la carta',
+    dynamicIslandClose: 'Cerrar',
+    dynamicIslandChef: 'Sugerencia del Chef',
+    dynamicIsland2x1: 'Promoción 2x1',
+    dynamicIslandDiscount: 'Oferta Especial',
+    dynamicIslandEvent: 'Evento Especial',
   },
   en: {
     heroSabor: 'Authentic',
@@ -220,6 +226,12 @@ export const translations = {
     cartPickupOption: 'Pickup',
     cartDeliveryType: 'Order type',
     cartMinOrder: 'Minimum order is',
+    dynamicIslandViewDish: 'View on menu',
+    dynamicIslandClose: 'Close',
+    dynamicIslandChef: "Chef's Special",
+    dynamicIsland2x1: '2 for 1 Promo',
+    dynamicIslandDiscount: 'Special Offer',
+    dynamicIslandEvent: 'Special Event',
   },
   it: {
     heroSabor: 'Sapore',
@@ -330,5 +342,11 @@ export const translations = {
     cartPickupOption: 'Ritiro in negozio',
     cartDeliveryType: 'Tipo di ordine',
     cartMinOrder: 'L\'ordine minimo è di',
+    dynamicIslandViewDish: 'Vedi nel menu',
+    dynamicIslandClose: 'Chiudi',
+    dynamicIslandChef: 'Specialità dello Chef',
+    dynamicIsland2x1: 'Promozione 2x1',
+    dynamicIslandDiscount: 'Offerta Speciale',
+    dynamicIslandEvent: 'Evento Speciale',
   }
 };

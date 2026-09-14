@@ -11,11 +11,22 @@ export interface MenuItem {
   available?: boolean;
 }
 
+export type PromoType = 'dish' | 'promo_2x1' | 'discount' | 'special_event' | 'custom';
+export type PromoTargetType = 'dish' | 'category' | 'none';
+
 export interface PromoPillConfig {
   active: boolean;
   tag: { es: string; en: string; it: string } | string;
   title: { es: string; en: string; it: string } | string;
-  targetCategory: string;
+  targetCategory?: string;
+  // Campos extendidos para Dynamic Promotional Island:
+  type?: PromoType;
+  description?: { es: string; en: string; it: string } | string;
+  price?: number | string;
+  originalPrice?: number | string;
+  targetType?: PromoTargetType;
+  targetItemId?: string;
+  image?: string;
 }
 
 export interface MenuCategory {

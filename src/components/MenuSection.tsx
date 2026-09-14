@@ -193,11 +193,12 @@ export default function MenuSection() {
                         {items.map((item, itemIdx) => (
                           <motion.div
                             key={item.id}
+                            id={`dish-${item.id}`}
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.4, delay: itemIdx * 0.05 }}
-                            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-colors"
+                            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-8 hover:bg-white/[0.05] transition-all scroll-mt-[250px]"
                           >
                             <div className="flex justify-between items-start sm:items-center gap-4 w-full">
                               <h5 className="font-sans text-[1.1rem] md:text-xl text-white font-bold tracking-wide flex-shrink max-w-[75%] leading-tight">

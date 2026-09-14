@@ -36,8 +36,15 @@ interface MenuDataContextType {
 
 const defaultPromoPill: PromoPillConfig = {
   active: true,
+  type: 'dish',
   tag: { es: 'Novedad', en: 'New', it: 'Novità' },
   title: { es: 'Risottos Auténticos', en: 'Authentic Risottos', it: 'Risotti Autentici' },
+  description: {
+    es: 'Deliciosos risottos tradicionales preparados con arroz carnaroli italiano.',
+    en: 'Delicious traditional risottos prepared with authentic Italian carnaroli rice.',
+    it: 'Deliziosi risotti tradizionali preparati con autentico riso carnaroli italiano.'
+  },
+  targetType: 'category',
   targetCategory: 'risottos'
 };
 

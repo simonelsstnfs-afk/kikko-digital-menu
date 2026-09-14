@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Reorder, useDragControls } from 'motion/react';
 import { useMenuData } from '../../context/MenuDataContext';
-import { MenuItem } from '../../types';
+import { MenuItem, PromoType, PromoTargetType } from '../../types';
 import ProductModal from './ProductModal';
 import { translateText } from '../../utils/translateService';
 import {
@@ -17,6 +17,9 @@ import {
   Upload,
   Search,
   Sparkles,
+  Flame,
+  Tag,
+  Calendar,
   UtensilsCrossed,
   Sliders,
   Eye,
@@ -286,10 +289,11 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   const [productToDelete, setProductToDelete] = useState<{ categoryId: string; item: MenuItem } | null>(null);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
-  // Estado del formulario de la píldora de novedad (Soporte multilingüe ES, EN, IT)
+  // Estado del formulario de la Dynamic Promotional Island (Soporte multilingüe ES, EN, IT)
   const [pillActive, setPillActive] = useState(promoPill.active);
+  const [pillType, setPillType] = useState<PromoType>(promoPill.type || 'dish');
   const [pillTag, setPillTag] = useState(
-    typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Novedad'
+    typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Sugerencia'
   );
   const [pillTagEn, setPillTagEn] = useState(
     typeof promoPill.tag === 'object' ? promoPill.tag?.en || '' : ''
@@ -308,20 +312,63 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     typeof promoPill.title === 'object' ? promoPill.title?.it || '' : ''
   );
 
+  const [pillDesc, setPillDesc] = useState(
+    typeof promoPill.description === 'string'
+      ? promoPill.description
+      : promoPill.description?.es || ''
+  );
+  const [pillDescEn, setPillDescEn] = useState(
+    typeof promoPill.description === 'object' ? promoPill.description?.en || '' : ''
+  );
+  const [pillDescIt, setPillDescIt] = useState(
+    typeof promoPill.description === 'object' ? promoPill.description?.it || '' : ''
+  );
+
+  const [pillPrice, setPillPrice] = useState(
+    promoPill.price !== undefined && promoPill.price !== null ? String(promoPill.price) : ''
+  );
+  const [pillOriginalPrice, setPillOriginalPrice] = useState(
+    promoPill.originalPrice !== undefined && promoPill.originalPrice !== null
+      ? String(promoPill.originalPrice)
+      : ''
+  );
+
+  const [pillTargetType, setPillTargetType] = useState<PromoTargetType>(
+    promoPill.targetType || (promoPill.targetItemId ? 'dish' : 'category')
+  );
+  const [pillTargetItemId, setPillTargetItemId] = useState(promoPill.targetItemId || '');
   const [pillCategory, setPillCategory] = useState(promoPill.targetCategory || 'risottos');
+
   const [promoSavedSuccess, setPromoSavedSuccess] = useState(false);
   const [previewLang, setPreviewLang] = useState<'es' | 'en' | 'it'>('es');
+  const [previewMode, setPreviewMode] = useState<'compact' | 'expanded'>('compact');
   const [isTranslatingPill, setIsTranslatingPill] = useState(false);
   const [pillTranslateDone, setPillTranslateDone] = useState(false);
 
   useEffect(() => {
     setPillActive(promoPill.active);
-    setPillTag(typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Novedad');
+    setPillType(promoPill.type || 'dish');
+    setPillTag(typeof promoPill.tag === 'string' ? promoPill.tag : promoPill.tag?.es || 'Sugerencia');
     setPillTagEn(typeof promoPill.tag === 'object' ? promoPill.tag?.en || '' : '');
     setPillTagIt(typeof promoPill.tag === 'object' ? promoPill.tag?.it || '' : '');
     setPillTitle(typeof promoPill.title === 'string' ? promoPill.title : promoPill.title?.es || 'Risottos Auténticos');
     setPillTitleEn(typeof promoPill.title === 'object' ? promoPill.title?.en || '' : '');
     setPillTitleIt(typeof promoPill.title === 'object' ? promoPill.title?.it || '' : '');
+    setPillDesc(
+      typeof promoPill.description === 'string'
+        ? promoPill.description
+        : promoPill.description?.es || ''
+    );
+    setPillDescEn(typeof promoPill.description === 'object' ? promoPill.description?.en || '' : '');
+    setPillDescIt(typeof promoPill.description === 'object' ? promoPill.description?.it || '' : '');
+    setPillPrice(promoPill.price !== undefined && promoPill.price !== null ? String(promoPill.price) : '');
+    setPillOriginalPrice(
+      promoPill.originalPrice !== undefined && promoPill.originalPrice !== null
+        ? String(promoPill.originalPrice)
+        : ''
+    );
+    setPillTargetType(promoPill.targetType || (promoPill.targetItemId ? 'dish' : 'category'));
+    setPillTargetItemId(promoPill.targetItemId || '');
     setPillCategory(promoPill.targetCategory || 'risottos');
   }, [promoPill]);
 
@@ -428,32 +475,102 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     setPinInput('');
   };
 
-  // Auto-traducir campos de la píldora a inglés e italiano
+  // Aplicar presets de promoción rápidamente
+  const applyPreset = (type: PromoType) => {
+    setPillType(type);
+    if (type === 'dish') {
+      setPillTag('SUGERENCIA');
+      setPillTagEn('SPECIAL');
+      setPillTagIt('CONSIGLIATO');
+      setPillTargetType('dish');
+    } else if (type === 'promo_2x1') {
+      setPillTag('PROMO 2x1');
+      setPillTagEn('2 FOR 1');
+      setPillTagIt('PROMO 2x1');
+      setPillTargetType('dish');
+    } else if (type === 'discount') {
+      setPillTag('OFERTA');
+      setPillTagEn('SALE');
+      setPillTagIt('OFFERTA');
+      setPillTargetType('dish');
+    } else if (type === 'special_event') {
+      setPillTag('EVENTO');
+      setPillTagEn('EVENT');
+      setPillTagIt('EVENTO');
+      setPillTargetType('none');
+    } else if (type === 'custom') {
+      setPillTag('PROMO');
+      setPillTagEn('SPECIAL');
+      setPillTagIt('PROMO');
+    }
+  };
+
+  // Autocompletar datos desde un plato existente de la carta
+  const handleSelectDishForPromo = (dishId: string) => {
+    if (!dishId) return;
+    for (const cat of categories) {
+      const item = cat.items.find(it => it.id === dishId);
+      if (item) {
+        setPillTargetType('dish');
+        setPillTargetItemId(item.id);
+        setPillCategory(cat.id);
+        
+        // Autocompletar título
+        if (typeof item.name === 'string') {
+          setPillTitle(item.name);
+          setPillTitleEn(item.name);
+          setPillTitleIt(item.name);
+        } else {
+          setPillTitle(item.name.es);
+          setPillTitleEn(item.name.en || '');
+          setPillTitleIt(item.name.it || '');
+        }
+
+        // Autocompletar descripción
+        if (item.description) {
+          setPillDesc(item.description.es || '');
+          setPillDescEn(item.description.en || '');
+          setPillDescIt(item.description.it || '');
+        }
+
+        // Autocompletar precio
+        setPillPrice(item.price.toFixed(2));
+        break;
+      }
+    }
+  };
+
+  // Auto-traducir campos de la Dynamic Island a inglés e italiano
   const handleAutoTranslatePill = async () => {
-    if (!pillTitle.trim()) return;
+    if (!pillTitle.trim() && !pillDesc.trim() && !pillTag.trim()) return;
     setIsTranslatingPill(true);
     try {
-      const [tTagEn, tTagIt, tTitleEn, tTitleIt] = await Promise.all([
+      const [tTagEn, tTagIt, tTitleEn, tTitleIt, tDescEn, tDescIt] = await Promise.all([
         pillTag.trim() ? translateText(pillTag.trim(), 'en') : Promise.resolve(''),
         pillTag.trim() ? translateText(pillTag.trim(), 'it') : Promise.resolve(''),
-        translateText(pillTitle.trim(), 'en'),
-        translateText(pillTitle.trim(), 'it')
+        pillTitle.trim() ? translateText(pillTitle.trim(), 'en') : Promise.resolve(''),
+        pillTitle.trim() ? translateText(pillTitle.trim(), 'it') : Promise.resolve(''),
+        pillDesc.trim() ? translateText(pillDesc.trim(), 'en') : Promise.resolve(''),
+        pillDesc.trim() ? translateText(pillDesc.trim(), 'it') : Promise.resolve('')
       ]);
 
       if (tTagEn) setPillTagEn(tTagEn);
       if (tTagIt) setPillTagIt(tTagIt);
       if (tTitleEn) setPillTitleEn(tTitleEn);
       if (tTitleIt) setPillTitleIt(tTitleIt);
+      if (tDescEn) setPillDescEn(tDescEn);
+      if (tDescIt) setPillDescIt(tDescIt);
+
       setPillTranslateDone(true);
       setTimeout(() => setPillTranslateDone(false), 3000);
     } catch (e) {
-      console.warn('Error traduciendo píldora:', e);
+      console.warn('Error traduciendo promoción:', e);
     } finally {
       setIsTranslatingPill(false);
     }
   };
 
-  // Guardar píldora de novedad con auto-traducción si faltan campos en otros idiomas
+  // Guardar configuración de la Dynamic Island con auto-traducción si faltan campos
   const handleSavePromoPill = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsTranslatingPill(true);
@@ -462,33 +579,50 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     let finalTagIt = pillTagIt.trim();
     let finalTitleEn = pillTitleEn.trim();
     let finalTitleIt = pillTitleIt.trim();
+    let finalDescEn = pillDescEn.trim();
+    let finalDescIt = pillDescIt.trim();
 
     // Auto-completar traducciones faltantes al vuelo antes de guardar
-    if (!finalTitleEn || !finalTitleIt || !finalTagEn || !finalTagIt) {
-      try {
-        const [tTagEn, tTagIt, tTitleEn, tTitleIt] = await Promise.all([
-          !finalTagEn && pillTag.trim() ? translateText(pillTag.trim(), 'en') : Promise.resolve(finalTagEn),
-          !finalTagIt && pillTag.trim() ? translateText(pillTag.trim(), 'it') : Promise.resolve(finalTagIt),
-          !finalTitleEn && pillTitle.trim() ? translateText(pillTitle.trim(), 'en') : Promise.resolve(finalTitleEn),
-          !finalTitleIt && pillTitle.trim() ? translateText(pillTitle.trim(), 'it') : Promise.resolve(finalTitleIt)
-        ]);
-        if (tTagEn) finalTagEn = tTagEn;
-        if (tTagIt) finalTagIt = tTagIt;
-        if (tTitleEn) finalTitleEn = tTitleEn;
-        if (tTitleIt) finalTitleIt = tTitleIt;
-
+    try {
+      const promises: Promise<void>[] = [];
+      if (!finalTagEn && pillTag.trim()) {
+        promises.push(translateText(pillTag.trim(), 'en').then(res => { if (res) finalTagEn = res; }));
+      }
+      if (!finalTagIt && pillTag.trim()) {
+        promises.push(translateText(pillTag.trim(), 'it').then(res => { if (res) finalTagIt = res; }));
+      }
+      if (!finalTitleEn && pillTitle.trim()) {
+        promises.push(translateText(pillTitle.trim(), 'en').then(res => { if (res) finalTitleEn = res; }));
+      }
+      if (!finalTitleIt && pillTitle.trim()) {
+        promises.push(translateText(pillTitle.trim(), 'it').then(res => { if (res) finalTitleIt = res; }));
+      }
+      if (!finalDescEn && pillDesc.trim()) {
+        promises.push(translateText(pillDesc.trim(), 'en').then(res => { if (res) finalDescEn = res; }));
+      }
+      if (!finalDescIt && pillDesc.trim()) {
+        promises.push(translateText(pillDesc.trim(), 'it').then(res => { if (res) finalDescIt = res; }));
+      }
+      if (promises.length > 0) {
+        await Promise.all(promises);
         setPillTagEn(finalTagEn);
         setPillTagIt(finalTagIt);
         setPillTitleEn(finalTitleEn);
         setPillTitleIt(finalTitleIt);
-      } catch (err) {
-        console.warn('Error auto-traduciendo píldora al guardar:', err);
+        setPillDescEn(finalDescEn);
+        setPillDescIt(finalDescIt);
       }
+    } catch (err) {
+      console.warn('Error auto-traduciendo al guardar:', err);
     }
     setIsTranslatingPill(false);
 
+    const parsedPrice = pillPrice.trim() !== '' ? parseFloat(pillPrice.replace(',', '.')) : undefined;
+    const parsedOriginalPrice = pillOriginalPrice.trim() !== '' ? parseFloat(pillOriginalPrice.replace(',', '.')) : undefined;
+
     updatePromoPill({
       active: pillActive,
+      type: pillType,
       tag: {
         es: pillTag.trim(),
         en: finalTagEn || pillTag.trim(),
@@ -499,8 +633,18 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
         en: finalTitleEn || pillTitle.trim(),
         it: finalTitleIt || pillTitle.trim()
       },
+      description: {
+        es: pillDesc.trim(),
+        en: finalDescEn || pillDesc.trim(),
+        it: finalDescIt || pillDesc.trim()
+      },
+      price: !isNaN(parsedPrice as number) ? parsedPrice : undefined,
+      originalPrice: !isNaN(parsedOriginalPrice as number) ? parsedOriginalPrice : undefined,
+      targetType: pillTargetType,
+      targetItemId: pillTargetType === 'dish' ? pillTargetItemId : undefined,
       targetCategory: pillCategory
     });
+
     setPromoSavedSuccess(true);
     setTimeout(() => setPromoSavedSuccess(false), 3000);
   };
@@ -767,8 +911,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
             >
               <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-amber-400" />
               <span className="truncate">
-                <span className="sm:hidden">Novedad</span>
-                <span className="hidden sm:inline">Píldora Novedad</span>
+                <span className="sm:hidden">Promos</span>
+                <span className="hidden sm:inline">Dynamic Island</span>
               </span>
             </button>
 
@@ -1052,28 +1196,151 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
         )}
 
         {/* =========================================================================
-            PESTAÑA 2: CONTROL DE LA PÍLDORA DE NOVEDAD (HERO)
+            PESTAÑA 2: CONTROL DE LA DYNAMIC PROMOTIONAL ISLAND
            ========================================================================= */}
         {activeTab === 'promo' && (
           <div className="max-w-2xl mx-auto space-y-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
             <div>
               <span className="text-xs font-semibold text-[#C2410C] uppercase tracking-wider">
-                Hero Section
+                Dynamic Promotional Island
               </span>
               <h2 className="text-lg sm:text-xl font-serif font-bold text-white mt-1">
-                Píldora de Novedad / Promoción
+                Configurador de Promociones & Ofertas
               </h2>
               <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-                Controla manualmente la etiqueta destacada que aparece justo debajo del logo en la cabecera de la carta.
+                Gestiona la isla interactiva Liquid Glass flotante en la zona del pulgar en móviles. Soporta autonavegación guiada con halo de luz a platos, presets rápidos (2x1, rebajas) y auto-traducción.
               </p>
             </div>
 
-            {/* Live Preview de la Píldora con selector de idiomas */}
+            {/* Presets de promoción rápida */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <label className="block text-xs uppercase font-semibold text-zinc-400 tracking-wider">
-                  Vista Previa en Vivo (Hero)
-                </label>
+              <label className="block text-xs uppercase font-semibold text-zinc-400 tracking-wider">
+                Presets de Promoción Rápida (1 Clic)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => applyPreset('dish')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'dish'
+                      ? 'bg-amber-950/50 border-amber-500 text-amber-300 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Sugerencia</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">Plato destacado</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset('promo_2x1')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'promo_2x1'
+                      ? 'bg-red-950/50 border-red-500 text-red-300 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Flame className="w-4 h-4 text-red-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Promo 2x1</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">Doble ración</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset('discount')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'discount'
+                      ? 'bg-emerald-950/50 border-emerald-500 text-emerald-300 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Tag className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Rebaja</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">Precio tachado</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset('special_event')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'special_event'
+                      ? 'bg-purple-950/50 border-purple-500 text-purple-300 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4 text-purple-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Evento</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">Cata / Directo</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Autocompletado desde plato existente */}
+            <div className="space-y-1.5 p-3.5 rounded-xl bg-zinc-950/70 border border-zinc-800">
+              <label className="block text-xs uppercase font-semibold text-zinc-300 tracking-wider">
+                ⚡ Autocompletar desde la Carta (1 Clic)
+              </label>
+              <select
+                onChange={(e) => handleSelectDishForPromo(e.target.value)}
+                defaultValue=""
+                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-[#C2410C] cursor-pointer"
+              >
+                <option value="">-- Elige un plato para cargar nombre, precio y descripción --</option>
+                {categories.map((cat) => (
+                  <optgroup key={cat.id} label={cat.id.toUpperCase()}>
+                    {cat.items.map((item) => {
+                      const name = typeof item.name === 'string' ? item.name : item.name.es;
+                      return (
+                        <option key={item.id} value={item.id}>
+                          {name} — {item.price.toFixed(2)}€
+                        </option>
+                      );
+                    })}
+                  </optgroup>
+                ))}
+              </select>
+              <span className="text-[11px] text-zinc-500 block">
+                Carga instantáneamente el nombre, descripción y precio del plato, y configura la autonavegación hacia él.
+              </span>
+            </div>
+
+            {/* Live Preview de la Dynamic Island */}
+            <div className="space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-1 bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewMode('compact')}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded cursor-pointer transition-colors ${
+                      previewMode === 'compact'
+                        ? 'bg-zinc-800 text-white shadow-sm'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Píldora Compacta
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewMode('expanded')}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded cursor-pointer transition-colors ${
+                      previewMode === 'expanded'
+                        ? 'bg-zinc-800 text-white shadow-sm'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Tarjeta Expandida
+                  </button>
+                </div>
+
                 <div className="flex items-center gap-1 bg-zinc-950 p-1 rounded-lg border border-zinc-800">
                   <button
                     type="button"
@@ -1081,7 +1348,6 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
                       previewLang === 'es' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
                     }`}
-                    title="Ver cómo lo verán en Español"
                   >
                     🇪🇸 ES
                   </button>
@@ -1091,7 +1357,6 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
                       previewLang === 'en' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
                     }`}
-                    title="Ver cómo lo verán en Inglés"
                   >
                     🇬🇧 EN
                   </button>
@@ -1101,27 +1366,74 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     className={`px-2 py-0.5 text-[11px] font-bold rounded cursor-pointer transition-colors ${
                       previewLang === 'it' ? 'bg-[#C2410C] text-white shadow-sm' : 'text-zinc-400 hover:text-white'
                     }`}
-                    title="Ver cómo lo verán en Italiano"
                   >
                     🇮🇹 IT
                   </button>
                 </div>
               </div>
 
-              <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[100px] text-center">
+              {/* Contenedor de la Vista Previa */}
+              <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[120px] text-center relative overflow-hidden">
                 {pillActive ? (
-                  <div className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-zinc-950/80 border border-[#C2410C]/60 shadow-[0_0_15px_rgba(194,65,12,0.4)] backdrop-blur-md max-w-full">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#C2410C] shrink-0">
-                      {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}:
-                    </span>
-                    <span className="text-[10px] sm:text-[11px] text-zinc-100 uppercase tracking-wider font-semibold truncate">
-                      {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
-                    </span>
-                    <span className="text-xs text-[#C2410C] font-bold shrink-0">↓</span>
-                  </div>
+                  previewMode === 'compact' ? (
+                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-950/85 border border-[#C2410C]/60 shadow-[0_8px_25px_rgba(0,0,0,0.8),0_0_15px_rgba(194,65,12,0.3)] backdrop-blur-md max-w-full">
+                      <span className="relative flex h-2.5 w-2.5 shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                      </span>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded bg-white/10 shrink-0">
+                        {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-100 truncate max-w-[150px] sm:max-w-[200px]">
+                        {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
+                      </span>
+                      {pillOriginalPrice && pillPrice && (
+                        <span className="line-through text-zinc-400 text-[10px] shrink-0">
+                          {parseFloat(pillOriginalPrice).toFixed(2)}€
+                        </span>
+                      )}
+                      {pillPrice && (
+                        <span className="text-amber-400 font-extrabold text-xs shrink-0">
+                          {parseFloat(pillPrice).toFixed(2)}€
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full max-w-sm p-4 rounded-2xl bg-zinc-950/95 border border-[#C2410C]/60 shadow-2xl flex flex-col gap-2.5 text-left">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 px-2.5 py-0.5 rounded-full bg-amber-950/60 border border-amber-800/80">
+                          {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-mono">Dynamic Island</span>
+                      </div>
+                      <h4 className="font-serif text-lg text-white font-bold tracking-tight">
+                        {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
+                      </h4>
+                      <p className="text-xs text-zinc-300 leading-relaxed">
+                        {previewLang === 'es' ? (pillDesc || 'Sin descripción') : previewLang === 'en' ? (pillDescEn || pillDesc || 'No description') : (pillDescIt || pillDesc || 'Senza descrizione')}
+                      </p>
+                      <div className="flex items-baseline gap-2 pt-1">
+                        {pillOriginalPrice && (
+                          <span className="text-zinc-500 line-through text-xs">
+                            Antes {parseFloat(pillOriginalPrice).toFixed(2)}€
+                          </span>
+                        )}
+                        {pillPrice && (
+                          <span className="text-xl font-extrabold text-amber-400">
+                            {parseFloat(pillPrice).toFixed(2)}€
+                          </span>
+                        )}
+                      </div>
+                      <div className="pt-1">
+                        <div className="w-full py-2 rounded-xl bg-gradient-to-r from-[#C2410C] to-amber-600 text-white font-bold text-xs text-center">
+                          Ver en la carta →
+                        </div>
+                      </div>
+                    </div>
+                  )
                 ) : (
                   <span className="text-xs text-zinc-500 italic">
-                    (La píldora se encuentra oculta actualmente)
+                    (La Dynamic Island se encuentra oculta actualmente)
                   </span>
                 )}
               </div>
@@ -1132,8 +1444,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               {/* Switch de activación */}
               <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 gap-3">
                 <div>
-                  <span className="text-xs sm:text-sm font-bold text-white block">Mostrar Píldora en el Hero</span>
-                  <span className="text-[11px] sm:text-xs text-zinc-400">Si lo desactivas, no aparecerá en la web pública.</span>
+                  <span className="text-xs sm:text-sm font-bold text-white block">Mostrar Dynamic Island</span>
+                  <span className="text-[11px] sm:text-xs text-zinc-400">Píldora flotante interactiva en la parte inferior de la carta.</span>
                 </div>
                 <button
                   type="button"
@@ -1150,22 +1462,144 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                 </button>
               </div>
 
+              {/* Destino de Autonavegación Inteligente */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#C2410C] block">
+                  🎯 Autonavegación al pulsar "Ver en la carta"
+                </span>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPillTargetType('dish')}
+                    className={`p-2.5 rounded-xl border text-xs font-semibold cursor-pointer text-center transition-all ${
+                      pillTargetType === 'dish'
+                        ? 'bg-[#C2410C]/20 border-[#C2410C] text-white'
+                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    ✨ Plato con Halo de Luz
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPillTargetType('category')}
+                    className={`p-2.5 rounded-xl border text-xs font-semibold cursor-pointer text-center transition-all ${
+                      pillTargetType === 'category'
+                        ? 'bg-[#C2410C]/20 border-[#C2410C] text-white'
+                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    📂 Categoría General
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPillTargetType('none')}
+                    className={`p-2.5 rounded-xl border text-xs font-semibold cursor-pointer text-center transition-all ${
+                      pillTargetType === 'none'
+                        ? 'bg-[#C2410C]/20 border-[#C2410C] text-white'
+                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    ℹ️ Solo Informativo
+                  </button>
+                </div>
+
+                {pillTargetType === 'dish' && (
+                  <div>
+                    <label className="block text-[11px] uppercase font-semibold text-zinc-400 mb-1">
+                      Plato objetivo que recibirá el halo de luz
+                    </label>
+                    <select
+                      value={pillTargetItemId}
+                      onChange={(e) => setPillTargetItemId(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-[#C2410C]"
+                    >
+                      <option value="">-- Selecciona el plato a iluminar --</option>
+                      {categories.map((cat) => (
+                        <optgroup key={cat.id} label={cat.id.toUpperCase()}>
+                          {cat.items.map((item) => {
+                            const name = typeof item.name === 'string' ? item.name : item.name.es;
+                            return (
+                              <option key={item.id} value={item.id}>
+                                {name} ({item.price.toFixed(2)}€)
+                              </option>
+                            );
+                          })}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {pillTargetType === 'category' && (
+                  <div>
+                    <label className="block text-[11px] uppercase font-semibold text-zinc-400 mb-1">
+                      Categoría a la que desplazarse
+                    </label>
+                    <select
+                      value={pillCategory}
+                      onChange={(e) => setPillCategory(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-[#C2410C]"
+                    >
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.id.charAt(0).toUpperCase() + c.id.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {/* Precios (Normal y Rebaja) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1 tracking-wider">
+                    Precio Promocional (€)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. 16.50"
+                    value={pillPrice}
+                    onChange={(e) => setPillPrice(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
+                  />
+                  <span className="text-[10px] text-zinc-500">Precio destacado en la píldora.</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
+                    Precio Original Tachado (€) <span className="text-zinc-500 font-normal">(Opcional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. 21.00"
+                    value={pillOriginalPrice}
+                    onChange={(e) => setPillOriginalPrice(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
+                  />
+                  <span className="text-[10px] text-zinc-500">Aparecerá tachado si se rellena.</span>
+                </div>
+              </div>
+
               {/* Botón de Auto-Traducción Inteligente */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/60 border border-zinc-800">
                 <div>
                   <span className="text-xs font-semibold text-zinc-200 block">
-                    Traducción Automática
+                    Traducción Automática Inteligente
                   </span>
                   <span className="text-[11px] text-zinc-500">
-                    Genera inglés e italiano con un solo clic.
+                    Traduce etiqueta, título y descripción a inglés e italiano en 1 clic.
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleAutoTranslatePill}
-                  disabled={isTranslatingPill || !pillTitle.trim()}
+                  disabled={isTranslatingPill || (!pillTitle.trim() && !pillDesc.trim())}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-950/40 hover:bg-amber-950/80 border border-amber-800/60 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                  title="Traducir etiqueta y mensaje automáticamente"
+                  title="Traducir automáticamente a inglés e italiano"
                 >
                   {isTranslatingPill ? (
                     <>
@@ -1198,7 +1632,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   <input
                     type="text"
                     required
-                    placeholder="Ej. NOVEDAD, PROMO..."
+                    placeholder="Ej. NOVEDAD, PROMO 2x1, REBAJA..."
                     value={pillTag}
                     onChange={(e) => setPillTag(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
@@ -1206,14 +1640,26 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                 </div>
                 <div>
                   <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
-                    Texto Principal de la Novedad
+                    Título de la Promoción
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Ej. RISOTTOS AUTÉNTICOS, NUEVA PIZZA TRUFADA..."
+                    placeholder="Ej. Risotto al Tartufo, Pizza Burrata Gourmet..."
                     value={pillTitle}
                     onChange={(e) => setPillTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
+                    Descripción Gourmet (Tarjeta Expandida)
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Ej. Arroz carnaroli con trufa negra seleccionada y virutas de parmesano reggiano."
+                    value={pillDesc}
+                    onChange={(e) => setPillDesc(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
                   />
                 </div>
@@ -1232,7 +1678,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej. NEW, SPECIAL..."
+                      placeholder="E.g. SPECIAL, 2 FOR 1..."
                       value={pillTagEn}
                       onChange={(e) => setPillTagEn(e.target.value)}
                       className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
@@ -1240,13 +1686,25 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   </div>
                   <div>
                     <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
-                      Message
+                      Title
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej. AUTHENTIC RISOTTOS..."
+                      placeholder="E.g. Truffle Risotto..."
                       value={pillTitleEn}
                       onChange={(e) => setPillTitleEn(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="E.g. Creamy carnaroli rice with black truffle..."
+                      value={pillDescEn}
+                      onChange={(e) => setPillDescEn(e.target.value)}
                       className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
                     />
                   </div>
@@ -1263,7 +1721,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej. NOVITÀ, PROMO..."
+                      placeholder="Es. CONSIGLIATO, PROMO 2x1..."
                       value={pillTagIt}
                       onChange={(e) => setPillTagIt(e.target.value)}
                       className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
@@ -1271,41 +1729,35 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   </div>
                   <div>
                     <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
-                      Messaggio
+                      Titolo
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej. RISOTTI AUTENTICI..."
+                      placeholder="Es. Risotto al Tartufo..."
                       value={pillTitleIt}
                       onChange={(e) => setPillTitleIt(e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase font-semibold text-zinc-500 mb-1">
+                      Descrizione
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Es. Cremoso riso carnaroli con tartufo nero..."
+                      value={pillDescIt}
+                      onChange={(e) => setPillDescIt(e.target.value)}
                       className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white text-base sm:text-xs focus:outline-none focus:border-[#C2410C]"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Categoría a la que desplaza al hacer clic */}
-              <div>
-                <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1.5 tracking-wider">
-                  Categoría a la que salta al hacer clic
-                </label>
-                <select
-                  value={pillCategory}
-                  onChange={(e) => setPillCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-xl text-white text-base sm:text-sm focus:outline-none focus:border-[#C2410C]"
-                >
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.id.charAt(0).toUpperCase() + c.id.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               {promoSavedSuccess && (
                 <div className="flex items-center gap-2 p-3 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 rounded-xl">
                   <Check className="w-4 h-4 shrink-0" />
-                  <span>¡Píldora de novedad actualizada y traducida correctamente!</span>
+                  <span>¡Dynamic Island actualizada y guardada correctamente!</span>
                 </div>
               )}
 
@@ -1320,7 +1772,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     <span>Guardando y traduciendo...</span>
                   </>
                 ) : (
-                  <span>Guardar Configuración de la Píldora</span>
+                  <span>Guardar Configuración de la Dynamic Island</span>
                 )}
               </button>
             </form>

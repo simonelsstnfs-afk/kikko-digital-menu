@@ -10,6 +10,7 @@ import MenuSection from './components/MenuSection';
 import ReservationForm from './components/ReservationForm';
 import GoogleReviewCTA from './components/GoogleReviewCTA';
 import Footer from './components/Footer';
+import DynamicIsland from './components/DynamicIsland';
 import AdminPanel from './components/admin/AdminPanel';
 import AdminErrorBoundary from './components/admin/AdminErrorBoundary';
 import { MenuDataProvider } from './context/MenuDataContext';
@@ -74,6 +75,7 @@ function AppContent() {
         <GoogleReviewCTA />
       </main>
       <Footer />
+      <DynamicIsland />
     </div>
   );
 }
