@@ -84,6 +84,7 @@ export default function DynamicIsland() {
 
   const visuals = getPresetVisuals(promoType);
 
+
   // Cerrar tarjeta al pulsar fuera o pulsar tecla Escape
   useEffect(() => {
     if (!isExpanded) return;
@@ -177,7 +178,7 @@ export default function DynamicIsland() {
       <div className="pointer-events-auto max-w-lg w-full flex justify-center">
         <AnimatePresence initial={false} mode="wait">
           {!isExpanded ? (
-            /* --- ESTADO COMPACTO: Dynamic Island Pill --- */
+            /* --- ESTADO COMPACTO: Dynamic Island Pill (100% Opaco y Segmentado) --- */
             <motion.button
               key="compact-pill"
               layoutId="dynamic-island-container"
@@ -187,8 +188,9 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className={`group relative flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[#10160c] border-2 ${visuals.borderColor} shadow-[0_12px_40px_rgba(0,0,0,0.95)] hover:shadow-[0_12px_40px_-4px_${visuals.glowColor}] transition-all duration-200 cursor-pointer active:scale-95`}
+              className={`group relative flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-zinc-950 border-2 ${visuals.borderColor} shadow-[0_12px_35px_rgba(0,0,0,0.95)] hover:shadow-[0_14px_40px_-2px_${visuals.glowColor}] transition-all duration-200 cursor-pointer active:scale-95`}
               style={{
+                backgroundColor: '#09090b',
                 boxShadow: `0 12px 35px rgba(0,0,0,0.95), 0 0 20px ${visuals.glowColor}`
               }}
               aria-label="Abrir detalle de la promoción"
@@ -200,7 +202,7 @@ export default function DynamicIsland() {
               </span>
 
               {/* Tag / Etiqueta */}
-              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-md bg-white/10 border border-white/10 whitespace-nowrap">
+              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-700/80 whitespace-nowrap">
                 {tagText}
               </span>
 
@@ -228,12 +230,12 @@ export default function DynamicIsland() {
               )}
 
               {/* Icono de chevron para invitar a expandir */}
-              <div className="w-5 h-5 rounded-full bg-white/5 group-hover:bg-white/15 flex items-center justify-center shrink-0 text-zinc-400 group-hover:text-white transition-colors">
+              <div className="w-5 h-5 rounded-full bg-zinc-900 group-hover:bg-zinc-800 flex items-center justify-center shrink-0 text-zinc-400 group-hover:text-white transition-colors">
                 <ChevronUp className="w-3 h-3 transition-transform duration-200 group-hover:-translate-y-0.5" />
               </div>
             </motion.button>
           ) : (
-            /* --- ESTADO EXPANDIDO: Gourmet Card --- */
+            /* --- ESTADO EXPANDIDO: Gourmet Card (100% Opaco y Segmentado) --- */
             <motion.div
               key="expanded-card"
               layoutId="dynamic-island-container"
@@ -241,8 +243,9 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className={`relative w-full max-w-sm sm:max-w-md p-5 sm:p-6 rounded-3xl bg-[#10160c] border-2 ${visuals.borderColor} shadow-[0_25px_60px_rgba(0,0,0,0.98)] flex flex-col gap-4 text-left`}
+              className={`relative w-full max-w-sm sm:max-w-md p-5 sm:p-6 rounded-3xl bg-zinc-950 border-2 ${visuals.borderColor} shadow-[0_25px_60px_rgba(0,0,0,0.98)] flex flex-col gap-4 text-left`}
               style={{
+                backgroundColor: '#09090b',
                 boxShadow: `0 25px 60px rgba(0,0,0,0.98), 0 0 35px ${visuals.glowColor}`
               }}
             >
