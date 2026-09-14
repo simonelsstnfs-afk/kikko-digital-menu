@@ -104,7 +104,7 @@ export default function DynamicIsland() {
           glowColor: 'rgba(245, 158, 11, 0.45)',
           borderColor: 'border-amber-500/70',
           metallicClass: 'metallic-border-dish',
-          badgeBg: 'bg-amber-950/70 border-amber-800/80 text-amber-300',
+          badgeBg: 'border-amber-500/40 bg-amber-500/10 text-amber-400',
           pingColor: 'bg-amber-500',
           defaultTag: t('dynamicIslandChef')
         };
@@ -219,8 +219,8 @@ export default function DynamicIsland() {
               {/* Borde animado de luz blanca líquida (CSS Puro a 9s) */}
               <div className="white-border-card-spinner" aria-hidden="true" />
 
-              <div className="relative z-10 rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
-                {/* Cabecera de la tarjeta: Medallón B&W de Kikko con Borde Blanco + Badge + Botón Cerrar */}
+              <div className="relative z-10 rounded-[22px] p-5 sm:p-6 bg-[#141A0F] space-y-4">
+                {/* Cabecera de la tarjeta: Medallón de Kikko + Badge + Botón Cerrar */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
@@ -228,11 +228,12 @@ export default function DynamicIsland() {
                         src="/kikko-mascot-face.png"
                         alt="Kikko Pizzeria"
                         className="w-full h-full object-cover scale-110"
+                        loading="eager"
                       />
                     </div>
                     <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${visuals.badgeBg}`}>
                       {visuals.icon}
-                      <span className="uppercase tracking-wider text-[11px]">{tagText}</span>
+                      <span className="uppercase tracking-wider text-[11px] font-black">{tagText}</span>
                     </div>
                   </div>
 
@@ -242,7 +243,7 @@ export default function DynamicIsland() {
                       e.stopPropagation();
                       setIsExpanded(false);
                     }}
-                    className="p-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700/60 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 text-xs font-bold flex items-center justify-center transition-colors cursor-pointer"
                     aria-label="Cerrar promoción"
                   >
                     <X className="w-4 h-4" />
@@ -250,23 +251,23 @@ export default function DynamicIsland() {
                 </div>
 
                 {/* Título & Descripción */}
-                <div className="flex flex-col gap-1.5">
-                  <h3 className="font-serif italic text-xl sm:text-2xl text-white font-bold tracking-tight leading-snug">
+                <div>
+                  <h3 className="font-serif italic text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
                     {titleText}
                   </h3>
                   {descText && (
-                    <p className="font-sans text-xs sm:text-sm text-zinc-300 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-zinc-300 mt-1 leading-relaxed">
                       {descText}
                     </p>
                   )}
                 </div>
 
-                {/* Precios y Condiciones */}
+                {/* Precios y Ahorro */}
                 {(price !== null || originalPrice !== null) && (
-                  <div className="flex items-baseline gap-2.5 pt-1 border-t border-zinc-800/80">
+                  <div className="flex items-baseline gap-2.5 pt-1 border-t border-zinc-800">
                     {originalPrice !== null && (
-                      <span className="text-zinc-500 line-through text-sm sm:text-base font-medium">
-                        Antes {originalPrice.toFixed(2)}€
+                      <span className="text-zinc-500 line-through text-xs font-sans">
+                        {originalPrice.toFixed(2)}€
                       </span>
                     )}
                     {price !== null && (
@@ -274,39 +275,27 @@ export default function DynamicIsland() {
                         {price.toFixed(2)}€
                       </span>
                     )}
-                    {promoType === 'promo_2x1' && (
-                      <span className="text-xs font-bold text-red-400 uppercase tracking-widest px-2 py-0.5 rounded bg-red-950/60 border border-red-800/50 ml-auto">
+                    {promoType === 'promo_2x1' ? (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded bg-red-950 text-red-400 border border-red-800/60 ml-auto">
                         2x1 Especial
                       </span>
-                    )}
-                    {originalPrice !== null && price !== null && originalPrice > price && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800/60 ml-auto">
+                    ) : originalPrice !== null && price !== null && originalPrice > price ? (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded bg-amber-950 text-amber-400 border border-amber-800/60 ml-auto">
                         Ahorras {(originalPrice - price).toFixed(2)}€
                       </span>
-                    )}
+                    ) : null}
                   </div>
                 )}
 
-                {/* Botón de Autonavegación directa al plato o sección */}
-                <div className="pt-2 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleNavigate}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:brightness-110 text-zinc-950 font-black text-sm tracking-wide shadow-lg shadow-amber-500/20 transition-all duration-200 cursor-pointer active:scale-[0.98]"
-                  >
-                    <UtensilsCrossed className="w-4 h-4" />
-                    <span>{t('dynamicIslandViewDish')}</span>
-                    <ArrowRight className="w-4 h-4 ml-0.5" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsExpanded(false)}
-                    className="px-3.5 py-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-colors cursor-pointer"
-                  >
-                    {t('dynamicIslandClose')}
-                  </button>
-                </div>
+                {/* Botón único de Acción a ancho completo */}
+                <button
+                  type="button"
+                  onClick={handleNavigate}
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 hover:brightness-110 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  <span>{t('dynamicIslandGoToDish') || 'Ir al plato en la carta'}</span>
+                  <span className="text-sm">→</span>
+                </button>
               </div>
             </motion.div>
           </div>

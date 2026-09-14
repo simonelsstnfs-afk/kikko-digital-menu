@@ -1418,46 +1418,59 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                       </div>
                     </div>
                   ) : (
-                    <div className="relative w-full max-w-sm rounded-3xl overflow-hidden p-[2px] text-left shadow-2xl">
+                    <div className="relative w-full max-w-sm rounded-3xl overflow-hidden p-[2.5px] text-left shadow-2xl">
                       <div className="white-border-card-spinner" aria-hidden="true" />
-                      <div className="relative z-10 rounded-[22px] p-5 bg-[#141A0F] flex flex-col gap-3.5">
+                      <div className="relative z-10 rounded-[22px] p-5 bg-[#141A0F] space-y-4">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
                               <img
                                 src="/kikko-mascot-face.png"
                                 alt="Kikko Pizzeria"
                                 className="w-full h-full object-cover scale-110"
                               />
                             </div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 px-2.5 py-0.5 rounded-full bg-amber-950/60 border border-amber-800/80">
-                              {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
-                            </span>
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-400 text-xs font-bold">
+                              <span>✨</span>
+                              <span className="uppercase tracking-wider text-[11px] font-black">
+                                {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                              </span>
+                            </div>
                           </div>
-                          <span className="text-[10px] text-amber-400/70 font-mono">Atelier Gourmet</span>
-                        </div>
-                        <h4 className="font-serif italic text-xl text-white font-bold tracking-tight">
-                          {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
-                        </h4>
-                        <p className="text-xs text-zinc-300 leading-relaxed">
-                          {previewLang === 'es' ? (pillDesc || 'Sin descripción') : previewLang === 'en' ? (pillDescEn || pillDesc || 'No description') : (pillDescIt || pillDesc || 'Senza descrizione')}
-                        </p>
-                        <div className="flex items-baseline gap-2 pt-1 border-t border-zinc-800">
-                          {pillOriginalPrice && (
-                            <span className="text-zinc-500 line-through text-xs">
-                              Antes {parseFloat(pillOriginalPrice).toFixed(2)}€
-                            </span>
-                          )}
-                          {pillPrice && (
-                            <span className="text-2xl font-black text-amber-400">
-                              {parseFloat(pillPrice).toFixed(2)}€
-                            </span>
-                          )}
-                        </div>
-                        <div className="pt-1">
-                          <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider text-center shadow-lg shadow-amber-500/20">
-                            Ver en la carta →
+                          <div className="p-1.5 rounded-full bg-zinc-900 text-zinc-400 border border-zinc-800 text-xs font-bold flex items-center justify-center w-7 h-7">
+                            ✕
                           </div>
+                        </div>
+                        <div>
+                          <h4 className="font-serif italic text-xl sm:text-2xl text-white font-bold tracking-tight leading-snug">
+                            {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
+                          </h4>
+                          <p className="text-xs sm:text-sm text-zinc-300 mt-1 leading-relaxed">
+                            {previewLang === 'es' ? (pillDesc || 'Sin descripción') : previewLang === 'en' ? (pillDescEn || pillDesc || 'No description') : (pillDescIt || pillDesc || 'Senza descrizione')}
+                          </p>
+                        </div>
+                        {(pillOriginalPrice || pillPrice) && (
+                          <div className="flex items-baseline gap-2.5 pt-1 border-t border-zinc-800">
+                            {pillOriginalPrice && (
+                              <span className="text-zinc-500 line-through text-xs font-sans">
+                                {parseFloat(pillOriginalPrice).toFixed(2)}€
+                              </span>
+                            )}
+                            {pillPrice && (
+                              <span className="text-2xl sm:text-3xl font-black text-amber-400 font-sans tracking-tight">
+                                {parseFloat(pillPrice).toFixed(2)}€
+                              </span>
+                            )}
+                            {pillOriginalPrice && pillPrice && parseFloat(pillOriginalPrice) > parseFloat(pillPrice) && (
+                              <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded bg-amber-950 text-amber-400 border border-amber-800/60 ml-auto">
+                                Ahorras {(parseFloat(pillOriginalPrice) - parseFloat(pillPrice)).toFixed(2)}€
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider text-center shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                          <span>Ir al plato en la carta</span>
+                          <span className="text-sm">→</span>
                         </div>
                       </div>
                     </div>
