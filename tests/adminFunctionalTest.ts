@@ -234,6 +234,21 @@ async function runAdminFunctionalTests() {
     `Alérgenos detectados: [${detectedAllergens.join(', ')}]`
   );
 
+  // Test de Entrantes: Croquetas y Bruschetta sin descripción explícita
+  const croquetasDetected = detectAllergensFromText('Croquetas Mixtas Pollo y Jamón (6 unidades)', '', 'entrantes');
+  assert(
+    croquetasDetected.includes('gluten') && croquetasDetected.includes('lacteos') && croquetasDetected.includes('huevos'),
+    'Motor heurístico detecta alérgenos culinarios en Croquetas (gluten, lácteos, huevos) aun sin descripción',
+    `Croquetas detectadas: [${croquetasDetected.join(', ')}]`
+  );
+
+  const bruschettaDetected = detectAllergensFromText('Bruschetta con Tomate', '', 'entrantes');
+  assert(
+    bruschettaDetected.includes('gluten'),
+    'Motor heurístico detecta gluten en Bruschetta por ser preparación a base de pan',
+    `Bruschetta detectada: [${bruschettaDetected.join(', ')}]`
+  );
+
   const dishWithAllergens: MenuItem = {
     id: 'test_dish_alg',
     name: { es: 'Calamares Fritos', en: 'Fried Squids', it: 'Calamari Fritti' },

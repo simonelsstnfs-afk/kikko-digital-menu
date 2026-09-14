@@ -16,9 +16,10 @@ export function ensureAllergensInCategories(cats: MenuCategory[]): MenuCategory[
       if (item.allergens && Array.isArray(item.allergens) && item.allergens.length > 0) {
         return item;
       }
+      const detected = detectAllergensFromText(item.name, item.description, cat.id);
       return {
         ...item,
-        allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, cat.id)
+        allergens: detected
       };
     })
   }));

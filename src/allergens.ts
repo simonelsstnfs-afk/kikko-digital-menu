@@ -283,30 +283,78 @@ export function detectAllergensFromText(
   const fullText = `${nameText} ${descText}`.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const cat = (categoryId || '').toLowerCase();
 
-  if (cat === 'pizzas' || cat === 'pastas' || cat === 'hamburguesas') {
+  const isExtraOrService = /extra|suplemento|llevar/.test(fullText);
+  const isGlutenFree = /sin gluten|gluten free|senza glutine/.test(fullText);
+
+  if ((cat === 'pizzas' || cat === 'pastas' || cat === 'hamburguesas') && !isExtraOrService && !isGlutenFree) {
     detected.add('gluten');
   }
 
-  if (cat === 'pizzas' && !fullText.includes('marinara')) {
+  if (cat === 'pizzas' && !isExtraOrService && !fullText.includes('marinara')) {
     detected.add('lacteos');
   }
 
-  if (cat === 'pastas' && (fullText.includes('parmigiano') || fullText.includes('parmesano') || fullText.includes('queso') || fullText.includes('crema') || fullText.includes('nata') || fullText.includes('carbonara') || fullText.includes('burrata') || fullText.includes('gorgonzola'))) {
+  if (cat === 'pastas' && (fullText.includes('parmigiano') || fullText.includes('parmesano') || fullText.includes('queso') || fullText.includes('crema') || fullText.includes('nata') || fullText.includes('carbonara') || fullText.includes('burrata') || fullText.includes('gorgonzola') || fullText.includes('ricotta') || fullText.includes('lasana') || fullText.includes('lasagne'))) {
     detected.add('lacteos');
   }
 
-  if (cat === 'risottos') {
+  if (cat === 'risottos' && !fullText.includes('sin queso')) {
     detected.add('lacteos');
   }
 
   if (cat === 'bebidas') {
-    if (fullText.includes('cerveza') || fullText.includes('birra') || fullText.includes('beer') || fullText.includes('artesanal')) {
+    if (/cerveza|birra|beer|artesanal|ipa|cana|jarra|estrella|heineken/.test(fullText)) {
       detected.add('gluten');
       detected.add('sulfitos');
     }
-    if (fullText.includes('vino') || fullText.includes('wine') || fullText.includes('prosecco') || fullText.includes('cava') || fullText.includes('champagne') || fullText.includes('tinto') || fullText.includes('blanco')) {
+    if (/vino|wine|prosecco|cava|champagne|sangria|tinto|blanco|rosado|merlot|sangiovese|nero d'avola|pinot|chardonnay|malvasia/.test(fullText)) {
       detected.add('sulfitos');
     }
+    if (/leche|latte|cappuccino|cortado|barraquito|baileys/.test(fullText)) {
+      detected.add('lacteos');
+    }
+  }
+
+  // Reglas culinarias y preparaciones gastronómicas específicas
+  // 1. Croquetas (bechamel = harina + leche/mantequilla, y rebozado = pan rallado + huevo)
+  if (/croqueta|crocchett|croquette/.test(fullText)) {
+    detected.add('gluten');
+    detected.add('lacteos');
+    detected.add('huevos');
+  }
+
+  // 2. Bruschettas y panes tostados (base de pan con gluten)
+  if (/bruschett/.test(fullText)) {
+    detected.add('gluten');
+  }
+
+  // 3. Aros de cebolla y bocados rebozados / empanados
+  if (/aros de cebolla|anelli di cipolla|onion ring|nugget|rebozado|empanado/.test(fullText)) {
+    detected.add('gluten');
+  }
+
+  // 4. Pollo frito / nuggets rebozados
+  if (/pollo frito|fried chicken|pollo fritto|nugget/.test(fullText)) {
+    detected.add('gluten');
+    detected.add('huevos');
+  }
+
+  // 5. Bocaditos de queso fritos / jalapeños rellenos
+  if (/chilli cheese|cheese bite|jalapeno/.test(fullText)) {
+    detected.add('gluten');
+    detected.add('lacteos');
+  }
+
+  // 6. Salsas barbacoa / BBQ (habitualmente llevan mostaza, vinagres y sulfitos)
+  if (/bbq|barbacoa/.test(fullText)) {
+    detected.add('mostaza');
+    detected.add('sulfitos');
+  }
+
+  // 7. Albóndigas tradicionales (miga de pan, huevo y a menudo queso)
+  if (/albondiga|polpett|meatball/.test(fullText)) {
+    detected.add('gluten');
+    detected.add('huevos');
   }
 
   if (/harina|masa|trigo|pan|pasta|spaghetti|penne|tagliatelle|focaccia|cerveza|rebozado|crouton|gnocchi|lasana|lasagne|burger|hamburguesa|brioche|gluten|bocadillo/.test(fullText)) {
@@ -361,8 +409,27 @@ export function detectAllergensFromText(
     detected.add('sulfitos');
   }
 
-  if (/altramuz|altramuces|lupin|lupini/.test(fullText)) {
-    detected.add('altramuces');
+  // Postres específicos
+  if (/nutella/.test(fullText)) {
+    detected.add('frutoscascara');
+    detected.add('lacteos');
+    detected.add('soja');
+  }
+
+  if (/tiramisu/.test(fullText)) {
+    detected.add('gluten');
+    detected.add('huevos');
+    detected.add('lacteos');
+  }
+
+  // Si el plato se declara explícitamente "sin gluten", remover gluten
+  if (isGlutenFree) {
+    detected.delete('gluten');
+  }
+
+  // Suplementos o extras de servicio que no son platos de comida en sí
+  if (isExtraOrService && (fullText.includes('llevar') || fullText.includes('ingrediente extra'))) {
+    detected.clear();
   }
 
   return ALLERGENS
