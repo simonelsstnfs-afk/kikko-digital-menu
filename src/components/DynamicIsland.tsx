@@ -18,9 +18,7 @@ export default function DynamicIsland() {
   const { promoPill, categories } = useMenuData();
   const { language, t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const lastScrollY = useRef(0);
 
   // Si la píldora está desactivada en /admin, no renderizar
   if (promoPill.active === false) {
@@ -85,22 +83,6 @@ export default function DynamicIsland() {
   };
 
   const visuals = getPresetVisuals(promoType);
-
-  // Microinteracción al hacer scroll: minimizar presencia si el usuario scrollea rápido hacia abajo
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY.current + 25 && currentScrollY > 150) {
-        setIsScrollingDown(true);
-      } else if (currentScrollY < lastScrollY.current - 15) {
-        setIsScrollingDown(false);
-      }
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Cerrar tarjeta al pulsar fuera o pulsar tecla Escape
   useEffect(() => {
@@ -190,9 +172,7 @@ export default function DynamicIsland() {
   return (
     <div
       ref={containerRef}
-      className={`fixed bottom-4 sm:bottom-6 inset-x-0 z-40 flex justify-center px-3.5 pointer-events-none transition-all duration-300 ${
-        isScrollingDown && !isExpanded ? 'translate-y-6 opacity-40 hover:opacity-100 hover:translate-y-0' : 'translate-y-0 opacity-100'
-      }`}
+      className="fixed bottom-4 sm:bottom-6 inset-x-0 z-40 flex justify-center px-3.5 pointer-events-none"
     >
       <div className="pointer-events-auto max-w-lg w-full flex justify-center">
         <AnimatePresence initial={false} mode="wait">
@@ -207,9 +187,9 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className={`group relative flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-zinc-950/85 backdrop-blur-2xl border ${visuals.borderColor} shadow-[0_10px_35px_-5px_rgba(0,0,0,0.85)] hover:shadow-[0_12px_40px_-4px_${visuals.glowColor}] transition-all duration-300 cursor-pointer active:scale-95`}
+              className={`group relative flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[#10160c] border-2 ${visuals.borderColor} shadow-[0_12px_40px_rgba(0,0,0,0.95)] hover:shadow-[0_12px_40px_-4px_${visuals.glowColor}] transition-all duration-200 cursor-pointer active:scale-95`}
               style={{
-                boxShadow: `0 10px 30px -5px rgba(0,0,0,0.9), 0 0 20px ${visuals.glowColor}`
+                boxShadow: `0 12px 35px rgba(0,0,0,0.95), 0 0 20px ${visuals.glowColor}`
               }}
               aria-label="Abrir detalle de la promoción"
             >
@@ -261,9 +241,9 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className={`relative w-full max-w-sm sm:max-w-md p-5 sm:p-6 rounded-3xl bg-zinc-950/95 backdrop-blur-3xl border ${visuals.borderColor} shadow-[0_20px_50px_rgba(0,0,0,0.95)] flex flex-col gap-4 text-left`}
+              className={`relative w-full max-w-sm sm:max-w-md p-5 sm:p-6 rounded-3xl bg-[#10160c] border-2 ${visuals.borderColor} shadow-[0_25px_60px_rgba(0,0,0,0.98)] flex flex-col gap-4 text-left`}
               style={{
-                boxShadow: `0 20px 50px rgba(0,0,0,0.95), 0 0 35px ${visuals.glowColor}`
+                boxShadow: `0 25px 60px rgba(0,0,0,0.98), 0 0 35px ${visuals.glowColor}`
               }}
             >
               {/* Cabecera de la tarjeta: Badge + Botón Cerrar */}
