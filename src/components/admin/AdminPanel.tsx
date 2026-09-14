@@ -1376,57 +1376,86 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               <div className="bg-[#141A0F] border border-zinc-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[120px] text-center relative overflow-hidden">
                 {pillActive ? (
                   previewMode === 'compact' ? (
-                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-950/85 border border-[#C2410C]/60 shadow-[0_8px_25px_rgba(0,0,0,0.8),0_0_15px_rgba(194,65,12,0.3)] backdrop-blur-md max-w-full">
-                      <span className="relative flex h-2.5 w-2.5 shrink-0">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
-                      </span>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded bg-white/10 shrink-0">
-                        {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
-                      </span>
-                      <span className="text-xs font-semibold text-zinc-100 truncate max-w-[150px] sm:max-w-[200px]">
-                        {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
-                      </span>
-                      {pillOriginalPrice && pillPrice && (
-                        <span className="line-through text-zinc-400 text-[10px] shrink-0">
-                          {parseFloat(pillOriginalPrice).toFixed(2)}€
-                        </span>
-                      )}
-                      {pillPrice && (
-                        <span className="text-amber-400 font-extrabold text-xs shrink-0">
-                          {parseFloat(pillPrice).toFixed(2)}€
-                        </span>
-                      )}
+                    <div className="metallic-conic-border metallic-border-dish p-[1.5px] rounded-full shadow-[0_12px_35px_rgba(0,0,0,0.98)] max-w-full">
+                      <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                          <img
+                            src="/kikko-mascot-gold.png"
+                            alt="Kikko Pizzeria"
+                            className="w-full h-full object-cover scale-110"
+                          />
+                        </div>
+                        <div className="flex flex-col text-left pr-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
+                              {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-amber-500/60" />
+                            <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Hoy</span>
+                          </div>
+                          <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[140px] sm:max-w-[200px]">
+                            {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
+                          </span>
+                        </div>
+                        {(pillOriginalPrice || pillPrice) && (
+                          <div className="pl-2 border-l border-amber-900/60 flex flex-col items-end shrink-0">
+                            {pillOriginalPrice && (
+                              <span className="text-[9px] text-zinc-400 line-through">
+                                {parseFloat(pillOriginalPrice).toFixed(2)}€
+                              </span>
+                            )}
+                            {pillPrice && (
+                              <span className="text-xs sm:text-sm font-black text-amber-400 font-sans tracking-tight">
+                                {parseFloat(pillPrice).toFixed(2)}€
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="w-5 h-5 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 text-xs">
+                          ↑
+                        </div>
+                      </div>
                     </div>
                   ) : (
-                    <div className="w-full max-w-sm p-4 rounded-2xl bg-zinc-950/95 border border-[#C2410C]/60 shadow-2xl flex flex-col gap-2.5 text-left">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 px-2.5 py-0.5 rounded-full bg-amber-950/60 border border-amber-800/80">
-                          {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
-                        </span>
-                        <span className="text-[10px] text-zinc-500 font-mono">Dynamic Island</span>
-                      </div>
-                      <h4 className="font-serif text-lg text-white font-bold tracking-tight">
-                        {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
-                      </h4>
-                      <p className="text-xs text-zinc-300 leading-relaxed">
-                        {previewLang === 'es' ? (pillDesc || 'Sin descripción') : previewLang === 'en' ? (pillDescEn || pillDesc || 'No description') : (pillDescIt || pillDesc || 'Senza descrizione')}
-                      </p>
-                      <div className="flex items-baseline gap-2 pt-1">
-                        {pillOriginalPrice && (
-                          <span className="text-zinc-500 line-through text-xs">
-                            Antes {parseFloat(pillOriginalPrice).toFixed(2)}€
-                          </span>
-                        )}
-                        {pillPrice && (
-                          <span className="text-xl font-extrabold text-amber-400">
-                            {parseFloat(pillPrice).toFixed(2)}€
-                          </span>
-                        )}
-                      </div>
-                      <div className="pt-1">
-                        <div className="w-full py-2 rounded-xl bg-gradient-to-r from-[#C2410C] to-amber-600 text-white font-bold text-xs text-center">
-                          Ver en la carta →
+                    <div className="w-full max-w-sm rounded-3xl p-[2px] metallic-conic-border metallic-border-dish text-left shadow-2xl">
+                      <div className="metallic-inner rounded-[22px] p-5 bg-[#09090b] flex flex-col gap-3.5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                              <img
+                                src="/kikko-mascot-gold.png"
+                                alt="Kikko Pizzeria"
+                                className="w-full h-full object-cover scale-110"
+                              />
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 px-2.5 py-0.5 rounded-full bg-amber-950/60 border border-amber-800/80">
+                              {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-amber-400/70 font-mono">Atelier Gourmet</span>
+                        </div>
+                        <h4 className="font-serif italic text-xl text-white font-bold tracking-tight">
+                          {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
+                        </h4>
+                        <p className="text-xs text-zinc-300 leading-relaxed">
+                          {previewLang === 'es' ? (pillDesc || 'Sin descripción') : previewLang === 'en' ? (pillDescEn || pillDesc || 'No description') : (pillDescIt || pillDesc || 'Senza descrizione')}
+                        </p>
+                        <div className="flex items-baseline gap-2 pt-1 border-t border-zinc-800">
+                          {pillOriginalPrice && (
+                            <span className="text-zinc-500 line-through text-xs">
+                              Antes {parseFloat(pillOriginalPrice).toFixed(2)}€
+                            </span>
+                          )}
+                          {pillPrice && (
+                            <span className="text-2xl font-black text-amber-400">
+                              {parseFloat(pillPrice).toFixed(2)}€
+                            </span>
+                          )}
+                        </div>
+                        <div className="pt-1">
+                          <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider text-center shadow-lg shadow-amber-500/20">
+                            Ver en la carta →
+                          </div>
                         </div>
                       </div>
                     </div>

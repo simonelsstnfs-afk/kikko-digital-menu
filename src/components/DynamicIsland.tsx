@@ -45,8 +45,9 @@ export default function DynamicIsland() {
       case 'promo_2x1':
         return {
           icon: <Flame className="w-3.5 h-3.5 text-red-400 animate-pulse" />,
-          glowColor: 'rgba(239, 68, 68, 0.4)',
-          borderColor: 'border-red-500/60',
+          glowColor: 'rgba(239, 68, 68, 0.45)',
+          borderColor: 'border-red-500/70',
+          metallicClass: 'metallic-border-promo_2x1',
           badgeBg: 'bg-red-950/70 border-red-800/80 text-red-300',
           pingColor: 'bg-red-500',
           defaultTag: t('dynamicIsland2x1')
@@ -54,8 +55,9 @@ export default function DynamicIsland() {
       case 'discount':
         return {
           icon: <Tag className="w-3.5 h-3.5 text-emerald-400" />,
-          glowColor: 'rgba(16, 185, 129, 0.4)',
-          borderColor: 'border-emerald-500/60',
+          glowColor: 'rgba(16, 185, 129, 0.45)',
+          borderColor: 'border-emerald-500/70',
+          metallicClass: 'metallic-border-discount',
           badgeBg: 'bg-emerald-950/70 border-emerald-800/80 text-emerald-300',
           pingColor: 'bg-emerald-500',
           defaultTag: t('dynamicIslandDiscount')
@@ -63,8 +65,9 @@ export default function DynamicIsland() {
       case 'special_event':
         return {
           icon: <Calendar className="w-3.5 h-3.5 text-purple-400" />,
-          glowColor: 'rgba(168, 85, 247, 0.4)',
-          borderColor: 'border-purple-500/60',
+          glowColor: 'rgba(168, 85, 247, 0.45)',
+          borderColor: 'border-purple-500/70',
+          metallicClass: 'metallic-border-event',
           badgeBg: 'bg-purple-950/70 border-purple-800/80 text-purple-300',
           pingColor: 'bg-purple-500',
           defaultTag: t('dynamicIslandEvent')
@@ -73,8 +76,9 @@ export default function DynamicIsland() {
       default:
         return {
           icon: <Sparkles className="w-3.5 h-3.5 text-amber-400" />,
-          glowColor: 'rgba(245, 158, 11, 0.4)',
-          borderColor: 'border-[#C2410C]/60',
+          glowColor: 'rgba(245, 158, 11, 0.45)',
+          borderColor: 'border-amber-500/70',
+          metallicClass: 'metallic-border-dish',
           badgeBg: 'bg-amber-950/70 border-amber-800/80 text-amber-300',
           pingColor: 'bg-amber-500',
           defaultTag: t('dynamicIslandChef')
@@ -178,7 +182,7 @@ export default function DynamicIsland() {
       <div className="pointer-events-auto max-w-lg w-full flex justify-center">
         <AnimatePresence initial={false} mode="wait">
           {!isExpanded ? (
-            /* --- ESTADO COMPACTO: Dynamic Island Pill (100% Opaco y Segmentado) --- */
+            /* --- ESTADO COMPACTO: Dynamic Island Atelier Gourmet con Medallón Kikko --- */
             <motion.button
               key="compact-pill"
               layoutId="dynamic-island-container"
@@ -188,54 +192,67 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className={`group relative flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-zinc-950 border-2 ${visuals.borderColor} shadow-[0_12px_35px_rgba(0,0,0,0.95)] hover:shadow-[0_14px_40px_-2px_${visuals.glowColor}] transition-all duration-200 cursor-pointer active:scale-95`}
-              style={{
-                backgroundColor: '#09090b',
-                boxShadow: `0 12px 35px rgba(0,0,0,0.95), 0 0 20px ${visuals.glowColor}`
-              }}
+              className="group relative select-none cursor-pointer max-w-sm w-auto active:scale-95 transition-transform"
               aria-label="Abrir detalle de la promoción"
             >
-              {/* Radar Ping pulsante */}
-              <span className="relative flex h-2.5 w-2.5 shrink-0">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${visuals.pingColor} opacity-75`} />
-                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${visuals.pingColor}`} />
-              </span>
+              <div
+                className={`metallic-conic-border ${visuals.metallicClass} p-[1.5px] rounded-full`}
+                style={{
+                  boxShadow: `0 14px 40px rgba(0,0,0,0.98), 0 0 24px ${visuals.glowColor}`
+                }}
+              >
+                <div className="metallic-inner rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#09090b]">
+                  {/* Sello / Medallón de Oro con el Imagotipo Oficial de Kikko */}
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                    <img
+                      src="/kikko-mascot-gold.png"
+                      alt="Kikko Pizzeria"
+                      className="w-full h-full object-cover scale-110"
+                      loading="eager"
+                    />
+                  </div>
 
-              {/* Tag / Etiqueta */}
-              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-700/80 whitespace-nowrap">
-                {tagText}
-              </span>
+                  {/* Textos con Estilo Editorial */}
+                  <div className="flex flex-col text-left pr-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
+                        {tagText}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-amber-500/60" />
+                      <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
+                        {t('dynamicIslandChef') || 'Hoy'}
+                      </span>
+                    </div>
+                    <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[130px] sm:max-w-[190px]">
+                      {titleText}
+                    </span>
+                  </div>
 
-              {/* Título de la Promoción */}
-              <span className="font-sans text-xs sm:text-sm font-semibold text-zinc-100 truncate max-w-[140px] sm:max-w-[220px]">
-                {titleText}
-              </span>
+                  {/* Placa Biselada de Precios */}
+                  {(originalPrice !== null || price !== null) && (
+                    <div className="pl-2 border-l border-amber-900/60 flex flex-col items-end shrink-0">
+                      {originalPrice !== null && (
+                        <span className="text-[9px] text-zinc-400 line-through">
+                          {originalPrice.toFixed(2)}€
+                        </span>
+                      )}
+                      {price !== null && (
+                        <span className="text-xs sm:text-sm font-black text-amber-400 font-sans tracking-tight">
+                          {price.toFixed(2)}€
+                        </span>
+                      )}
+                    </div>
+                  )}
 
-              {/* Precio o Indicador de Oferta */}
-              {originalPrice !== null && price !== null && (
-                <div className="flex items-center gap-1 shrink-0 text-xs font-bold">
-                  <span className="line-through text-zinc-400 text-[10px] sm:text-xs">
-                    {originalPrice.toFixed(2)}€
-                  </span>
-                  <span className="text-emerald-400 font-extrabold text-xs sm:text-sm">
-                    {price.toFixed(2)}€
-                  </span>
+                  {/* Flecha / Indicador para invitar a expandir */}
+                  <div className="w-5 h-5 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-xs transition-colors">
+                    <ChevronUp className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-y-0.5" />
+                  </div>
                 </div>
-              )}
-
-              {originalPrice === null && price !== null && (
-                <span className="text-amber-400 font-extrabold text-xs sm:text-sm shrink-0">
-                  {price.toFixed(2)}€
-                </span>
-              )}
-
-              {/* Icono de chevron para invitar a expandir */}
-              <div className="w-5 h-5 rounded-full bg-zinc-900 group-hover:bg-zinc-800 flex items-center justify-center shrink-0 text-zinc-400 group-hover:text-white transition-colors">
-                <ChevronUp className="w-3 h-3 transition-transform duration-200 group-hover:-translate-y-0.5" />
               </div>
             </motion.button>
           ) : (
-            /* --- ESTADO EXPANDIDO: Gourmet Card (100% Opaco y Segmentado) --- */
+            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Imagotipo --- */
             <motion.div
               key="expanded-card"
               layoutId="dynamic-island-container"
@@ -243,84 +260,99 @@ export default function DynamicIsland() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className={`relative w-full max-w-sm sm:max-w-md p-5 sm:p-6 rounded-3xl bg-zinc-950 border-2 ${visuals.borderColor} shadow-[0_25px_60px_rgba(0,0,0,0.98)] flex flex-col gap-4 text-left`}
+              className={`relative w-full max-w-sm sm:max-w-md rounded-3xl p-[2px] metallic-conic-border ${visuals.metallicClass} text-left`}
               style={{
-                backgroundColor: '#09090b',
                 boxShadow: `0 25px 60px rgba(0,0,0,0.98), 0 0 35px ${visuals.glowColor}`
               }}
             >
-              {/* Cabecera de la tarjeta: Badge + Botón Cerrar */}
-              <div className="flex items-center justify-between gap-3">
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${visuals.badgeBg}`}>
-                  {visuals.icon}
-                  <span className="uppercase tracking-wider text-[11px]">{tagText}</span>
+              <div className="metallic-inner rounded-[22px] p-5 sm:p-6 bg-[#09090b] flex flex-col gap-4">
+                {/* Cabecera de la tarjeta: Medallón de Kikko + Badge + Botón Cerrar */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.5)] bg-zinc-900 shrink-0">
+                      <img
+                        src="/kikko-mascot-gold.png"
+                        alt="Kikko Pizzeria"
+                        className="w-full h-full object-cover scale-110"
+                      />
+                    </div>
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${visuals.badgeBg}`}>
+                      {visuals.icon}
+                      <span className="uppercase tracking-wider text-[11px]">{tagText}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsExpanded(false);
+                    }}
+                    className="p-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700/60 transition-colors cursor-pointer"
+                    aria-label="Cerrar promoción"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsExpanded(false);
-                  }}
-                  className="p-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700/60 transition-colors cursor-pointer"
-                  aria-label="Cerrar promoción"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+                {/* Título & Descripción */}
+                <div className="flex flex-col gap-1.5">
+                  <h3 className="font-serif italic text-xl sm:text-2xl text-white font-bold tracking-tight leading-snug">
+                    {titleText}
+                  </h3>
+                  {descText && (
+                    <p className="font-sans text-xs sm:text-sm text-zinc-300 leading-relaxed">
+                      {descText}
+                    </p>
+                  )}
+                </div>
 
-              {/* Título & Descripción */}
-              <div className="flex flex-col gap-1.5">
-                <h3 className="font-serif text-xl sm:text-2xl text-white font-bold tracking-tight leading-snug">
-                  {titleText}
-                </h3>
-                {descText && (
-                  <p className="font-sans text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                    {descText}
-                  </p>
+                {/* Precios y Condiciones */}
+                {(price !== null || originalPrice !== null) && (
+                  <div className="flex items-baseline gap-2.5 pt-1 border-t border-zinc-800/80">
+                    {originalPrice !== null && (
+                      <span className="text-zinc-500 line-through text-sm sm:text-base font-medium">
+                        Antes {originalPrice.toFixed(2)}€
+                      </span>
+                    )}
+                    {price !== null && (
+                      <span className="text-2xl sm:text-3xl font-black text-amber-400 font-sans tracking-tight">
+                        {price.toFixed(2)}€
+                      </span>
+                    )}
+                    {promoType === 'promo_2x1' && (
+                      <span className="text-xs font-bold text-red-400 uppercase tracking-widest px-2 py-0.5 rounded bg-red-950/60 border border-red-800/50 ml-auto">
+                        2x1 Especial
+                      </span>
+                    )}
+                    {originalPrice !== null && price !== null && originalPrice > price && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800/60 ml-auto">
+                        Ahorras {(originalPrice - price).toFixed(2)}€
+                      </span>
+                    )}
+                  </div>
                 )}
-              </div>
 
-              {/* Precios y Condiciones */}
-              {(price !== null || originalPrice !== null) && (
-                <div className="flex items-baseline gap-2.5 pt-1">
-                  {originalPrice !== null && (
-                    <span className="text-zinc-500 line-through text-sm sm:text-base font-medium">
-                      Antes {originalPrice.toFixed(2)}€
-                    </span>
-                  )}
-                  {price !== null && (
-                    <span className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-sans tracking-tight">
-                      {price.toFixed(2)}€
-                    </span>
-                  )}
-                  {promoType === 'promo_2x1' && (
-                    <span className="text-xs font-bold text-red-400 uppercase tracking-widest px-2 py-0.5 rounded bg-red-950/60 border border-red-800/50">
-                      2x1 Especial
-                    </span>
-                  )}
+                {/* Botón de Autonavegación directa al plato o sección */}
+                <div className="pt-2 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleNavigate}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:brightness-110 text-zinc-950 font-black text-sm tracking-wide shadow-lg shadow-amber-500/20 transition-all duration-200 cursor-pointer active:scale-[0.98]"
+                  >
+                    <UtensilsCrossed className="w-4 h-4" />
+                    <span>{t('dynamicIslandViewDish')}</span>
+                    <ArrowRight className="w-4 h-4 ml-0.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(false)}
+                    className="px-3.5 py-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-colors cursor-pointer"
+                  >
+                    {t('dynamicIslandClose')}
+                  </button>
                 </div>
-              )}
-
-              {/* Botón de Autonavegación directa al plato o sección */}
-              <div className="pt-2 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleNavigate}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#C2410C] to-amber-600 hover:from-[#d9480f] hover:to-amber-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-[#C2410C]/30 hover:shadow-[#C2410C]/50 transition-all duration-200 cursor-pointer active:scale-[0.98]"
-                >
-                  <UtensilsCrossed className="w-4 h-4" />
-                  <span>{t('dynamicIslandViewDish')}</span>
-                  <ArrowRight className="w-4 h-4 ml-0.5" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsExpanded(false)}
-                  className="px-3.5 py-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-colors cursor-pointer"
-                >
-                  {t('dynamicIslandClose')}
-                </button>
               </div>
             </motion.div>
           )}

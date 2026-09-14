@@ -58,6 +58,47 @@ html {
   z-index: 25;
 }
 
+/* Dynamic Island Atelier Gourmet: Borde Metálico Dinámico */
+@keyframes metallicRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.metallic-conic-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.metallic-conic-border::before {
+  content: '';
+  position: absolute;
+  inset: -150%;
+  animation: metallicRotate 7s linear infinite;
+  z-index: 0;
+}
+
+.metallic-border-dish::before {
+  background: conic-gradient(from 0deg, #d97706, #fbbf24, #92400e, #f59e0b, #d97706);
+}
+
+.metallic-border-promo_2x1::before {
+  background: conic-gradient(from 0deg, #dc2626, #f97316, #b91c1c, #ea580c, #dc2626);
+}
+
+.metallic-border-discount::before {
+  background: conic-gradient(from 0deg, #059669, #34d399, #047857, #10b981, #059669);
+}
+
+.metallic-border-event::before {
+  background: conic-gradient(from 0deg, #7c3aed, #fbbf24, #6d28d9, #a855f7, #7c3aed);
+}
+
+.metallic-inner {
+  position: relative;
+  z-index: 1;
+  background-color: #09090b;
+}
+
 /* Respetar preferencias de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
