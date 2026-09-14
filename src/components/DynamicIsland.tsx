@@ -18,7 +18,20 @@ export default function DynamicIsland() {
   const { promoPill, categories } = useMenuData();
   const { language, t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Detectar scroll para colapsar la píldora en el botón Kikko con bocadillo al hacer scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 50;
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Si la píldora está desactivada en /admin, no renderizar
   if (promoPill.active === false) {
@@ -38,6 +51,18 @@ export default function DynamicIsland() {
   const descText = getLocalized(promoPill.description, '');
   const price = promoPill.price !== undefined && promoPill.price !== '' ? Number(promoPill.price) : null;
   const originalPrice = promoPill.originalPrice !== undefined && promoPill.originalPrice !== '' ? Number(promoPill.originalPrice) : null;
+
+  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "2x1", "Novedad", "Sugerencia")
+  const getShortBubbleText = () => {
+    const raw = (tagText || '').trim();
+    if (/2\s*x\s*1/i.test(raw) || promoType === 'promo_2x1') return '2x1';
+    if (/novedad/i.test(raw) || promoType === 'promo_new') return 'Novedad';
+    if (/sugerencia|chef/i.test(raw) || promoType === 'dish_suggestion') return t('dynamicIslandChef') || 'Sugerencia';
+    if (/evento/i.test(raw) || promoType === 'event') return t('dynamicIslandEvent') || 'Evento';
+    if (/oferta|rebaja/i.test(raw) || promoType === 'discount') return 'Oferta';
+    return raw.length > 10 ? raw.slice(0, 9) + '…' : raw || 'Novedad';
+  };
+  const shortBubbleText = getShortBubbleText();
 
   // Icono y temática según el Preset
   const getPresetVisuals = (type: PromoType) => {
@@ -175,101 +200,24 @@ export default function DynamicIsland() {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed bottom-4 sm:bottom-6 inset-x-0 z-40 flex justify-center px-3.5 pointer-events-none"
-    >
-      <div className="pointer-events-auto max-w-lg w-full flex justify-center">
-        <AnimatePresence initial={false} mode="wait">
-          {!isExpanded ? (
-            /* --- ESTADO COMPACTO: Dynamic Island Atelier Gourmet con Medallón Kikko --- */
-            <motion.button
-              key="compact-pill"
-              layoutId="dynamic-island-container"
-              type="button"
-              onClick={() => setIsExpanded(true)}
-              initial={{ opacity: 0, y: 25, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className="group relative select-none cursor-pointer max-w-sm w-auto active:scale-95 transition-transform"
-              aria-label="Abrir detalle de la promoción"
-            >
-              <div
-                className="relative p-[2.5px] rounded-full overflow-hidden"
-                style={{
-                  boxShadow: '0 14px 40px rgba(0,0,0,0.98), 0 0 20px rgba(0,146,70,0.3)'
-                }}
-              >
-                {/* Borde animado bandera de Italia (CSS Puro con rotación continua inmediata a 7s) */}
-                <div className="italian-flag-spinner" aria-hidden="true" />
-
-                <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
-                  {/* Sello / Medallón Pop-Art B&W con Borde Blanco Puro Minimalista */}
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
-                    <img
-                      src="/kikko-mascot-face.png"
-                      alt="Kikko Pizzeria"
-                      className="w-full h-full object-cover scale-110"
-                      loading="eager"
-                    />
-                  </div>
-
-                  {/* Textos con Estilo Editorial */}
-                  <div className="flex flex-col text-left pr-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
-                        {tagText}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-amber-500/60" />
-                      <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
-                        {t('dynamicIslandChef') || 'Hoy'}
-                      </span>
-                    </div>
-                    <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[130px] sm:max-w-[190px]">
-                      {titleText}
-                    </span>
-                  </div>
-
-                  {/* Placa Biselada de Precios */}
-                  {(originalPrice !== null || price !== null) && (
-                    <div className="pl-2 border-l border-amber-900/60 flex flex-col items-end shrink-0">
-                      {originalPrice !== null && (
-                        <span className="text-[9px] text-zinc-400 line-through">
-                          {originalPrice.toFixed(2)}€
-                        </span>
-                      )}
-                      {price !== null && (
-                        <span className="text-xs sm:text-sm font-black text-amber-400 font-sans tracking-tight">
-                          {price.toFixed(2)}€
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Flecha / Indicador para invitar a expandir */}
-                  <div className="w-5 h-5 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-xs transition-colors">
-                    <ChevronUp className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-y-0.5" />
-                  </div>
-                </div>
-              </div>
-            </motion.button>
-          ) : (
-            /* --- ESTADO EXPANDIDO: Gourmet Card Atelier con Bandera de Italia --- */
+    <div ref={containerRef} className="pointer-events-none">
+      <AnimatePresence mode="wait">
+        {isExpanded ? (
+          /* --- ESTADO EXPANDIDO: Gourmet Card Atelier Centrada --- */
+          <div className="fixed bottom-4 sm:bottom-6 inset-x-0 z-40 flex justify-center px-3.5 pointer-events-none">
             <motion.div
               key="expanded-card"
-              layoutId="dynamic-island-container"
               initial={{ opacity: 0, scale: 0.92, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 27 }}
-              className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden p-[2.5px] text-left"
+              className="pointer-events-auto relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden p-[2.5px] text-left"
               style={{
-                boxShadow: '0 25px 60px rgba(0,0,0,0.98), 0 0 35px rgba(0,146,70,0.35)'
+                boxShadow: '0 25px 60px rgba(0,0,0,0.98), 0 0 35px rgba(255,255,255,0.15)'
               }}
             >
-              {/* Borde animado bandera de Italia para tarjeta (CSS Puro con rotación 9s) */}
-              <div className="italian-flag-card-spinner" aria-hidden="true" />
+              {/* Borde animado de luz blanca líquida (CSS Puro a 9s) */}
+              <div className="white-border-card-spinner" aria-hidden="true" />
 
               <div className="relative z-10 rounded-[22px] p-5 sm:p-6 bg-[#141A0F] flex flex-col gap-4">
                 {/* Cabecera de la tarjeta: Medallón B&W de Kikko con Borde Blanco + Badge + Botón Cerrar */}
@@ -361,9 +309,127 @@ export default function DynamicIsland() {
                 </div>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </div>
+        ) : isScrolled ? (
+          /* --- ESTADO AL SCROLL: Botón Kikko Flotante + Bocadillo de Conversación Compacto --- */
+          <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-40 pointer-events-none">
+            <motion.button
+              key="scrolled-kikko-btn"
+              type="button"
+              onClick={() => setIsExpanded(true)}
+              initial={{ opacity: 0, scale: 0.7, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.7, y: 20 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              className="pointer-events-auto group flex flex-col items-end gap-1 cursor-pointer select-none active:scale-95 transition-transform"
+              aria-label="Abrir promoción"
+            >
+              {/* Bocadillo de diálogo cómic ultra-compacto y ligero */}
+              <div className="relative bg-[#141A0F] border border-white/25 text-white rounded-xl px-2.5 py-1 shadow-xl flex items-center gap-1.5">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-amber-400">
+                  {shortBubbleText}
+                </span>
+                <span className="text-[9px] text-zinc-400">↗</span>
+                <div className="speech-tail-bottom" />
+              </div>
+
+              {/* Botón Circular con Avatar Kikko y Borde de Luz Blanca */}
+              <div
+                className="relative p-[2.5px] rounded-full overflow-hidden"
+                style={{
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.95), 0 0 15px rgba(255,255,255,0.2)'
+                }}
+              >
+                <div className="white-border-avatar-spinner" aria-hidden="true" />
+                <div className="relative z-10 w-12 h-12 sm:w-13 sm:h-13 rounded-full overflow-hidden border-2 border-white shadow-md bg-[#141A0F] flex items-center justify-center">
+                  <img
+                    src="/kikko-mascot-face.png"
+                    alt="Kikko Pizzeria"
+                    className="w-full h-full object-cover scale-110"
+                    loading="eager"
+                  />
+                </div>
+              </div>
+            </motion.button>
+          </div>
+        ) : (
+          /* --- ESTADO INICIAL (TOP): Píldora Completa Atelier Gourmet --- */
+          <div className="fixed bottom-4 sm:bottom-6 inset-x-0 z-40 flex justify-center px-3.5 pointer-events-none">
+            <div className="pointer-events-auto max-w-lg w-full flex justify-center">
+              <motion.button
+                key="initial-pill"
+                type="button"
+                onClick={() => setIsExpanded(true)}
+                initial={{ opacity: 0, y: 25, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                className="group relative select-none cursor-pointer max-w-sm w-auto active:scale-95 transition-transform"
+                aria-label="Abrir detalle de la promoción"
+              >
+                <div
+                  className="relative p-[2.5px] rounded-full overflow-hidden"
+                  style={{
+                    boxShadow: '0 14px 40px rgba(0,0,0,0.98), 0 0 20px rgba(255,255,255,0.15)'
+                  }}
+                >
+                  {/* Borde animado de luz blanca líquida (CSS Puro a 7s) */}
+                  <div className="white-border-spinner" aria-hidden="true" />
+
+                  <div className="relative z-10 rounded-full px-2.5 sm:px-3 py-2 flex items-center gap-2.5 sm:gap-3 bg-[#141A0F]">
+                    {/* Sello / Medallón Pop-Art B&W con Borde Blanco Puro Minimalista */}
+                    <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-[#141A0F] shrink-0">
+                      <img
+                        src="/kikko-mascot-face.png"
+                        alt="Kikko Pizzeria"
+                        className="w-full h-full object-cover scale-110"
+                        loading="eager"
+                      />
+                    </div>
+
+                    {/* Textos con Estilo Editorial */}
+                    <div className="flex flex-col text-left pr-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
+                          {tagText}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-amber-500/60" />
+                        <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
+                          {t('dynamicIslandChef') || 'Hoy'}
+                        </span>
+                      </div>
+                      <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[130px] sm:max-w-[190px]">
+                        {titleText}
+                      </span>
+                    </div>
+
+                    {/* Placa Biselada de Precios */}
+                    {(originalPrice !== null || price !== null) && (
+                      <div className="pl-2 border-l border-amber-900/60 flex flex-col items-end shrink-0">
+                        {originalPrice !== null && (
+                          <span className="text-[9px] text-zinc-400 line-through">
+                            {originalPrice.toFixed(2)}€
+                          </span>
+                        )}
+                        {price !== null && (
+                          <span className="text-xs sm:text-sm font-black text-amber-400 font-sans tracking-tight">
+                            {price.toFixed(2)}€
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Flecha / Indicador para invitar a expandir */}
+                    <div className="w-5 h-5 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-xs transition-colors">
+                      <ChevronUp className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-y-0.5" />
+                    </div>
+                  </div>
+                </div>
+              </motion.button>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
