@@ -41,11 +41,17 @@ export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsRes
   if (!url) return null;
 
   try {
-    const response = await fetch(url, {
+    // Parámetro anti-caché para forzar que proxies y navegadores móviles traigan siempre datos frescos en tiempo real
+    const separator = url.includes('?') ? '&' : '?';
+    const freshUrl = `${url}${separator}_t=${Date.now()}`;
+
+    const response = await fetch(freshUrl, {
       method: 'GET',
       redirect: 'follow',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
       }
     });
 

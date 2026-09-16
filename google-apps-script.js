@@ -84,14 +84,26 @@ function writeDataToSheet(ss, categories, promoPill) {
   configSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#C2410C").setFontColor("#FFFFFF");
   
   if (promoPill) {
+    var descEs = typeof promoPill.description === 'object' ? (promoPill.description.es || "") : (promoPill.description || "");
+    var descEn = typeof promoPill.description === 'object' ? (promoPill.description.en || "") : "";
+    var descIt = typeof promoPill.description === 'object' ? (promoPill.description.it || "") : "";
+
     var configRows = [
       ["activa", promoPill.active ? "SI" : "NO"],
-      ["tag_es", typeof promoPill.tag === 'object' ? promoPill.tag.es : promoPill.tag || ""],
-      ["tag_en", typeof promoPill.tag === 'object' ? promoPill.tag.en : ""],
-      ["tag_it", typeof promoPill.tag === 'object' ? promoPill.tag.it : ""],
-      ["titulo_es", typeof promoPill.title === 'object' ? promoPill.title.es : promoPill.title || ""],
-      ["titulo_en", typeof promoPill.title === 'object' ? promoPill.title.en : ""],
-      ["titulo_it", typeof promoPill.title === 'object' ? promoPill.title.it : ""],
+      ["tipo", promoPill.type || "dish"],
+      ["tag_es", typeof promoPill.tag === 'object' ? (promoPill.tag.es || "") : (promoPill.tag || "")],
+      ["tag_en", typeof promoPill.tag === 'object' ? (promoPill.tag.en || "") : ""],
+      ["tag_it", typeof promoPill.tag === 'object' ? (promoPill.tag.it || "") : ""],
+      ["titulo_es", typeof promoPill.title === 'object' ? (promoPill.title.es || "") : (promoPill.title || "")],
+      ["titulo_en", typeof promoPill.title === 'object' ? (promoPill.title.en || "") : ""],
+      ["titulo_it", typeof promoPill.title === 'object' ? (promoPill.title.it || "") : ""],
+      ["descripcion_es", descEs],
+      ["descripcion_en", descEn],
+      ["descripcion_it", descIt],
+      ["precio", promoPill.price !== undefined && promoPill.price !== null ? promoPill.price : ""],
+      ["precio_original", promoPill.originalPrice !== undefined && promoPill.originalPrice !== null ? promoPill.originalPrice : ""],
+      ["tipo_destino", promoPill.targetType || "category"],
+      ["id_plato_destino", promoPill.targetItemId || ""],
       ["categoria_salto", promoPill.targetCategory || "risottos"]
     ];
     configSheet.getRange(2, 1, configRows.length, 2).setValues(configRows);
@@ -216,9 +228,10 @@ function readDataFromSheet(ss) {
     for (var j = 1; j < configValues.length; j++) {
       configMap[configValues[j][0]] = configValues[j][1];
     }
-    if (configMap["activa"]) {
+    if (configMap["activa"] !== undefined && configMap["activa"] !== "") {
       promoPill = {
         active: configMap["activa"].toString().toUpperCase() === "SI",
+        type: configMap["tipo"] || "dish",
         tag: {
           es: configMap["tag_es"] || "Novedad",
           en: configMap["tag_en"] || "New",
@@ -229,6 +242,15 @@ function readDataFromSheet(ss) {
           en: configMap["titulo_en"] || "Authentic Risottos",
           it: configMap["titulo_it"] || "Risotti Autentici"
         },
+        description: {
+          es: configMap["descripcion_es"] || "",
+          en: configMap["descripcion_en"] || "",
+          it: configMap["descripcion_it"] || ""
+        },
+        price: configMap["precio"] !== "" && !isNaN(Number(configMap["precio"])) ? Number(configMap["precio"]) : undefined,
+        originalPrice: configMap["precio_original"] !== "" && !isNaN(Number(configMap["precio_original"])) ? Number(configMap["precio_original"]) : undefined,
+        targetType: configMap["tipo_destino"] || "category",
+        targetItemId: configMap["id_plato_destino"] || undefined,
         targetCategory: configMap["categoria_salto"] || "risottos"
       };
     }

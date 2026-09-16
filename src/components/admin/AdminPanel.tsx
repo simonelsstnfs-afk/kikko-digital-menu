@@ -379,6 +379,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   const [pillCategory, setPillCategory] = useState(promoPill.targetCategory || 'risottos');
 
   const [promoSavedSuccess, setPromoSavedSuccess] = useState(false);
+  const [promoSaveError, setPromoSaveError] = useState<string | null>(null);
   const [previewLang, setPreviewLang] = useState<'es' | 'en' | 'it'>('es');
   const [previewMode, setPreviewMode] = useState<'compact' | 'expanded'>('compact');
   const [isTranslatingPill, setIsTranslatingPill] = useState(false);
@@ -685,7 +686,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     const parsedPrice = pillPrice.trim() !== '' ? parseFloat(pillPrice.replace(',', '.')) : undefined;
     const parsedOriginalPrice = pillOriginalPrice.trim() !== '' ? parseFloat(pillOriginalPrice.replace(',', '.')) : undefined;
 
-    updatePromoPill({
+    setPromoSaveError(null);
+    const saveResult = await updatePromoPill({
       active: pillActive,
       type: pillType,
       tag: {
@@ -710,8 +712,13 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
       targetCategory: pillCategory
     });
 
-    setPromoSavedSuccess(true);
-    setTimeout(() => setPromoSavedSuccess(false), 3000);
+    if (saveResult && !saveResult.success) {
+      setPromoSaveError(saveResult.error || 'Error al sincronizar con Google Sheets');
+      setTimeout(() => setPromoSaveError(null), 5000);
+    } else {
+      setPromoSavedSuccess(true);
+      setTimeout(() => setPromoSavedSuccess(false), 4000);
+    }
   };
 
   // Guardar precio inline rápido
@@ -2027,7 +2034,14 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               {promoSavedSuccess && (
                 <div className="flex items-center gap-2 p-3 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 rounded-xl">
                   <Check className="w-4 h-4 shrink-0" />
-                  <span>¡Dynamic Island actualizada y guardada correctamente!</span>
+                  <span>✅ Dynamic Island guardada y visible globalmente para todos los comensales.</span>
+                </div>
+              )}
+
+              {promoSaveError && (
+                <div className="flex items-center gap-2 p-3 text-xs text-rose-400 bg-rose-950/40 border border-rose-800/60 rounded-xl">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>⚠️ Guardado en local, pero falló la sincronización con Google Sheets: {promoSaveError}</span>
                 </div>
               )}
 

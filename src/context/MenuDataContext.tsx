@@ -41,7 +41,7 @@ interface MenuDataContextType {
   updateProduct: (categoryId: string, itemId: string, updated: Partial<MenuItem>) => void;
   deleteProduct: (categoryId: string, itemId: string) => void;
   toggleItemAvailable: (categoryId: string, itemId: string) => void;
-  updatePromoPill: (config: Partial<PromoPillConfig>) => void;
+  updatePromoPill: (config: Partial<PromoPillConfig>) => Promise<{ success: boolean; error?: string }>;
   resetToDefaults: () => void;
   exportBackup: () => string;
   importBackup: (jsonString: string) => boolean;
@@ -53,16 +53,15 @@ interface MenuDataContextType {
 
 const defaultPromoPill: PromoPillConfig = {
   active: true,
-  type: 'dish',
-  tag: { es: 'Novedad', en: 'New', it: 'Novità' },
-  title: { es: 'Risottos Auténticos', en: 'Authentic Risottos', it: 'Risotti Autentici' },
+  type: 'booking',
+  tag: { es: 'RESERVAS', en: 'BOOKINGS', it: 'PRENOTAZIONI' },
+  title: { es: 'Reserva tu mesa en Kikko', en: 'Book your table at Kikko', it: 'Prenota il tuo tavolo da Kikko' },
   description: {
-    es: 'Deliciosos risottos tradicionales preparados con arroz carnaroli italiano.',
-    en: 'Delicious traditional risottos prepared with authentic Italian carnaroli rice.',
-    it: 'Deliziosi risotti tradizionali preparati con autentico riso carnaroli italiano.'
+    es: 'Atención directa con nuestro equipo de sala por WhatsApp para reservas de hoy o próximos días.',
+    en: 'Direct contact with our team via WhatsApp for bookings today or upcoming dates.',
+    it: 'Contatto diretto con il nostro staff via WhatsApp per prenotare oggi o nei prossimi giorni.'
   },
-  targetType: 'category',
-  targetCategory: 'risottos'
+  targetType: 'reservation'
 };
 
 const STORAGE_KEY_CATEGORIES = 'kikko_menu_categories_v1';
@@ -188,7 +187,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       try {
         const remoteData = await fetchMenuFromSheets(sheetsUrl);
         if (isMounted && remoteData && remoteData.categories?.length) {
-          setCategories(remoteData.categories);
+          setCategories(ensureAllergensInCategories(remoteData.categories));
           if (remoteData.promoPill) {
             setPromoPill(remoteData.promoPill);
           }
@@ -204,6 +203,36 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       isMounted = false;
     };
   }, [sheetsUrl]);
+
+  // Revalidar en segundo plano al volver a la pestaña/desbloquear móvil
+  useEffect(() => {
+    if (!sheetsUrl || isSandboxMode) return;
+
+    const handleRevalidate = async () => {
+      if (document.visibilityState === 'visible') {
+        try {
+          const remoteData = await fetchMenuFromSheets(sheetsUrl);
+          if (remoteData && remoteData.categories?.length) {
+            setCategories(ensureAllergensInCategories(remoteData.categories));
+            if (remoteData.promoPill) {
+              setPromoPill(remoteData.promoPill);
+            }
+            setLastSyncedAt(new Date());
+            setSyncStatus('saved');
+          }
+        } catch (err) {
+          console.warn('Revalidación en segundo plano fallida:', err);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleRevalidate);
+    window.addEventListener('focus', handleRevalidate);
+    return () => {
+      document.removeEventListener('visibilitychange', handleRevalidate);
+      window.removeEventListener('focus', handleRevalidate);
+    };
+  }, [sheetsUrl, isSandboxMode]);
 
   // Función para forzar sincronización manual (descargar de Sheets)
   const syncWithSheets = async (): Promise<boolean> => {
@@ -356,14 +385,42 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     triggerAutoSaveToSheets(updated, promoPill);
   };
 
-  // Actualizar píldora de novedad
-  const updatePromoPill = (config: Partial<PromoPillConfig>) => {
-    const updatedPill = {
+  // Actualizar píldora de novedad con persistencia global inmediata
+  const updatePromoPill = async (config: Partial<PromoPillConfig>): Promise<{ success: boolean; error?: string }> => {
+    const updatedPill: PromoPillConfig = {
       ...promoPill,
       ...config
     };
     setPromoPill(updatedPill);
-    triggerAutoSaveToSheets(categories, updatedPill);
+    try {
+      localStorage.setItem(STORAGE_KEY_PROMO_PILL, JSON.stringify(updatedPill));
+    } catch (e) {
+      console.error('Error saving promo pill to localStorage:', e);
+    }
+
+    if (isSandboxMode) {
+      return { success: true };
+    }
+
+    if (!sheetsUrl) {
+      return { success: true };
+    }
+
+    setSyncStatus('syncing');
+    try {
+      const res = await sendMenuToSheets(latestDataRef.current.categories, updatedPill, sheetsUrl);
+      if (res.success) {
+        setSyncStatus('saved');
+        setLastSyncedAt(new Date());
+        return { success: true };
+      } else {
+        setSyncStatus('error');
+        return { success: false, error: res.error || 'Error al guardar en Google Sheets' };
+      }
+    } catch (err: any) {
+      setSyncStatus('error');
+      return { success: false, error: err?.message || 'Error de conexión con Google Sheets' };
+    }
   };
 
   // Reordenar productos dentro de una categoría
