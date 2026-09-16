@@ -25,6 +25,14 @@ const GoogleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+export const WhatsAppIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 175.216 175.552" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#ffffff" d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"/>
+    <path fill="#25D366" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"/>
+    <path fill="#ffffff" fillRule="evenodd" d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"/>
+  </svg>
+);
+
 export default function DynamicIsland() {
   const { promoPill, categories } = useMenuData();
   const { language, t } = useLanguage();
@@ -63,11 +71,11 @@ export default function DynamicIsland() {
   const price = promoPill.price !== undefined && promoPill.price !== '' ? Number(promoPill.price) : null;
   const originalPrice = promoPill.originalPrice !== undefined && promoPill.originalPrice !== '' ? Number(promoPill.originalPrice) : null;
 
-  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "RESEÑANOS", "Reserva", "2x1", "Novedad")
+  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "RESEÑANOS", "RESERVAR", "2x1", "Novedad")
   const getShortBubbleText = () => {
     const raw = (tagText || '').trim();
     if (/reseña|review|recensioni|5\s*★/i.test(raw) || promoType === 'google_review') return t('dynamicIslandGoogleReviewBubble') || 'RESEÑANOS';
-    if (/reserva|booking|prenota/i.test(raw) || promoType === 'booking') return 'Reserva';
+    if (/reserva|booking|prenota/i.test(raw) || promoType === 'booking') return t('dynamicIslandBookingBubble') || 'RESERVAR';
     if (/2\s*x\s*1/i.test(raw) || promoType === 'promo_2x1') return '2x1';
     if (/novedad/i.test(raw) || promoType === 'promo_new') return 'Novedad';
     if (/sugerencia|chef/i.test(raw) || promoType === 'dish_suggestion') return t('dynamicIslandChef') || 'Sugerencia';
@@ -97,15 +105,18 @@ export default function DynamicIsland() {
         };
       case 'booking':
         return {
-          icon: <Calendar className="w-3.5 h-3.5 text-emerald-400" />,
+          icon: <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />,
           glowColor: 'rgba(16, 185, 129, 0.45)',
           borderColor: 'border-emerald-500/70',
           metallicClass: 'metallic-border-booking',
-          badgeBg: 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300',
+          badgeBg: 'bg-zinc-900/90 border-emerald-500/40 text-white',
           pingColor: 'bg-emerald-500',
-          defaultTag: t('dynamicIslandBookingTag') || '📅 RESERVAS',
-          btnText: t('dynamicIslandBookingBtn') || 'Reservar Mesa Ahora 📅',
-          btnGradient: 'from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-emerald-500/20'
+          defaultTag: t('dynamicIslandBookingTag') || 'RESERVAS',
+          btnText: t('dynamicIslandBookingBtn') || 'Reservar Mesa en WhatsApp',
+          btnGradient: 'from-emerald-600 via-emerald-700 to-teal-800 hover:from-emerald-500 text-white shadow-lg border border-emerald-400/30',
+          btnIcon: <WhatsAppIcon className="w-4 h-4 shrink-0" />,
+          bubbleIcon: <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />,
+          bubbleTextColor: 'text-white'
         };
       case 'promo_2x1':
         return {
@@ -463,6 +474,16 @@ export default function DynamicIsland() {
                           </div>
                           <span className="text-[9.5px] text-zinc-400 font-medium">Google 4.7★</span>
                         </div>
+                      ) : promoType === 'booking' ? (
+                        <div className="flex items-center gap-2">
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-emerald-500/40 bg-zinc-900/90 text-white shadow-sm">
+                            <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[9.5px] font-black uppercase tracking-wider text-white">
+                              {tagText}
+                            </span>
+                          </div>
+                          <span className="text-[9.5px] text-emerald-400/90 font-medium">WhatsApp Inmediato</span>
+                        </div>
                       ) : (
                         <div className="flex items-center gap-1.5">
                           <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
@@ -470,7 +491,7 @@ export default function DynamicIsland() {
                           </span>
                           <span className="w-1 h-1 rounded-full bg-amber-500/60" />
                           <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
-                            {promoType === 'booking' ? 'WhatsApp' : (t('dynamicIslandChef') || 'Hoy')}
+                            {t('dynamicIslandChef') || 'Hoy'}
                           </span>
                         </div>
                       )}
@@ -497,7 +518,7 @@ export default function DynamicIsland() {
 
                     {/* Flecha / Indicador para invitar a expandir */}
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs transition-colors ml-1 ${
-                      promoType === 'google_review'
+                      promoType === 'google_review' || promoType === 'booking'
                         ? 'bg-white/10 group-hover:bg-white/25 text-white border border-white/20'
                         : 'bg-amber-500/10 group-hover:bg-amber-500/20 text-amber-400'
                     }`}>

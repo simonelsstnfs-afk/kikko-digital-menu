@@ -297,12 +297,12 @@ async function runAdminFunctionalTests() {
   const promoBookingPreset: PromoPillConfig = {
     active: true,
     type: 'booking',
-    tag: { es: '📅 RESERVAS', en: '📅 BOOKINGS', it: '📅 PRENOTAZIONI' },
+    tag: { es: 'RESERVAS', en: 'BOOKINGS', it: 'PRENOTAZIONI' },
     title: { es: 'Reserva tu mesa en Kikko', en: 'Book your table at Kikko', it: 'Prenota il tuo tavolo da Kikko' },
     description: {
-      es: 'Asegura tu sitio en salón o terraza en pocos segundos por WhatsApp.',
-      en: 'Secure your table in dining room or terrace in seconds via WhatsApp.',
-      it: 'Assicura il tuo posto in sala o terrazza in pochi secondi via WhatsApp.'
+      es: 'Atención directa con nuestro equipo de sala por WhatsApp para reservas de hoy o próximos días.',
+      en: 'Direct contact with our team via WhatsApp for bookings today or upcoming dates.',
+      it: 'Contatto diretto con il nostro staff via WhatsApp per prenotare oggi o nei prossimi giorni.'
     },
     targetType: 'reservation'
   };

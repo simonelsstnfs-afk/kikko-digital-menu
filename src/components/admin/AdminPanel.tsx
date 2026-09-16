@@ -53,6 +53,14 @@ const GoogleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const WhatsAppIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 175.216 175.552" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#ffffff" d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"/>
+    <path fill="#25D366" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"/>
+    <path fill="#ffffff" fillRule="evenodd" d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"/>
+  </svg>
+);
+
 interface DraggableProductItemProps {
   key?: React.Key;
   item: MenuItem;
@@ -543,15 +551,15 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
       setPillOriginalPrice('');
       setPillTargetType('google_review');
     } else if (type === 'booking') {
-      setPillTag('📅 RESERVAS');
-      setPillTagEn('📅 BOOKINGS');
-      setPillTagIt('📅 PRENOTAZIONI');
+      setPillTag('RESERVAS');
+      setPillTagEn('BOOKINGS');
+      setPillTagIt('PRENOTAZIONI');
       setPillTitle('Reserva tu mesa en Kikko');
       setPillTitleEn('Book your table at Kikko');
       setPillTitleIt('Prenota il tuo tavolo da Kikko');
-      setPillDesc('Asegura tu sitio en salón o terraza en pocos segundos por WhatsApp.');
-      setPillDescEn('Secure your table in dining room or terrace in seconds via WhatsApp.');
-      setPillDescIt('Assicura il tuo posto in sala o terrazza in pochi secondi via WhatsApp.');
+      setPillDesc('Atención directa con nuestro equipo de sala por WhatsApp para reservas de hoy o próximos días.');
+      setPillDescEn('Direct contact with our team via WhatsApp for bookings today or upcoming dates.');
+      setPillDescIt('Contatto diretto con il nostro staff via WhatsApp per prenotare oggi o nei prossimi giorni.');
       setPillPrice('');
       setPillOriginalPrice('');
       setPillTargetType('reservation');
@@ -1383,10 +1391,10 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                       : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
                   }`}
                 >
-                  <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
                   <div className="min-w-0">
                     <span className="text-xs font-bold block truncate">Reservar Mesa</span>
-                    <span className="text-[10px] text-zinc-500 block truncate">WhatsApp / Salón</span>
+                    <span className="text-[10px] text-zinc-400 block truncate">WhatsApp Oficial</span>
                   </div>
                 </button>
               </div>
@@ -1505,6 +1513,16 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                               </div>
                               <span className="text-[9.5px] text-zinc-400 font-medium">Google 4.7★</span>
                             </div>
+                          ) : pillType === 'booking' ? (
+                            <div className="flex items-center gap-2">
+                              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-emerald-500/40 bg-zinc-900/90 text-white shadow-sm">
+                                <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                                <span className="text-[9.5px] font-black uppercase tracking-wider text-white">
+                                  {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                                </span>
+                              </div>
+                              <span className="text-[9.5px] text-emerald-400/90 font-medium">WhatsApp Inmediato</span>
+                            </div>
                           ) : (
                             <div className="flex items-center gap-1.5">
                               <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
@@ -1512,7 +1530,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                               </span>
                               <span className="w-1 h-1 rounded-full bg-amber-500/60" />
                               <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
-                                {pillType === 'booking' ? 'WhatsApp' : 'Hoy'}
+                                Hoy
                               </span>
                             </div>
                           )}
@@ -1535,7 +1553,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                           </div>
                         )}
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs ml-1 ${
-                          pillType === 'google_review'
+                          pillType === 'google_review' || pillType === 'booking'
                             ? 'bg-white/10 text-white border border-white/20'
                             : 'bg-amber-500/10 text-amber-400'
                         }`}>
@@ -1560,13 +1578,15 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                               pillType === 'google_review'
                                 ? 'border-white/20 bg-zinc-900/90 text-white'
                                 : pillType === 'booking'
-                                ? 'border-emerald-500/50 bg-emerald-950/80 text-emerald-300'
+                                ? 'border-emerald-500/40 bg-zinc-900 text-white'
                                 : 'border-amber-500/40 bg-amber-500/10 text-amber-400'
                             }`}>
                               {pillType === 'google_review' ? (
                                 <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
+                              ) : pillType === 'booking' ? (
+                                <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
                               ) : (
-                                <span>{pillType === 'booking' ? '📅' : '✨'}</span>
+                                <span>✨</span>
                               )}
                               <span className="uppercase tracking-wider text-[11px] font-black">
                                 {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
@@ -1608,15 +1628,16 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                           pillType === 'google_review'
                             ? 'from-white via-zinc-100 to-zinc-200 text-zinc-950 shadow-white/20'
                             : pillType === 'booking'
-                            ? 'from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-emerald-500/20'
+                            ? 'from-emerald-600 via-emerald-700 to-teal-800 text-white shadow-lg border border-emerald-400/30'
                             : 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
                         } font-black text-xs uppercase tracking-wider text-center shadow-lg flex items-center justify-center gap-2`}>
                           {pillType === 'google_review' && <GoogleIcon className="w-4 h-4 shrink-0" />}
+                          {pillType === 'booking' && <WhatsAppIcon className="w-4 h-4 shrink-0" />}
                           <span>
                             {pillType === 'google_review'
                               ? (previewLang === 'es' ? 'Valorar en Google (5★)' : previewLang === 'en' ? 'Rate on Google (5★)' : 'Valuta su Google (5★)')
                               : pillType === 'booking'
-                              ? (previewLang === 'es' ? 'Reservar Mesa Ahora 📅' : previewLang === 'en' ? 'Book Table Now 📅' : 'Prenota Tavolo Ora 📅')
+                              ? (previewLang === 'es' ? 'Reservar Mesa en WhatsApp' : previewLang === 'en' ? 'Book Table on WhatsApp' : 'Prenota Tavolo su WhatsApp')
                               : 'Ir al plato en la carta'}
                           </span>
                           <span className="text-sm">→</span>
