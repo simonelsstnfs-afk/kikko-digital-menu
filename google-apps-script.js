@@ -36,12 +36,28 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  var lock = LockService.getScriptLock();
   try {
+    lock.waitLock(10000);
     var payload = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    if (payload.categories && Array.isArray(payload.categories)) {
-      writeDataToSheet(ss, payload.categories, payload.promoPill);
+    if (payload.action === 'updatePin') {
+      var configSheet = getOrCreateSheet(ss, "Configuracion");
+      var configValues = configSheet.getDataRange().getValues();
+      var found = false;
+      for (var i = 1; i < configValues.length; i++) {
+        if (configValues[i][0] === 'pin_admin') {
+          configSheet.getRange(i + 1, 2).setValue(payload.pinAdmin);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        configSheet.appendRow(['pin_admin', payload.pinAdmin]);
+      }
+    } else if (payload.categories && Array.isArray(payload.categories)) {
+      writeDataToSheet(ss, payload.categories, payload.promoPill, payload.pinAdmin);
     }
     
     return ContentService.createTextOutput(JSON.stringify({
@@ -53,6 +69,8 @@ function doPost(e) {
       success: false,
       error: err.toString()
     })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    if (lock) lock.releaseLock();
   }
 }
 
@@ -68,7 +86,7 @@ function getOrCreateSheet(ss, name) {
   return sheet;
 }
 
-function writeDataToSheet(ss, categories, promoPill) {
+function writeDataToSheet(ss, categories, promoPill, pinAdmin) {
   // 1. Guardar copia JSON completa para fidelidad absoluta
   var rawSheet = getOrCreateSheet(ss, "_RAW_DATA");
   rawSheet.getRange("A1").setValue(JSON.stringify({
@@ -77,18 +95,31 @@ function writeDataToSheet(ss, categories, promoPill) {
     updatedAt: new Date().toISOString()
   }));
   
-  // 2. Guardar Píldora de Novedades en pestaña "Configuracion"
+  // 2. Guardar Píldora de Novedades y PIN en pestaña "Configuracion"
   var configSheet = getOrCreateSheet(ss, "Configuracion");
+  
+  // Rescatar el PIN anterior si no se provee uno en este guardado general
+  var oldPin = null;
+  var configValues = configSheet.getDataRange().getValues();
+  for (var i = 1; i < configValues.length; i++) {
+    if (configValues[i][0] === 'pin_admin') {
+      oldPin = configValues[i][1];
+      break;
+    }
+  }
+
   configSheet.clear();
   configSheet.getRange("A1:B1").setValues([["Clave", "Valor"]]);
   configSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#C2410C").setFontColor("#FFFFFF");
+  
+  var configRows = [];
   
   if (promoPill) {
     var descEs = typeof promoPill.description === 'object' ? (promoPill.description.es || "") : (promoPill.description || "");
     var descEn = typeof promoPill.description === 'object' ? (promoPill.description.en || "") : "";
     var descIt = typeof promoPill.description === 'object' ? (promoPill.description.it || "") : "";
 
-    var configRows = [
+    configRows = [
       ["activa", promoPill.active ? "SI" : "NO"],
       ["tipo", promoPill.type || "dish"],
       ["tag_es", typeof promoPill.tag === 'object' ? (promoPill.tag.es || "") : (promoPill.tag || "")],
@@ -106,6 +137,12 @@ function writeDataToSheet(ss, categories, promoPill) {
       ["id_plato_destino", promoPill.targetItemId || ""],
       ["categoria_salto", promoPill.targetCategory || "risottos"]
     ];
+  }
+  
+  var finalPin = pinAdmin || oldPin || "kikko2026";
+  configRows.push(["pin_admin", finalPin.toString()]);
+  
+  if (configRows.length > 0) {
     configSheet.getRange(2, 1, configRows.length, 2).setValues(configRows);
     configSheet.autoResizeColumns(1, 2);
   }
@@ -158,6 +195,7 @@ function writeDataToSheet(ss, categories, promoPill) {
 
 function readDataFromSheet(ss) {
   // Intentar leer primero de _RAW_DATA para máxima velocidad y fidelidad
+  var rawDataObj = null;
   var rawSheet = ss.getSheetByName("_RAW_DATA");
   if (rawSheet) {
     var rawVal = rawSheet.getRange("A1").getValue();
@@ -165,18 +203,68 @@ function readDataFromSheet(ss) {
       try {
         var parsed = JSON.parse(rawVal);
         if (parsed.categories && Array.isArray(parsed.categories)) {
-          return parsed;
+          rawDataObj = parsed;
         }
       } catch (e) {}
     }
   }
 
+  // Leer configuración de la píldora y PIN
+  var promoPill = null;
+  var pinAdmin = "kikko2026";
+  var configSheet = ss.getSheetByName("Configuracion");
+  if (configSheet) {
+    var configValues = configSheet.getDataRange().getValues();
+    var configMap = {};
+    for (var j = 1; j < configValues.length; j++) {
+      configMap[configValues[j][0]] = configValues[j][1];
+    }
+    if (configMap["pin_admin"]) {
+      pinAdmin = configMap["pin_admin"].toString();
+    }
+    if (configMap["activa"] !== undefined && configMap["activa"] !== "") {
+      promoPill = {
+        active: configMap["activa"].toString().toUpperCase() === "SI",
+        type: configMap["tipo"] || "dish",
+        tag: {
+          es: configMap["tag_es"] || "Novedad",
+          en: configMap["tag_en"] || "New",
+          it: configMap["tag_it"] || "Novità"
+        },
+        title: {
+          es: configMap["titulo_es"] || "Risottos Auténticos",
+          en: configMap["titulo_en"] || "Authentic Risottos",
+          it: configMap["titulo_it"] || "Risotti Autentici"
+        },
+        description: {
+          es: configMap["descripcion_es"] || "",
+          en: configMap["descripcion_en"] || "",
+          it: configMap["descripcion_it"] || ""
+        },
+        price: configMap["precio"] !== "" && !isNaN(Number(configMap["precio"])) ? Number(configMap["precio"]) : undefined,
+        originalPrice: configMap["precio_original"] !== "" && !isNaN(Number(configMap["precio_original"])) ? Number(configMap["precio_original"]) : undefined,
+        targetType: configMap["tipo_destino"] || "category",
+        targetItemId: configMap["id_plato_destino"] || undefined,
+        targetCategory: configMap["categoria_salto"] || "risottos"
+      };
+    }
+  }
+
+  // Si hay RAW_DATA usaremos eso para las categorías
+  if (rawDataObj) {
+    return {
+      categories: rawDataObj.categories,
+      promoPill: promoPill, // Siempre primamos la config leida
+      pinAdmin: pinAdmin
+    };
+  }
+
   // Si no hay RAW_DATA o el dueño editó directamente la hoja "Platos":
   var platosSheet = ss.getSheetByName("Platos");
-  if (!platosSheet) return { categories: [], promoPill: null };
+  if (!platosSheet) return { categories: [], promoPill: promoPill, pinAdmin: pinAdmin };
 
   var values = platosSheet.getDataRange().getValues();
-  if (values.length <= 1) return { categories: [], promoPill: null };
+  if (values.length <= 1) return { categories: [], promoPill: promoPill, pinAdmin: pinAdmin };
 
   var categoriesMap = {};
   for (var i = 1; i < values.length; i++) {
@@ -219,45 +307,9 @@ function readDataFromSheet(ss) {
     return categoriesMap[k];
   });
 
-  // Leer configuración de la píldora
-  var promoPill = null;
-  var configSheet = ss.getSheetByName("Configuracion");
-  if (configSheet) {
-    var configValues = configSheet.getDataRange().getValues();
-    var configMap = {};
-    for (var j = 1; j < configValues.length; j++) {
-      configMap[configValues[j][0]] = configValues[j][1];
-    }
-    if (configMap["activa"] !== undefined && configMap["activa"] !== "") {
-      promoPill = {
-        active: configMap["activa"].toString().toUpperCase() === "SI",
-        type: configMap["tipo"] || "dish",
-        tag: {
-          es: configMap["tag_es"] || "Novedad",
-          en: configMap["tag_en"] || "New",
-          it: configMap["tag_it"] || "Novità"
-        },
-        title: {
-          es: configMap["titulo_es"] || "Risottos Auténticos",
-          en: configMap["titulo_en"] || "Authentic Risottos",
-          it: configMap["titulo_it"] || "Risotti Autentici"
-        },
-        description: {
-          es: configMap["descripcion_es"] || "",
-          en: configMap["descripcion_en"] || "",
-          it: configMap["descripcion_it"] || ""
-        },
-        price: configMap["precio"] !== "" && !isNaN(Number(configMap["precio"])) ? Number(configMap["precio"]) : undefined,
-        originalPrice: configMap["precio_original"] !== "" && !isNaN(Number(configMap["precio_original"])) ? Number(configMap["precio_original"]) : undefined,
-        targetType: configMap["tipo_destino"] || "category",
-        targetItemId: configMap["id_plato_destino"] || undefined,
-        targetCategory: configMap["categoria_salto"] || "risottos"
-      };
-    }
-  }
-
   return {
     categories: categoriesList,
-    promoPill: promoPill
+    promoPill: promoPill,
+    pinAdmin: pinAdmin
   };
 }

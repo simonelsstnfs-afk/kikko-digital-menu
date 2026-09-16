@@ -499,8 +499,12 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   // Manejador de Login PIN
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const storedPin = localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_PIN;
-    if (pinInput === storedPin) {
+    if (isLoading) {
+      setAuthError('Cargando configuración. Espera un momento...');
+      return;
+    }
+    const currentPin = adminPin || DEFAULT_PIN;
+    if (pinInput === currentPin) {
       setIsAuthenticated(true);
       sessionStorage.setItem('kikko_admin_auth', 'true');
       setAuthError('');
@@ -794,15 +798,21 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   };
 
   // Cambiar PIN
-  const handleChangePin = (e: React.FormEvent) => {
+  const handleChangePin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPin.trim().length >= 4) {
-      localStorage.setItem(PIN_STORAGE_KEY, newPin.trim());
-      setPinChangeMsg('¡PIN actualizado correctamente!');
-      setNewPin('');
-      setTimeout(() => setPinChangeMsg(''), 3000);
+      setPinChangeMsg('Actualizando PIN en el servidor...');
+      const result = await updateAdminPin(newPin.trim());
+      if (result.success) {
+        setPinChangeMsg('¡PIN actualizado correctamente!');
+        setNewPin('');
+      } else {
+        setPinChangeMsg('Error: ' + result.error);
+      }
+      setTimeout(() => setPinChangeMsg(''), 4000);
     } else {
       setPinChangeMsg('El PIN debe tener al menos 4 caracteres.');
+      setTimeout(() => setPinChangeMsg(''), 3000);
     }
   };
 

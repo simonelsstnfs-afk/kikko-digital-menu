@@ -5,6 +5,7 @@ import { detectAllergensFromText } from '../allergens';
 import {
   fetchMenuFromSheets,
   sendMenuToSheets,
+  sendPinUpdateToSheets,
   getStoredSheetsUrl,
   saveStoredSheetsUrl
 } from '../services/googleSheetsService';
@@ -49,6 +50,9 @@ interface MenuDataContextType {
   isSandboxMode: boolean;
   toggleSandboxMode: () => void;
   exitSandboxMode: () => void;
+  adminPin: string;
+  updateAdminPin: (newPin: string) => Promise<{ success: boolean; error?: string }>;
+  isLoading: boolean;
 }
 
 const defaultPromoPill: PromoPillConfig = {
@@ -64,41 +68,19 @@ const defaultPromoPill: PromoPillConfig = {
   targetType: 'reservation'
 };
 
-const STORAGE_KEY_CATEGORIES = 'kikko_menu_categories_v1';
-const STORAGE_KEY_PROMO_PILL = 'kikko_menu_promo_pill_v1';
-
 const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined);
 
 export function MenuDataProvider({ children }: { children: ReactNode }) {
-  const [categories, setCategories] = useState<MenuCategory[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
-      if (saved) {
-        return ensureAllergensInCategories(JSON.parse(saved));
-      }
-    } catch (e) {
-      console.error('Error loading categories from localStorage:', e);
-    }
-    return ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
-  });
-
-  const [promoPill, setPromoPill] = useState<PromoPillConfig>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_PROMO_PILL);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.error('Error loading promo pill from localStorage:', e);
-    }
-    return defaultPromoPill;
-  });
-
+  const [categories, setCategories] = useState<MenuCategory[]>(ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData))));
+  const [promoPill, setPromoPill] = useState<PromoPillConfig>(defaultPromoPill);
+  const [adminPin, setAdminPin] = useState<string>('kikko2026');
+  
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sheetsUrl, setSheetsUrlState] = useState<string>(() => getStoredSheetsUrl());
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
 
-  // Modo Sandbox / Pruebas (aísla cambios en sesión sin alterar producción)
+  // Modo Sandbox
   const [isSandboxMode, setIsSandboxMode] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return sessionStorage.getItem('kikko_sandbox_mode') === 'true';
@@ -137,6 +119,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
           if (remote?.categories?.length) {
             setCategories(remote.categories);
             if (remote.promoPill) setPromoPill(remote.promoPill);
+            if (remote.pinAdmin) setAdminPin(remote.pinAdmin);
           }
         });
       }
@@ -148,84 +131,56 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     setIsSandboxMode(false);
   };
 
-  // Referencia a estado actual para evitar condiciones de carrera en sincronización
-  const latestDataRef = useRef({ categories, promoPill });
+  const latestDataRef = useRef({ categories, promoPill, adminPin });
   useEffect(() => {
-    latestDataRef.current = { categories, promoPill };
-  }, [categories, promoPill]);
+    latestDataRef.current = { categories, promoPill, adminPin };
+  }, [categories, promoPill, adminPin]);
 
   const setSheetsUrl = (url: string) => {
     setSheetsUrlState(url);
     saveStoredSheetsUrl(url);
   };
 
-  // 1. Guardar en localStorage de inmediato ante cualquier cambio (si no está en sandbox)
-  useEffect(() => {
-    if (isSandboxMode) return;
+  // Carga inicial y revalidación fuerte (NO usamos localStorage)
+  const loadDataFromServer = async (url: string, background = false) => {
+    if (!background) setIsLoading(true);
     try {
-      localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
-    } catch (e) {
-      console.error('Error saving categories to localStorage:', e);
-    }
-  }, [categories, isSandboxMode]);
-
-  useEffect(() => {
-    if (isSandboxMode) return;
-    try {
-      localStorage.setItem(STORAGE_KEY_PROMO_PILL, JSON.stringify(promoPill));
-    } catch (e) {
-      console.error('Error saving promo pill to localStorage:', e);
-    }
-  }, [promoPill, isSandboxMode]);
-
-  // 2. Al arrancar la app, intentar descargar datos frescos desde Google Sheets en segundo plano
-  useEffect(() => {
-    if (!sheetsUrl) return;
-
-    let isMounted = true;
-    (async () => {
-      try {
-        const remoteData = await fetchMenuFromSheets(sheetsUrl);
-        if (isMounted && remoteData && remoteData.categories?.length) {
-          setCategories(ensureAllergensInCategories(remoteData.categories));
-          if (remoteData.promoPill) {
-            setPromoPill(remoteData.promoPill);
-          }
-          setLastSyncedAt(new Date());
-          setSyncStatus('saved');
-        }
-      } catch (err) {
-        console.warn('No se pudo sincronizar inicialmente desde Google Sheets:', err);
+      const remoteData = await fetchMenuFromSheets(url);
+      if (remoteData && remoteData.categories?.length) {
+        setCategories(ensureAllergensInCategories(remoteData.categories));
+        if (remoteData.promoPill) setPromoPill(remoteData.promoPill);
+        if (remoteData.pinAdmin) setAdminPin(remote.pinAdmin);
+        setLastSyncedAt(new Date());
+        setSyncStatus('saved');
+        return true;
       }
-    })();
+      if (!background) setSyncStatus('error');
+      return false;
+    } catch (err) {
+      console.warn('No se pudo sincronizar desde Google Sheets:', err);
+      if (!background) setSyncStatus('error');
+      return false;
+    } finally {
+      if (!background) setIsLoading(false);
+    }
+  };
 
-    return () => {
-      isMounted = false;
-    };
+  useEffect(() => {
+    if (!sheetsUrl) {
+      setIsLoading(false);
+      return;
+    }
+    loadDataFromServer(sheetsUrl, false);
   }, [sheetsUrl]);
 
-  // Revalidar en segundo plano al volver a la pestaña/desbloquear móvil
+  // Revalidar en segundo plano al volver a la pestaña
   useEffect(() => {
     if (!sheetsUrl || isSandboxMode) return;
-
-    const handleRevalidate = async () => {
+    const handleRevalidate = () => {
       if (document.visibilityState === 'visible') {
-        try {
-          const remoteData = await fetchMenuFromSheets(sheetsUrl);
-          if (remoteData && remoteData.categories?.length) {
-            setCategories(ensureAllergensInCategories(remoteData.categories));
-            if (remoteData.promoPill) {
-              setPromoPill(remoteData.promoPill);
-            }
-            setLastSyncedAt(new Date());
-            setSyncStatus('saved');
-          }
-        } catch (err) {
-          console.warn('Revalidación en segundo plano fallida:', err);
-        }
+        loadDataFromServer(sheetsUrl, true);
       }
     };
-
     document.addEventListener('visibilitychange', handleRevalidate);
     window.addEventListener('focus', handleRevalidate);
     return () => {
@@ -234,41 +189,21 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     };
   }, [sheetsUrl, isSandboxMode]);
 
-  // Función para forzar sincronización manual (descargar de Sheets)
   const syncWithSheets = async (): Promise<boolean> => {
     if (!sheetsUrl) return false;
     setSyncStatus('syncing');
-    try {
-      const remoteData = await fetchMenuFromSheets(sheetsUrl);
-      if (remoteData && remoteData.categories?.length) {
-        setCategories(ensureAllergensInCategories(remoteData.categories));
-        if (remoteData.promoPill) {
-          setPromoPill(remoteData.promoPill);
-        }
-        setLastSyncedAt(new Date());
-        setSyncStatus('saved');
-        return true;
-      }
-      setSyncStatus('error');
-      return false;
-    } catch (e) {
-      setSyncStatus('error');
-      return false;
-    }
+    return await loadDataFromServer(sheetsUrl, false);
   };
 
-  // Función para subir datos a Sheets
   const pushToSheets = async (): Promise<boolean> => {
     if (!sheetsUrl) return false;
-    if (isSandboxMode) {
-      console.info('Modo Sandbox activo: pushToSheets simulado con éxito (sin alterar Google Sheets).');
-      return true;
-    }
+    if (isSandboxMode) return true;
     setSyncStatus('syncing');
     try {
       const res = await sendMenuToSheets(
         latestDataRef.current.categories,
         latestDataRef.current.promoPill,
+        latestDataRef.current.adminPin,
         sheetsUrl
       );
       if (res.success) {
@@ -284,26 +219,33 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Helper para auto-guardar en Google Sheets tras una acción CRUD si hay URL configurada
-  const triggerAutoSaveToSheets = (newCats: MenuCategory[], newPill: PromoPillConfig) => {
-    if (!sheetsUrl || isSandboxMode) return;
+  // Helper para persistencia Transaccional: actualiza remoto y luego local
+  const executePessimisticUpdate = async (newCats: MenuCategory[], newPill: PromoPillConfig) => {
+    if (!sheetsUrl || isSandboxMode) {
+      setCategories(newCats);
+      setPromoPill(newPill);
+      return { success: true };
+    }
     setSyncStatus('syncing');
-    sendMenuToSheets(newCats, newPill, sheetsUrl)
-      .then((res) => {
-        if (res.success) {
-          setSyncStatus('saved');
-          setLastSyncedAt(new Date());
-        } else {
-          setSyncStatus('error');
-        }
-      })
-      .catch(() => {
+    try {
+      const res = await sendMenuToSheets(newCats, newPill, latestDataRef.current.adminPin, sheetsUrl);
+      if (res.success) {
+        setCategories(newCats);
+        setPromoPill(newPill);
+        setSyncStatus('saved');
+        setLastSyncedAt(new Date());
+        return { success: true };
+      } else {
         setSyncStatus('error');
-      });
+        return { success: false, error: res.error };
+      }
+    } catch (e: any) {
+      setSyncStatus('error');
+      return { success: false, error: e.message };
+    }
   };
 
-  // Modificar precio rápido
-  const updatePrice = (categoryId: string, itemId: string, newPrice: number) => {
+  const updatePrice = async (categoryId: string, itemId: string, newPrice: number) => {
     const updated = categories.map(cat => {
       if (cat.id !== categoryId) return cat;
       return {
@@ -313,65 +255,39 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         )
       };
     });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
+    await executePessimisticUpdate(updated, promoPill);
   };
 
-  // Añadir nuevo producto
-  const addProduct = (categoryId: string, itemData: Omit<MenuItem, 'id'>) => {
+  const addProduct = async (categoryId: string, itemData: Omit<MenuItem, 'id'>) => {
     const newId = `${categoryId.slice(0, 2)}_${Date.now()}`;
-    const newItem: MenuItem = {
-      ...itemData,
-      id: newId,
-      available: itemData.available ?? true
-    };
+    const newItem: MenuItem = { ...itemData, id: newId, available: itemData.available ?? true };
+    const updated = categories.map(cat => {
+      if (cat.id !== categoryId) return cat;
+      return { ...cat, items: [newItem, ...cat.items] };
+    });
+    await executePessimisticUpdate(updated, promoPill);
+  };
 
+  const updateProduct = async (categoryId: string, itemId: string, itemUpdates: Partial<MenuItem>) => {
     const updated = categories.map(cat => {
       if (cat.id !== categoryId) return cat;
       return {
         ...cat,
-        items: [newItem, ...cat.items]
+        items: cat.items.map(item => item.id === itemId ? { ...item, ...itemUpdates, id: item.id } : item)
       };
     });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
+    await executePessimisticUpdate(updated, promoPill);
   };
 
-  // Modificar producto existente
-  const updateProduct = (categoryId: string, itemId: string, itemUpdates: Partial<MenuItem>) => {
+  const deleteProduct = async (categoryId: string, itemId: string) => {
     const updated = categories.map(cat => {
       if (cat.id !== categoryId) return cat;
-      return {
-        ...cat,
-        items: cat.items.map(item => {
-          if (item.id !== itemId) return item;
-          return {
-            ...item,
-            ...itemUpdates,
-            id: item.id
-          };
-        })
-      };
+      return { ...cat, items: cat.items.filter(item => item.id !== itemId) };
     });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
+    await executePessimisticUpdate(updated, promoPill);
   };
 
-  // Eliminar producto
-  const deleteProduct = (categoryId: string, itemId: string) => {
-    const updated = categories.map(cat => {
-      if (cat.id !== categoryId) return cat;
-      return {
-        ...cat,
-        items: cat.items.filter(item => item.id !== itemId)
-      };
-    });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
-  };
-
-  // Alternar disponibilidad (Agotado / Disponible)
-  const toggleItemAvailable = (categoryId: string, itemId: string) => {
+  const toggleItemAvailable = async (categoryId: string, itemId: string) => {
     const updated = categories.map(cat => {
       if (cat.id !== categoryId) return cat;
       return {
@@ -381,99 +297,67 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         )
       };
     });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
+    await executePessimisticUpdate(updated, promoPill);
   };
 
-  // Actualizar píldora de novedad con persistencia global inmediata
   const updatePromoPill = async (config: Partial<PromoPillConfig>): Promise<{ success: boolean; error?: string }> => {
-    const updatedPill: PromoPillConfig = {
-      ...promoPill,
-      ...config
-    };
-    setPromoPill(updatedPill);
-    try {
-      localStorage.setItem(STORAGE_KEY_PROMO_PILL, JSON.stringify(updatedPill));
-    } catch (e) {
-      console.error('Error saving promo pill to localStorage:', e);
-    }
-
-    if (isSandboxMode) {
-      return { success: true };
-    }
-
-    if (!sheetsUrl) {
-      return { success: true };
-    }
-
-    setSyncStatus('syncing');
-    try {
-      const res = await sendMenuToSheets(latestDataRef.current.categories, updatedPill, sheetsUrl);
-      if (res.success) {
-        setSyncStatus('saved');
-        setLastSyncedAt(new Date());
-        return { success: true };
-      } else {
-        setSyncStatus('error');
-        return { success: false, error: res.error || 'Error al guardar en Google Sheets' };
-      }
-    } catch (err: any) {
-      setSyncStatus('error');
-      return { success: false, error: err?.message || 'Error de conexión con Google Sheets' };
-    }
+    const updatedPill: PromoPillConfig = { ...promoPill, ...config };
+    return await executePessimisticUpdate(categories, updatedPill);
   };
 
-  // Reordenar productos dentro de una categoría
-  const reorderItems = (categoryId: string, newItems: MenuItem[]) => {
+  const reorderItems = async (categoryId: string, newItems: MenuItem[]) => {
     const updated = categories.map(cat => {
       if (cat.id !== categoryId) return cat;
-      return {
-        ...cat,
-        items: newItems
-      };
+      return { ...cat, items: newItems };
     });
-    setCategories(updated);
-    triggerAutoSaveToSheets(updated, promoPill);
+    await executePessimisticUpdate(updated, promoPill);
   };
 
-  // Restablecer valores de fábrica
-  const resetToDefaults = () => {
+  const resetToDefaults = async () => {
     const factoryCategories = ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
-    setCategories(factoryCategories);
-    setPromoPill(defaultPromoPill);
-    localStorage.removeItem(STORAGE_KEY_CATEGORIES);
-    localStorage.removeItem(STORAGE_KEY_PROMO_PILL);
-    triggerAutoSaveToSheets(factoryCategories, defaultPromoPill);
+    await executePessimisticUpdate(factoryCategories, defaultPromoPill);
   };
 
-  // Exportar backup
   const exportBackup = (): string => {
-    const data = {
-      version: '1.0',
-      exportedAt: new Date().toISOString(),
-      promoPill,
-      categories
-    };
+    const data = { version: '1.0', exportedAt: new Date().toISOString(), promoPill, categories };
     return JSON.stringify(data, null, 2);
   };
 
-  // Importar backup
-  const importBackup = (jsonString: string): boolean => {
+  const importBackup = async (jsonString: string): Promise<boolean> => {
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed && Array.isArray(parsed.categories)) {
         const sanitizedCats = ensureAllergensInCategories(parsed.categories);
-        setCategories(sanitizedCats);
-        if (parsed.promoPill) {
-          setPromoPill(parsed.promoPill);
-        }
-        triggerAutoSaveToSheets(sanitizedCats, parsed.promoPill || promoPill);
-        return true;
+        const res = await executePessimisticUpdate(sanitizedCats, parsed.promoPill || promoPill);
+        return res.success;
       }
       return false;
     } catch (e) {
       console.error('Error parsing backup JSON:', e);
       return false;
+    }
+  };
+
+  const updateAdminPin = async (newPin: string): Promise<{ success: boolean; error?: string }> => {
+    if (!sheetsUrl || isSandboxMode) {
+      setAdminPin(newPin);
+      return { success: true };
+    }
+    setSyncStatus('syncing');
+    try {
+      const res = await sendPinUpdateToSheets(newPin, sheetsUrl);
+      if (res.success) {
+        setAdminPin(newPin);
+        setSyncStatus('saved');
+        setLastSyncedAt(new Date());
+        return { success: true };
+      } else {
+        setSyncStatus('error');
+        return { success: false, error: res.error || 'Error al guardar PIN en Google Sheets' };
+      }
+    } catch (e: any) {
+      setSyncStatus('error');
+      return { success: false, error: e.message };
     }
   };
 
@@ -500,7 +384,10 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         isSandboxMode,
         toggleSandboxMode,
         exitSandboxMode,
-        reorderItems
+        reorderItems,
+        adminPin,
+        updateAdminPin,
+        isLoading
       }}
     >
       {children}

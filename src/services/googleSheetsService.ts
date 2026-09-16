@@ -12,7 +12,6 @@ export function getStoredSheetsUrl(): string {
   } catch (e) {
     console.error('Error reading sheets URL from localStorage:', e);
   }
-  // Fallback a variable de entorno de Vite si existe
   const envUrl = (import.meta as any).env?.VITE_GOOGLE_SHEETS_URL;
   if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
     return envUrl.trim();
@@ -31,17 +30,14 @@ export function saveStoredSheetsUrl(url: string): void {
 export interface SheetsResponse {
   categories: MenuCategory[];
   promoPill?: PromoPillConfig;
+  pinAdmin?: string;
 }
 
-/**
- * Descarga los datos más recientes desde Google Sheets
- */
 export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsResponse | null> {
   const url = customUrl || getStoredSheetsUrl();
   if (!url) return null;
 
   try {
-    // Parámetro anti-caché para forzar que proxies y navegadores móviles traigan siempre datos frescos en tiempo real
     const separator = url.includes('?') ? '&' : '?';
     const freshUrl = `${url}${separator}_t=${Date.now()}`;
 
@@ -52,7 +48,8 @@ export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsRes
         'Accept': 'application/json',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache'
-      }
+      },
+      cache: 'no-store'
     });
 
     if (!response.ok) {
@@ -64,7 +61,8 @@ export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsRes
     if (data && Array.isArray(data.categories) && data.categories.length > 0) {
       return {
         categories: data.categories,
-        promoPill: data.promoPill
+        promoPill: data.promoPill,
+        pinAdmin: data.pinAdmin
       };
     }
     return null;
@@ -74,12 +72,10 @@ export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsRes
   }
 }
 
-/**
- * Guarda y sincroniza los cambios hacia Google Sheets
- */
 export async function sendMenuToSheets(
   categories: MenuCategory[],
   promoPill: PromoPillConfig,
+  pinAdmin?: string,
   customUrl?: string
 ): Promise<{ success: boolean; error?: string }> {
   const url = customUrl || getStoredSheetsUrl();
@@ -88,16 +84,17 @@ export async function sendMenuToSheets(
   }
 
   try {
-    // text/plain previene el preflight OPTIONS de CORS que suele fallar en Apps Script
     const response = await fetch(url, {
       method: 'POST',
       redirect: 'follow',
       headers: {
         'Content-Type': 'text/plain;charset=utf-8'
       },
+      cache: 'no-store',
       body: JSON.stringify({
         categories,
         promoPill,
+        pinAdmin,
         timestamp: new Date().toISOString()
       })
     });
@@ -113,6 +110,45 @@ export async function sendMenuToSheets(
     return { success: false, error: result?.error || 'Respuesta inválida de Google Sheets' };
   } catch (error: any) {
     console.error('Error al enviar a Google Sheets:', error);
+    return { success: false, error: error.message || 'Error de conexión' };
+  }
+}
+
+export async function sendPinUpdateToSheets(
+  pinAdmin: string,
+  customUrl?: string
+): Promise<{ success: boolean; error?: string }> {
+  const url = customUrl || getStoredSheetsUrl();
+  if (!url) {
+    return { success: false, error: 'No hay URL de Google Sheets configurada.' };
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      cache: 'no-store',
+      body: JSON.stringify({
+        action: 'updatePin',
+        pinAdmin: pinAdmin,
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    if (!response.ok) {
+      return { success: false, error: `Error HTTP ${response.status}` };
+    }
+
+    const result = await response.json();
+    if (result && result.success) {
+      return { success: true };
+    }
+    return { success: false, error: result?.error || 'Error al actualizar PIN' };
+  } catch (error: any) {
+    console.error('Error al actualizar PIN:', error);
     return { success: false, error: error.message || 'Error de conexión' };
   }
 }
