@@ -63,10 +63,10 @@ export default function DynamicIsland() {
   const price = promoPill.price !== undefined && promoPill.price !== '' ? Number(promoPill.price) : null;
   const originalPrice = promoPill.originalPrice !== undefined && promoPill.originalPrice !== '' ? Number(promoPill.originalPrice) : null;
 
-  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "Google 5★", "Reserva", "2x1", "Novedad")
+  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "RESEÑANOS", "Reserva", "2x1", "Novedad")
   const getShortBubbleText = () => {
     const raw = (tagText || '').trim();
-    if (/reseña|review|recensioni|5\s*★/i.test(raw) || promoType === 'google_review') return 'Google 5★';
+    if (/reseña|review|recensioni|5\s*★/i.test(raw) || promoType === 'google_review') return t('dynamicIslandGoogleReviewBubble') || 'RESEÑANOS';
     if (/reserva|booking|prenota/i.test(raw) || promoType === 'booking') return 'Reserva';
     if (/2\s*x\s*1/i.test(raw) || promoType === 'promo_2x1') return '2x1';
     if (/novedad/i.test(raw) || promoType === 'promo_new') return 'Novedad';
@@ -91,7 +91,9 @@ export default function DynamicIsland() {
           defaultTag: t('dynamicIslandGoogleReviewTag') || 'RESEÑAS',
           btnText: t('dynamicIslandGoogleReviewBtn') || 'Valorar en Google (5★)',
           btnGradient: 'from-white via-zinc-100 to-zinc-200 text-zinc-950 shadow-white/20 hover:bg-zinc-100',
-          btnIcon: <GoogleIcon className="w-4 h-4 shrink-0" />
+          btnIcon: <GoogleIcon className="w-4 h-4 shrink-0" />,
+          bubbleIcon: <GoogleIcon className="w-3.5 h-3.5 shrink-0" />,
+          bubbleTextColor: 'text-white'
         };
       case 'booking':
         return {
@@ -387,7 +389,8 @@ export default function DynamicIsland() {
             >
               {/* Bocadillo de diálogo cómic ultra-compacto y ligero */}
               <div className="relative bg-[#141A0F] border border-white/25 text-white rounded-xl px-2.5 py-1 shadow-xl flex items-center gap-1.5">
-                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-amber-400">
+                {visuals.bubbleIcon}
+                <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider ${visuals.bubbleTextColor || 'text-amber-400'}`}>
                   {shortBubbleText}
                 </span>
                 <span className="text-[9px] text-zinc-400">↗</span>
