@@ -271,7 +271,7 @@ async function runAdminFunctionalTests() {
   const promoReviewPreset: PromoPillConfig = {
     active: true,
     type: 'google_review',
-    tag: { es: '⭐ RESEÑAS', en: '⭐ REVIEWS', it: '⭐ RECENSIONI' },
+    tag: { es: 'RESEÑAS', en: 'REVIEWS', it: 'RECENSIONI' },
     title: { es: '¿Te gustó la experiencia?', en: 'Did you enjoy the experience?', it: "Ti è piaciuta l'esperienza?" },
     description: {
       es: 'Valóranos en Google con 5 estrellas y apoya a nuestro equipo.',
@@ -287,10 +287,11 @@ async function runAdminFunctionalTests() {
     `Tipo: ${promoReviewPreset.type}, Target: ${promoReviewPreset.targetType}`
   );
 
+  const titleObj = typeof promoReviewPreset.title === 'object' && promoReviewPreset.title !== null ? promoReviewPreset.title : null;
   assert(
-    typeof promoReviewPreset.title === 'object' && promoReviewPreset.title.es.includes('experiencia'),
+    titleObj !== null && titleObj.es.includes('experiencia'),
     'Preset de Reseñas contiene textos trilingües completos en título y tag',
-    `ES: "${promoReviewPreset.title.es}", EN: "${promoReviewPreset.title.en}"`
+    `ES: "${titleObj?.es}", EN: "${titleObj?.en}"`
   );
 
   const promoBookingPreset: PromoPillConfig = {
