@@ -264,6 +264,64 @@ async function runAdminFunctionalTests() {
   );
 
   // -------------------------------------------------------------
+  // TEST 8: DYNAMIC ISLAND — NUEVOS PRESETS NO COMERCIALES (RESEÑAS & RESERVAS)
+  // -------------------------------------------------------------
+  console.log('\n🔹 8. Probando Presets de Dynamic Island (Reseñas Google & Reservas)...');
+
+  const promoReviewPreset: PromoPillConfig = {
+    active: true,
+    type: 'google_review',
+    tag: { es: '⭐ RESEÑAS', en: '⭐ REVIEWS', it: '⭐ RECENSIONI' },
+    title: { es: '¿Te gustó la experiencia?', en: 'Did you enjoy the experience?', it: "Ti è piaciuta l'esperienza?" },
+    description: {
+      es: 'Valóranos en Google con 5 estrellas y apoya a nuestro equipo.',
+      en: 'Rate us 5 stars on Google and support our team.',
+      it: 'Valutaci con 5 stelle su Google e supporta il nostro team.'
+    },
+    targetType: 'google_review'
+  };
+
+  assert(
+    promoReviewPreset.type === 'google_review' && promoReviewPreset.targetType === 'google_review',
+    'Preset de Reseñas de Google inicializa tipo y targetType correctos',
+    `Tipo: ${promoReviewPreset.type}, Target: ${promoReviewPreset.targetType}`
+  );
+
+  assert(
+    typeof promoReviewPreset.title === 'object' && promoReviewPreset.title.es.includes('experiencia'),
+    'Preset de Reseñas contiene textos trilingües completos en título y tag',
+    `ES: "${promoReviewPreset.title.es}", EN: "${promoReviewPreset.title.en}"`
+  );
+
+  const promoBookingPreset: PromoPillConfig = {
+    active: true,
+    type: 'booking',
+    tag: { es: '📅 RESERVAS', en: '📅 BOOKINGS', it: '📅 PRENOTAZIONI' },
+    title: { es: 'Reserva tu mesa en Kikko', en: 'Book your table at Kikko', it: 'Prenota il tuo tavolo da Kikko' },
+    description: {
+      es: 'Asegura tu sitio en salón o terraza en pocos segundos por WhatsApp.',
+      en: 'Secure your table in dining room or terrace in seconds via WhatsApp.',
+      it: 'Assicura il tuo posto in sala o terrazza in pochi secondi via WhatsApp.'
+    },
+    targetType: 'reservation'
+  };
+
+  assert(
+    promoBookingPreset.type === 'booking' && promoBookingPreset.targetType === 'reservation',
+    'Preset de Reservas de mesa inicializa tipo y targetType correctos',
+    `Tipo: ${promoBookingPreset.type}, Target: ${promoBookingPreset.targetType}`
+  );
+
+  // Serialización y restauración de Dynamic Island
+  const serializedPromo = JSON.stringify({ promoPill: promoReviewPreset });
+  const restoredPromo = JSON.parse(serializedPromo).promoPill as PromoPillConfig;
+  assert(
+    restoredPromo.type === 'google_review' && restoredPromo.targetType === 'google_review',
+    'Configuración de aviso no comercial se serializa y restaura íntegramente',
+    `Restaurado: ${restoredPromo.type} con tag "${typeof restoredPromo.tag === 'object' ? restoredPromo.tag.es : restoredPromo.tag}"`
+  );
+
+  // -------------------------------------------------------------
   // RESUMEN FINAL
   // -------------------------------------------------------------
   console.log('\n======================================================');

@@ -12,8 +12,8 @@ export interface MenuItem {
   allergens?: string[];
 }
 
-export type PromoType = 'dish' | 'promo_2x1' | 'discount' | 'special_event' | 'custom' | 'promo_new' | 'dish_suggestion' | 'event';
-export type PromoTargetType = 'dish' | 'category' | 'none';
+export type PromoType = 'dish' | 'promo_2x1' | 'discount' | 'special_event' | 'custom' | 'promo_new' | 'dish_suggestion' | 'event' | 'google_review' | 'booking';
+export type PromoTargetType = 'dish' | 'category' | 'none' | 'google_review' | 'reservation';
 
 export interface PromoPillConfig {
   active: boolean;

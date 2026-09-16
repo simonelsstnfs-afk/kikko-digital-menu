@@ -21,6 +21,7 @@ import {
   Flame,
   Tag,
   Calendar,
+  Star,
   UtensilsCrossed,
   Sliders,
   Eye,
@@ -519,6 +520,32 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
       setPillTagEn('EVENT');
       setPillTagIt('EVENTO');
       setPillTargetType('none');
+    } else if (type === 'google_review') {
+      setPillTag('⭐ RESEÑAS');
+      setPillTagEn('⭐ REVIEWS');
+      setPillTagIt('⭐ RECENSIONI');
+      setPillTitle('¿Te gustó la experiencia?');
+      setPillTitleEn('Did you enjoy the experience?');
+      setPillTitleIt('Ti è piaciuta l\'esperienza?');
+      setPillDesc('Valóranos en Google con 5 estrellas y apoya a nuestro equipo.');
+      setPillDescEn('Rate us 5 stars on Google and support our team.');
+      setPillDescIt('Valutaci con 5 stelle su Google e supporta il nostro team.');
+      setPillPrice('');
+      setPillOriginalPrice('');
+      setPillTargetType('google_review');
+    } else if (type === 'booking') {
+      setPillTag('📅 RESERVAS');
+      setPillTagEn('📅 BOOKINGS');
+      setPillTagIt('📅 PRENOTAZIONI');
+      setPillTitle('Reserva tu mesa en Kikko');
+      setPillTitleEn('Book your table at Kikko');
+      setPillTitleIt('Prenota il tuo tavolo da Kikko');
+      setPillDesc('Asegura tu sitio en salón o terraza en pocos segundos por WhatsApp.');
+      setPillDescEn('Secure your table in dining room or terrace in seconds via WhatsApp.');
+      setPillDescIt('Assicura il tuo posto in sala o terrazza in pochi secondi via WhatsApp.');
+      setPillPrice('');
+      setPillOriginalPrice('');
+      setPillTargetType('reservation');
     } else if (type === 'custom') {
       setPillTag('PROMO');
       setPillTagEn('SPECIAL');
@@ -1257,7 +1284,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               <label className="block text-xs uppercase font-semibold text-zinc-400 tracking-wider">
                 Presets de Promoción Rápida (1 Clic)
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => applyPreset('dish')}
@@ -1319,6 +1346,38 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   <div className="min-w-0">
                     <span className="text-xs font-bold block truncate">Evento</span>
                     <span className="text-[10px] text-zinc-500 block truncate">Cata / Directo</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset('google_review')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'google_review'
+                      ? 'bg-amber-950/60 border-[#FBBC05] text-amber-200 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Star className="w-4 h-4 text-[#FBBC05] fill-[#FBBC05] shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Reseñas Google</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">Valoración 5★</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset('booking')}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    pillType === 'booking'
+                      ? 'bg-emerald-950/60 border-emerald-500 text-emerald-200 shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold block truncate">Reservar Mesa</span>
+                    <span className="text-[10px] text-zinc-500 block truncate">WhatsApp / Salón</span>
                   </div>
                 </button>
               </div>
@@ -1432,7 +1491,9 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                               {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
                             </span>
                             <span className="w-1 h-1 rounded-full bg-amber-500/60" />
-                            <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Hoy</span>
+                            <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
+                              {pillType === 'google_review' ? 'Google 4.7★' : pillType === 'booking' ? 'WhatsApp' : 'Hoy'}
+                            </span>
                           </div>
                           <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[140px] sm:max-w-[200px]">
                             {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
@@ -1470,8 +1531,14 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                                 className="w-full h-full object-cover scale-110"
                               />
                             </div>
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-400 text-xs font-bold">
-                              <span>✨</span>
+                            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${
+                              pillType === 'google_review'
+                                ? 'border-[#FBBC05]/50 bg-amber-950/80 text-[#FBBC05]'
+                                : pillType === 'booking'
+                                ? 'border-emerald-500/50 bg-emerald-950/80 text-emerald-300'
+                                : 'border-amber-500/40 bg-amber-500/10 text-amber-400'
+                            }`}>
+                              <span>{pillType === 'google_review' ? '⭐' : pillType === 'booking' ? '📅' : '✨'}</span>
                               <span className="uppercase tracking-wider text-[11px] font-black">
                                 {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
                               </span>
@@ -1508,8 +1575,20 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             )}
                           </div>
                         )}
-                        <div className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider text-center shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
-                          <span>Ir al plato en la carta</span>
+                        <div className={`w-full py-3 rounded-2xl bg-gradient-to-r ${
+                          pillType === 'google_review'
+                            ? 'from-amber-400 via-amber-500 to-amber-600 text-zinc-950 shadow-amber-500/20'
+                            : pillType === 'booking'
+                            ? 'from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-emerald-500/20'
+                            : 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
+                        } font-black text-xs uppercase tracking-wider text-center shadow-lg flex items-center justify-center gap-2`}>
+                          <span>
+                            {pillType === 'google_review'
+                              ? (previewLang === 'es' ? 'Valorar en Google (5★)' : previewLang === 'en' ? 'Rate on Google (5★)' : 'Valuta su Google (5★)')
+                              : pillType === 'booking'
+                              ? (previewLang === 'es' ? 'Reservar Mesa Ahora 📅' : previewLang === 'en' ? 'Book Table Now 📅' : 'Prenota Tavolo Ora 📅')
+                              : 'Ir al plato en la carta'}
+                          </span>
                           <span className="text-sm">→</span>
                         </div>
                       </div>
@@ -1552,7 +1631,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                   🎯 Autonavegación al pulsar "Ver en la carta"
                 </span>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setPillTargetType('dish')}
@@ -1562,7 +1641,7 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                         : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
                     }`}
                   >
-                    ✨ Plato con Halo de Luz
+                    ✨ Plato con Halo
                   </button>
 
                   <button
@@ -1574,7 +1653,31 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                         : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
                     }`}
                   >
-                    📂 Categoría General
+                    📂 Categoría
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPillTargetType('google_review')}
+                    className={`p-2.5 rounded-xl border text-xs font-semibold cursor-pointer text-center transition-all ${
+                      pillTargetType === 'google_review'
+                        ? 'bg-amber-950/60 border-[#FBBC05] text-amber-200'
+                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    ⭐ Reseñas Google
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPillTargetType('reservation')}
+                    className={`p-2.5 rounded-xl border text-xs font-semibold cursor-pointer text-center transition-all ${
+                      pillTargetType === 'reservation'
+                        ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'
+                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    📅 Reservas Mesa
                   </button>
 
                   <button
@@ -1589,6 +1692,30 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                     ℹ️ Solo Informativo
                   </button>
                 </div>
+
+                {pillTargetType === 'google_review' && (
+                  <div className="p-3 rounded-xl bg-amber-950/30 border border-[#FBBC05]/30 text-xs text-amber-200 flex items-start gap-2.5">
+                    <Star className="w-4 h-4 text-[#FBBC05] fill-[#FBBC05] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-white">Apertura directa de Reseñas de Google Maps</span>
+                      <span className="text-[11px] text-amber-300/90 block mt-0.5">
+                        Al pulsar el botón de la Dynamic Island, se abre la ventana oficial de Google Maps para valorar Kikko con 5★ y se desplaza la carta hacia la sección de opiniones.
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {pillTargetType === 'reservation' && (
+                  <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-200 flex items-start gap-2.5">
+                    <Calendar className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-white">Desplazamiento asistido al Formulario de Reservas</span>
+                      <span className="text-[11px] text-emerald-300/90 block mt-0.5">
+                        Al pulsar, la carta se desplaza suavemente hasta la sección de reservas (#reservas) y resalta el formulario para reservar por WhatsApp o teléfono.
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {pillTargetType === 'dish' && (
                   <div>
@@ -1638,35 +1765,43 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
               </div>
 
               {/* Precios (Normal y Rebaja) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
-                <div>
-                  <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1 tracking-wider">
-                    Precio Promocional (€)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. 16.50"
-                    value={pillPrice}
-                    onChange={(e) => setPillPrice(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
-                  />
-                  <span className="text-[10px] text-zinc-500">Precio destacado en la píldora.</span>
+              {pillType === 'google_review' || pillType === 'booking' ? (
+                <div className="p-3.5 rounded-xl bg-zinc-950/40 border border-zinc-800/70 text-center">
+                  <span className="text-xs text-zinc-400 italic">
+                    ℹ️ Los precios se ocultan automáticamente en este tipo de aviso no comercial.
+                  </span>
                 </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
+                  <div>
+                    <label className="block text-xs uppercase font-semibold text-zinc-300 mb-1 tracking-wider">
+                      Precio Promocional (€)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 16.50"
+                      value={pillPrice}
+                      onChange={(e) => setPillPrice(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
+                    />
+                    <span className="text-[10px] text-zinc-500">Precio destacado en la píldora.</span>
+                  </div>
 
-                <div>
-                  <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
-                    Precio Original Tachado (€) <span className="text-zinc-500 font-normal">(Opcional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. 21.00"
-                    value={pillOriginalPrice}
-                    onChange={(e) => setPillOriginalPrice(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
-                  />
-                  <span className="text-[10px] text-zinc-500">Aparecerá tachado si se rellena.</span>
+                  <div>
+                    <label className="block text-xs uppercase font-semibold text-zinc-400 mb-1 tracking-wider">
+                      Precio Original Tachado (€) <span className="text-zinc-500 font-normal">(Opcional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 21.00"
+                      value={pillOriginalPrice}
+                      onChange={(e) => setPillOriginalPrice(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-base sm:text-sm font-mono focus:outline-none focus:border-[#C2410C]"
+                    />
+                    <span className="text-[10px] text-zinc-500">Aparecerá tachado si se rellena.</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Botón de Auto-Traducción Inteligente */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/60 border border-zinc-800">

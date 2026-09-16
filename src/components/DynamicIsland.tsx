@@ -11,8 +11,11 @@ import {
   ChevronUp,
   X,
   ArrowRight,
-  UtensilsCrossed
+  UtensilsCrossed,
+  Star
 } from 'lucide-react';
+
+const GOOGLE_MAPS_REVIEW_URL = "https://g.page/r/CTkP71YejfMQEBM/review";
 
 export default function DynamicIsland() {
   const { promoPill, categories } = useMenuData();
@@ -52,9 +55,11 @@ export default function DynamicIsland() {
   const price = promoPill.price !== undefined && promoPill.price !== '' ? Number(promoPill.price) : null;
   const originalPrice = promoPill.originalPrice !== undefined && promoPill.originalPrice !== '' ? Number(promoPill.originalPrice) : null;
 
-  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "2x1", "Novedad", "Sugerencia")
+  // Texto ultra-compacto para el bocadillo de charla al scroll (ej. "⭐ 5★", "Reserva", "2x1", "Novedad")
   const getShortBubbleText = () => {
     const raw = (tagText || '').trim();
+    if (/reseña|review|recensioni|5\s*★/i.test(raw) || promoType === 'google_review') return '⭐ 5★';
+    if (/reserva|booking|prenota/i.test(raw) || promoType === 'booking') return 'Reserva';
     if (/2\s*x\s*1/i.test(raw) || promoType === 'promo_2x1') return '2x1';
     if (/novedad/i.test(raw) || promoType === 'promo_new') return 'Novedad';
     if (/sugerencia|chef/i.test(raw) || promoType === 'dish_suggestion') return t('dynamicIslandChef') || 'Sugerencia';
@@ -67,6 +72,30 @@ export default function DynamicIsland() {
   // Icono y temática según el Preset
   const getPresetVisuals = (type: PromoType) => {
     switch (type) {
+      case 'google_review':
+        return {
+          icon: <Star className="w-3.5 h-3.5 fill-[#FBBC05] text-[#FBBC05]" />,
+          glowColor: 'rgba(251, 188, 5, 0.45)',
+          borderColor: 'border-[#FBBC05]/70',
+          metallicClass: 'metallic-border-google_review',
+          badgeBg: 'bg-amber-950/80 border-[#FBBC05]/50 text-[#FBBC05]',
+          pingColor: 'bg-[#FBBC05]',
+          defaultTag: t('dynamicIslandGoogleReviewTag') || '⭐ RESEÑAS',
+          btnText: t('dynamicIslandGoogleReviewBtn') || 'Valorar en Google (5★) →',
+          btnGradient: 'from-amber-400 via-amber-500 to-amber-600 text-zinc-950 shadow-amber-500/20'
+        };
+      case 'booking':
+        return {
+          icon: <Calendar className="w-3.5 h-3.5 text-emerald-400" />,
+          glowColor: 'rgba(16, 185, 129, 0.45)',
+          borderColor: 'border-emerald-500/70',
+          metallicClass: 'metallic-border-booking',
+          badgeBg: 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300',
+          pingColor: 'bg-emerald-500',
+          defaultTag: t('dynamicIslandBookingTag') || '📅 RESERVAS',
+          btnText: t('dynamicIslandBookingBtn') || 'Reservar Mesa Ahora 📅 →',
+          btnGradient: 'from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-emerald-500/20'
+        };
       case 'promo_2x1':
         return {
           icon: <Flame className="w-3.5 h-3.5 text-red-400 animate-pulse" />,
@@ -75,7 +104,9 @@ export default function DynamicIsland() {
           metallicClass: 'metallic-border-promo_2x1',
           badgeBg: 'bg-red-950/70 border-red-800/80 text-red-300',
           pingColor: 'bg-red-500',
-          defaultTag: t('dynamicIsland2x1')
+          defaultTag: t('dynamicIsland2x1'),
+          btnText: t('dynamicIslandGoToDish') || 'Ir al plato en la carta',
+          btnGradient: 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
         };
       case 'discount':
         return {
@@ -85,7 +116,9 @@ export default function DynamicIsland() {
           metallicClass: 'metallic-border-discount',
           badgeBg: 'bg-emerald-950/70 border-emerald-800/80 text-emerald-300',
           pingColor: 'bg-emerald-500',
-          defaultTag: t('dynamicIslandDiscount')
+          defaultTag: t('dynamicIslandDiscount'),
+          btnText: t('dynamicIslandGoToDish') || 'Ir al plato en la carta',
+          btnGradient: 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
         };
       case 'special_event':
         return {
@@ -95,7 +128,9 @@ export default function DynamicIsland() {
           metallicClass: 'metallic-border-event',
           badgeBg: 'bg-purple-950/70 border-purple-800/80 text-purple-300',
           pingColor: 'bg-purple-500',
-          defaultTag: t('dynamicIslandEvent')
+          defaultTag: t('dynamicIslandEvent'),
+          btnText: t('dynamicIslandGoToDish') || 'Ir al plato en la carta',
+          btnGradient: 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
         };
       case 'dish':
       default:
@@ -106,7 +141,9 @@ export default function DynamicIsland() {
           metallicClass: 'metallic-border-dish',
           badgeBg: 'border-amber-500/40 bg-amber-500/10 text-amber-400',
           pingColor: 'bg-amber-500',
-          defaultTag: t('dynamicIslandChef')
+          defaultTag: t('dynamicIslandChef'),
+          btnText: t('dynamicIslandGoToDish') || 'Ir al plato en la carta',
+          btnGradient: 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'
         };
     }
   };
@@ -147,6 +184,31 @@ export default function DynamicIsland() {
     const targetType = promoPill.targetType || (promoPill.targetItemId ? 'dish' : 'category');
     const targetCategory = promoPill.targetCategory;
     const targetItemId = promoPill.targetItemId;
+
+    // Si es acción de Reseñas de Google
+    if (promoType === 'google_review' || targetType === 'google_review') {
+      window.open(GOOGLE_MAPS_REVIEW_URL, '_blank', 'noopener,noreferrer');
+      const reviewEl = document.getElementById('resenas');
+      if (reviewEl) {
+        reviewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
+    // Si es acción de Reserva de mesa
+    if (promoType === 'booking' || targetType === 'reservation') {
+      const reservaEl = document.getElementById('reservas');
+      if (reservaEl) {
+        reservaEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        reservaEl.classList.remove('dish-highlighted');
+        void reservaEl.offsetWidth;
+        reservaEl.classList.add('dish-highlighted');
+        setTimeout(() => {
+          reservaEl.classList.remove('dish-highlighted');
+        }, 2900);
+      }
+      return;
+    }
 
     // Si se especificó un plato concreto
     if (targetType === 'dish' && targetItemId) {
@@ -291,9 +353,9 @@ export default function DynamicIsland() {
                 <button
                   type="button"
                   onClick={handleNavigate}
-                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-zinc-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 hover:brightness-110 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer"
+                  className={`w-full py-3 rounded-2xl bg-gradient-to-r ${visuals.btnGradient || 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'} font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer`}
                 >
-                  <span>{t('dynamicIslandGoToDish') || 'Ir al plato en la carta'}</span>
+                  <span>{visuals.btnText || t('dynamicIslandGoToDish') || 'Ir al plato en la carta'}</span>
                   <span className="text-sm">→</span>
                 </button>
               </div>
@@ -384,7 +446,7 @@ export default function DynamicIsland() {
                         </span>
                         <span className="w-1 h-1 rounded-full bg-amber-500/60" />
                         <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
-                          {t('dynamicIslandChef') || 'Hoy'}
+                          {promoType === 'google_review' ? 'Google 4.7★' : promoType === 'booking' ? 'WhatsApp' : (t('dynamicIslandChef') || 'Hoy')}
                         </span>
                       </div>
                       <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[130px] sm:max-w-[190px]">
