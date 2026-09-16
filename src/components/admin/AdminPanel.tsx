@@ -1495,16 +1495,28 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                           />
                         </div>
                         <div className="flex flex-col text-left pr-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
-                              {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
-                            </span>
-                            <span className="w-1 h-1 rounded-full bg-amber-500/60" />
-                            <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
-                              {pillType === 'google_review' ? 'Google 4.7★' : pillType === 'booking' ? 'WhatsApp' : 'Hoy'}
-                            </span>
-                          </div>
-                          <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[140px] sm:max-w-[200px]">
+                          {pillType === 'google_review' ? (
+                            <div className="flex items-center gap-2">
+                              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-white/20 bg-zinc-900/90 text-white shadow-sm">
+                                <GoogleIcon className="w-3 h-3 shrink-0" />
+                                <span className="text-[9.5px] font-black uppercase tracking-wider text-white">
+                                  {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                                </span>
+                              </div>
+                              <span className="text-[9.5px] text-zinc-400 font-medium">Google 4.7★</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">
+                                {previewLang === 'es' ? pillTag : previewLang === 'en' ? (pillTagEn || pillTag) : (pillTagIt || pillTag)}
+                              </span>
+                              <span className="w-1 h-1 rounded-full bg-amber-500/60" />
+                              <span className="text-[9px] text-zinc-400 uppercase tracking-wider">
+                                {pillType === 'booking' ? 'WhatsApp' : 'Hoy'}
+                              </span>
+                            </div>
+                          )}
+                          <span className="font-serif italic text-xs sm:text-sm text-white font-bold tracking-tight truncate max-w-[140px] sm:max-w-[200px] mt-0.5">
                             {previewLang === 'es' ? pillTitle : previewLang === 'en' ? (pillTitleEn || pillTitle) : (pillTitleIt || pillTitle)}
                           </span>
                         </div>
@@ -1522,7 +1534,11 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
                             )}
                           </div>
                         )}
-                        <div className="w-5 h-5 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 text-xs">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs ml-1 ${
+                          pillType === 'google_review'
+                            ? 'bg-white/10 text-white border border-white/20'
+                            : 'bg-amber-500/10 text-amber-400'
+                        }`}>
                           ↑
                         </div>
                       </div>
