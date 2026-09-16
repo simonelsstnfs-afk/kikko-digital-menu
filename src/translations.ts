@@ -378,7 +378,7 @@ export const translations = {
     dynamicIslandGoogleReviewTitle: 'Ti è piaciuta l\'esperienza?',
     dynamicIslandGoogleReviewDesc: 'Valutaci con 5 stelle su Google e supporta il nostro team.',
     dynamicIslandGoogleReviewBtn: 'Valuta su Google (5★)',
-    dynamicIslandGoogleReviewBubble: 'RECENSISCICI',
+    dynamicIslandGoogleReviewBubble: 'VALUTACI',
     dynamicIslandBooking: 'Prenota un Tavolo',
     dynamicIslandBookingTag: '📅 PRENOTAZIONI',
     dynamicIslandBookingTitle: 'Prenota il tuo tavolo da Kikko',
