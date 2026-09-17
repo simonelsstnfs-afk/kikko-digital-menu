@@ -1,13 +1,13 @@
 {
   "title": "Informe Técnico de Auditoría de Entrega Final — Carta Web Kikko",
-  "date": "2026-09-17T12:40:03.690Z",
+  "date": "2026-09-17T13:33:03.562Z",
   "status": "PASSED_CERTIFIED",
   "summary": {
     "totalAssertions": 16,
     "passedAssertions": 16,
     "failedAssertions": 0,
     "successRatePercent": 100,
-    "totalDurationMs": 15807
+    "totalDurationMs": 22691
   },
   "modules": {
     "modulo1_healthcheck": [
@@ -15,15 +15,15 @@
         "module": "MÓDULO 1: Conectividad",
         "name": "Respuesta satisfactoria desde Google Apps Script (GET)",
         "passed": true,
-        "details": "Endpoint: https://script.google.com/macros/s/AKfycbwg8LkEU_r4YU610af0m... (2537ms)",
-        "durationMs": 2537
+        "details": "Endpoint: https://script.google.com/macros/s/AKfycbwg8LkEU_r4YU610af0m... (5580ms)",
+        "durationMs": 5580
       },
       {
         "module": "MÓDULO 1: Rendimiento",
         "name": "Latencia de lectura en vivo dentro de umbral operativo de Apps Script",
         "passed": true,
-        "details": "Tiempo de respuesta: 2537ms (Umbral admisible < 6000ms)",
-        "durationMs": 2537
+        "details": "Tiempo de respuesta: 5580ms (Umbral admisible < 6000ms)",
+        "durationMs": 5580
       },
       {
         "module": "MÓDULO 1: Estructura de Datos",
@@ -47,22 +47,22 @@
         "module": "MÓDULO 2: Escritura POST",
         "name": "Escritura en Google Sheets confirmada con éxito (200 OK)",
         "passed": true,
-        "details": "Duración: 3309ms",
-        "durationMs": 3309
+        "details": "Duración: 4052ms",
+        "durationMs": 4052
       },
       {
         "module": "MÓDULO 2: Sincronización Remota",
         "name": "La base de datos remota devolvió exactamente la mutación de prueba",
         "passed": true,
-        "details": "Esperado: \"[AUDIT_VERIFIED_1789648790421]\", Obtenido: \"[AUDIT_VERIFIED_1789648790421]\" (1958ms)",
-        "durationMs": 1958
+        "details": "Esperado: \"[AUDIT_VERIFIED_1789651966454]\", Obtenido: \"[AUDIT_VERIFIED_1789651966454]\" (6032ms)",
+        "durationMs": 6032
       },
       {
         "module": "MÓDULO 2: Auto-Rollback",
         "name": "Auto-Rollback completado con éxito — Base de datos restaurada al 100%",
         "passed": true,
-        "details": "Tag restaurado: \"RESEÑANOS\" === \"RESEÑANOS\" (6461ms)",
-        "durationMs": 6461
+        "details": "Tag restaurado: \"RESEÑANOS\" === \"RESEÑANOS\" (5490ms)",
+        "durationMs": 5490
       }
     ],
     "modulo3_personalizacion_modelos": [
