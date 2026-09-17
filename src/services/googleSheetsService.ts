@@ -36,6 +36,8 @@ export interface SheetsResponse {
   promoPill?: PromoPillConfig;
   pinAdmin?: string;
   schedule?: ScheduleConfig;
+  version?: number;
+  updatedAt?: string;
 }
 
 export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Promise<SheetsResponse | null> {
@@ -45,10 +47,16 @@ export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Prom
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const separator = url.includes('?') ? '&' : '?';
-      const freshUrl = `${url}${separator}_t=${Date.now()}`;
+      const nonce = Math.random().toString(36).substring(2, 9);
+      const freshUrl = `${url}${separator}_t=${Date.now()}&_nonce=${nonce}`;
 
       const response = await fetch(freshUrl, {
         method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
         redirect: 'follow',
         cache: 'no-store'
       });
@@ -65,11 +73,17 @@ export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Prom
       const data = await response.json();
       if (data && Array.isArray(data.categories) && data.categories.length > 0) {
         const resolvedSchedule = data.schedule || (data.categories[0] as any)?.schedule || undefined;
+        const resolvedVersion = typeof data.version === 'number'
+          ? data.version
+          : (data.updatedAt ? new Date(data.updatedAt).getTime() : Date.now());
+
         return {
           categories: data.categories,
           promoPill: data.promoPill,
           pinAdmin: data.pinAdmin,
-          schedule: resolvedSchedule
+          schedule: resolvedSchedule,
+          version: resolvedVersion,
+          updatedAt: data.updatedAt || new Date(resolvedVersion).toISOString()
         };
       }
       return null;
@@ -119,7 +133,8 @@ export async function sendMenuToSheets(
         promoPill,
         pinAdmin,
         schedule,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        version: Date.now()
       })
     });
 

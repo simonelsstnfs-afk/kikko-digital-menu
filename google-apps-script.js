@@ -23,6 +23,29 @@
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // Parámetro de acción ligera para verificar versión sin procesar toda la hoja
+    if (e && e.parameter && e.parameter.action === 'checkVersion') {
+      var rawSheet = ss.getSheetByName("_RAW_DATA");
+      var version = 0;
+      var updatedAt = null;
+      if (rawSheet) {
+        var rawVal = rawSheet.getRange("A1").getValue();
+        if (rawVal) {
+          try {
+            var parsed = JSON.parse(rawVal);
+            version = parsed.version || (parsed.updatedAt ? new Date(parsed.updatedAt).getTime() : 0);
+            updatedAt = parsed.updatedAt || null;
+          } catch (err) {}
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        version: version,
+        updatedAt: updatedAt
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var data = readDataFromSheet(ss);
     
     return ContentService.createTextOutput(JSON.stringify(data))
@@ -41,6 +64,8 @@ function doPost(e) {
     lock.waitLock(10000);
     var payload = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var now = new Date();
+    var versionTimestamp = now.getTime();
     
     if (payload.action === 'updatePin') {
       var configSheet = getOrCreateSheet(ss, "Configuracion");
@@ -62,7 +87,8 @@ function doPost(e) {
     
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
-      updatedAt: new Date().toISOString()
+      version: versionTimestamp,
+      updatedAt: now.toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -87,13 +113,17 @@ function getOrCreateSheet(ss, name) {
 }
 
 function writeDataToSheet(ss, categories, promoPill, pinAdmin, schedule) {
-  // 1. Guardar copia JSON completa para fidelidad absoluta
+  var now = new Date();
+  var versionTimestamp = now.getTime();
+  
+  // 1. Guardar copia JSON completa para fidelidad absoluta con VERSION atómica
   var rawSheet = getOrCreateSheet(ss, "_RAW_DATA");
   rawSheet.getRange("A1").setValue(JSON.stringify({
+    version: versionTimestamp,
+    updatedAt: now.toISOString(),
     categories: categories,
     promoPill: promoPill,
-    schedule: schedule || null,
-    updatedAt: new Date().toISOString()
+    schedule: schedule || null
   }));
   
   // 2. Guardar Píldora de Novedades y PIN en pestaña "Configuracion"
@@ -253,7 +283,10 @@ function readDataFromSheet(ss) {
 
   // Si hay RAW_DATA usaremos eso para las categorías
   if (rawDataObj) {
+    var rawVer = rawDataObj.version || (rawDataObj.updatedAt ? new Date(rawDataObj.updatedAt).getTime() : 0);
     return {
+      version: rawVer,
+      updatedAt: rawDataObj.updatedAt || null,
       categories: rawDataObj.categories,
       promoPill: promoPill, // Siempre primamos la config leida
       pinAdmin: pinAdmin,

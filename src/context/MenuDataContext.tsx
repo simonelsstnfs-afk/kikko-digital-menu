@@ -9,6 +9,7 @@ import {
   getStoredSheetsUrl,
   saveStoredSheetsUrl
 } from '../services/googleSheetsService';
+import { CacheService } from '../services/cacheService';
 
 export function ensureAllergensInCategories(cats: MenuCategory[]): MenuCategory[] {
   return cats.map(cat => ({
@@ -73,25 +74,32 @@ const defaultPromoPill: PromoPillConfig = {
 const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined);
 
 export function MenuDataProvider({ children }: { children: ReactNode }) {
-  const [categories, setCategories] = useState<MenuCategory[]>(ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData))));
-  const [promoPill, setPromoPill] = useState<PromoPillConfig>(defaultPromoPill);
-  const [schedule, setSchedule] = useState<ScheduleConfig>(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const cached = localStorage.getItem('kikko_persisted_schedule');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
-            return parsed;
-          }
-        }
-      }
-    } catch (e) {}
-    return defaultScheduleConfig;
+  const initialCache = useRef(CacheService.getLocalMenu()).current;
+
+  const [categories, setCategories] = useState<MenuCategory[]>(() => {
+    if (initialCache?.data?.categories && initialCache.data.categories.length > 0) {
+      return ensureAllergensInCategories(initialCache.data.categories);
+    }
+    return ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
   });
-  const [adminPin, setAdminPin] = useState<string>('kikko2026');
+
+  const [promoPill, setPromoPill] = useState<PromoPillConfig>(() => {
+    return initialCache?.data?.promoPill || defaultPromoPill;
+  });
+
+  const [schedule, setSchedule] = useState<ScheduleConfig>(() => {
+    return initialCache?.data?.schedule || defaultScheduleConfig;
+  });
+
+  const [adminPin, setAdminPin] = useState<string>(() => {
+    return initialCache?.data?.pinAdmin || 'kikko2026';
+  });
+
+  const [, setCurrentVersion] = useState<number>(() => {
+    return initialCache?.version || 0;
+  });
   
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => !initialCache);
   const [sheetsUrl, setSheetsUrlState] = useState<string>(() => getStoredSheetsUrl());
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
@@ -164,23 +172,36 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     saveStoredSheetsUrl(url);
   };
 
-  // Carga inicial y revalidación fuerte (NO usamos localStorage)
+  // Carga inicial y revalidación SWR
   const loadDataFromServer = async (url: string, background = false) => {
     if (!background) setIsLoading(true);
     try {
       const remoteData = await fetchMenuFromSheets(url);
       if (remoteData && remoteData.categories?.length) {
-        setCategories(ensureAllergensInCategories(remoteData.categories));
-        if (remoteData.promoPill) setPromoPill(remoteData.promoPill);
-        if (remoteData.pinAdmin) setAdminPin(remoteData.pinAdmin);
-        if (remoteData.schedule && Array.isArray(remoteData.schedule.items) && remoteData.schedule.items.length > 0) {
-          setSchedule(remoteData.schedule);
-          try {
-            if (typeof window !== 'undefined' && window.localStorage) {
-              localStorage.setItem('kikko_persisted_schedule', JSON.stringify(remoteData.schedule));
-            }
-          } catch (e) {}
-        }
+        const remoteVersion = remoteData.version || (remoteData.updatedAt ? new Date(remoteData.updatedAt).getTime() : Date.now());
+
+        const newCats = ensureAllergensInCategories(remoteData.categories);
+        const newPill = remoteData.promoPill || defaultPromoPill;
+        const newPin = remoteData.pinAdmin || 'kikko2026';
+        const newSchedule = (remoteData.schedule && Array.isArray(remoteData.schedule.items) && remoteData.schedule.items.length > 0)
+          ? remoteData.schedule
+          : defaultScheduleConfig;
+
+        setCategories(newCats);
+        if (remoteData.promoPill) setPromoPill(newPill);
+        if (remoteData.pinAdmin) setAdminPin(newPin);
+        if (remoteData.schedule) setSchedule(newSchedule);
+
+        setCurrentVersion(remoteVersion);
+
+        // Guardar en la bóveda de caché inteligente
+        CacheService.setLocalMenu({
+          categories: newCats,
+          promoPill: newPill,
+          schedule: newSchedule,
+          pinAdmin: newPin
+        }, remoteVersion);
+
         setLastSyncedAt(new Date());
         setSyncStatus('saved');
         return true;
@@ -201,22 +222,42 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       return;
     }
-    loadDataFromServer(sheetsUrl, false);
+    // Si ya teníamos caché local válida, revalidar en segundo plano para no mostrar spinner
+    const hasCache = initialCache !== null;
+    loadDataFromServer(sheetsUrl, hasCache);
   }, [sheetsUrl]);
 
-  // Revalidar en segundo plano al volver a la pestaña
+  // Revalidar en segundo plano al volver a la pestaña, reanudar de BFCache o recuperar conexión
   useEffect(() => {
     if (!sheetsUrl || isSandboxMode) return;
+
     const handleRevalidate = () => {
-      if (document.visibilityState === 'visible') {
-        loadDataFromServer(sheetsUrl, true);
+      loadDataFromServer(sheetsUrl, true);
+    };
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      // Revalidar de inmediato si Safari/Chrome restauró la página desde BFCache
+      if (event.persisted) {
+        handleRevalidate();
       }
     };
-    document.addEventListener('visibilitychange', handleRevalidate);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleRevalidate();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleRevalidate);
+    window.addEventListener('online', handleRevalidate);
+
     return () => {
-      document.removeEventListener('visibilitychange', handleRevalidate);
+      window.removeEventListener('pageshow', handlePageShow);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleRevalidate);
+      window.removeEventListener('online', handleRevalidate);
     };
   }, [sheetsUrl, isSandboxMode]);
 
@@ -239,6 +280,14 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         latestDataRef.current.schedule
       );
       if (res.success) {
+        const newVer = Date.now();
+        setCurrentVersion(newVer);
+        CacheService.setLocalMenu({
+          categories: latestDataRef.current.categories,
+          promoPill: latestDataRef.current.promoPill,
+          schedule: latestDataRef.current.schedule,
+          pinAdmin: latestDataRef.current.adminPin
+        }, newVer);
         setSyncStatus('saved');
         setLastSyncedAt(new Date());
         return true;
@@ -264,6 +313,14 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       if (res.success) {
         setCategories(newCats);
         setPromoPill(newPill);
+        const newVer = Date.now();
+        setCurrentVersion(newVer);
+        CacheService.setLocalMenu({
+          categories: newCats,
+          promoPill: newPill,
+          schedule,
+          pinAdmin: latestDataRef.current.adminPin
+        }, newVer);
         setSyncStatus('saved');
         setLastSyncedAt(new Date());
         return { success: true };
@@ -351,11 +408,6 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       return { success: true };
     }
     setSchedule(newSchedule);
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.setItem('kikko_persisted_schedule', JSON.stringify(newSchedule));
-      }
-    } catch (e) {}
 
     setSyncStatus('syncing');
     try {
@@ -370,6 +422,16 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         setSyncStatus('error');
         return { success: false, error: result.error || 'Error al sincronizar horarios con Google Sheets' };
       }
+
+      const newVer = Date.now();
+      setCurrentVersion(newVer);
+      CacheService.setLocalMenu({
+        categories: updatedCategories,
+        promoPill,
+        schedule: newSchedule,
+        pinAdmin: adminPin
+      }, newVer);
+
       setSyncStatus('saved');
       setLastSyncedAt(new Date());
       return { success: true };

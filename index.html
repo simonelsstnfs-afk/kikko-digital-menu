@@ -3,6 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- SCRIPT KILL-SWITCH: Saneamiento Atómico Inmediato de Caché y Persistencia Huérfana -->
+    <script>
+      (function() {
+        var APP_RESET_TOKEN = 'kikko_purge_2026_09_v2';
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            if (localStorage.getItem(APP_RESET_TOKEN) !== 'true') {
+              var legacyKeys = [
+                'kikko_persisted_schedule',
+                'kikko_menu_data',
+                'kikko_categories',
+                'kikko_promo_pill',
+                'kikko_menu_cache',
+                'kikko_cart'
+              ];
+              for (var i = 0; i < legacyKeys.length; i++) {
+                localStorage.removeItem(legacyKeys[i]);
+              }
+
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for (var j = 0; j < registrations.length; j++) {
+                    registrations[j].unregister();
+                  }
+                });
+              }
+
+              if ('caches' in window) {
+                caches.keys().then(function(names) {
+                  names.forEach(function(name) {
+                    caches.delete(name);
+                  });
+                });
+              }
+
+              localStorage.setItem(APP_RESET_TOKEN, 'true');
+              console.log('[Kikko Cache Guard] Almacenamiento y Service Workers saneados a v2.');
+            }
+          }
+        } catch (e) {
+          // Silencioso en entornos con cookies/storage bloqueados
+        }
+      })();
+    </script>
     <title>Kikko - Restaurante Pizzeria Italiano</title>
     <meta name="description" content="Carta Digital Gourmet de Kikko Restaurante Pizzería en Tenerife. Auténticas pizzas artesanales, pastas, risottos, alérgenos y reservas directas por WhatsApp." />
     <meta property="og:title" content="Kikko - Restaurante Pizzeria Italiano" />
