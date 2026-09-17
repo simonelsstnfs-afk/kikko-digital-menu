@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Reorder, useDragControls } from 'motion/react';
 import { useMenuData } from '../../context/MenuDataContext';
-import { MenuItem, PromoType, PromoTargetType } from '../../types';
+import { MenuItem, PromoType, PromoTargetType, ScheduleItem, ScheduleConfig } from '../../types';
 import ProductModal from './ProductModal';
 import { translateText } from '../../utils/translateService';
 import { getAllergen } from '../../allergens';
@@ -38,8 +38,18 @@ import {
   FlaskConical,
   GripVertical,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Clock
 } from 'lucide-react';
+
+const SCHEDULE_PRESETS = [
+  { label: 'Toda la semana (Lunes - Domingo)', es: 'Lunes - Domingo', en: 'Monday - Sunday', it: 'Lunedì - Domenica' },
+  { label: 'Días de diario (Lunes - Jueves)', es: 'Lunes - Jueves', en: 'Monday - Thursday', it: 'Lunedì - Giovedì' },
+  { label: 'Fines de semana (Viernes - Domingo)', es: 'Viernes - Domingo', en: 'Friday - Sunday', it: 'Venerdì - Domenica' },
+  { label: 'Lunes a Viernes', es: 'Lunes a Viernes', en: 'Monday to Friday', it: 'Da Lunedì a Venerdì' },
+  { label: 'Sábado y Domingo', es: 'Sábado y Domingo', en: 'Saturday & Sunday', it: 'Sabato e Domenica' },
+  { label: 'Día de descanso (Cerrado)', es: 'Martes', en: 'Tuesday', it: 'Martedì', isClosed: true }
+];
 
 const DEFAULT_PIN = 'kikko2026';
 const PIN_STORAGE_KEY = 'kikko_admin_pin_v1';
@@ -283,6 +293,8 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   const {
     categories,
     promoPill,
+    schedule,
+    updateSchedule,
     syncStatus,
     lastSyncedAt,
     sheetsUrl,
@@ -418,6 +430,108 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
   // Cambio de PIN
   const [newPin, setNewPin] = useState('');
   const [pinChangeMsg, setPinChangeMsg] = useState('');
+
+  // Estado local para Horarios de Apertura
+  const [localScheduleItems, setLocalScheduleItems] = useState<ScheduleItem[]>(() => schedule?.items || []);
+  const [isSavingSchedule, setIsSavingSchedule] = useState(false);
+  const [scheduleSaveFeedback, setScheduleSaveFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [translatingItemId, setTranslatingItemId] = useState<string | null>(null);
+  const [expandedScheduleItemId, setExpandedScheduleItemId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (schedule?.items) {
+      setLocalScheduleItems(schedule.items);
+    }
+  }, [schedule]);
+
+  // Handlers para Horarios de Apertura
+  const handleApplyPreset = (index: number, presetIndex: number) => {
+    const preset = SCHEDULE_PRESETS[presetIndex];
+    if (!preset) return;
+    setLocalScheduleItems(prev => {
+      const next = [...prev];
+      next[index] = {
+        ...next[index],
+        days: {
+          es: preset.es,
+          en: preset.en,
+          it: preset.it
+        },
+        isClosed: !!preset.isClosed
+      };
+      return next;
+    });
+  };
+
+  const handleTranslateScheduleItem = async (index: number) => {
+    const item = localScheduleItems[index];
+    if (!item || !item.days.es.trim()) return;
+    setTranslatingItemId(item.id);
+    try {
+      const [tEn, tIt] = await Promise.all([
+        translateText(item.days.es.trim(), 'en'),
+        translateText(item.days.es.trim(), 'it')
+      ]);
+      setLocalScheduleItems(prev => {
+        const next = [...prev];
+        next[index] = {
+          ...next[index],
+          days: {
+            ...next[index].days,
+            en: tEn || next[index].days.en,
+            it: tIt || next[index].days.it
+          }
+        };
+        return next;
+      });
+    } catch (err) {
+      console.error('Error al traducir horario con IA:', err);
+    } finally {
+      setTranslatingItemId(null);
+    }
+  };
+
+  const handleAddScheduleItem = () => {
+    const newItem: ScheduleItem = {
+      id: 'sched_' + Date.now(),
+      days: {
+        es: 'Lunes - Viernes',
+        en: 'Monday - Friday',
+        it: 'Lunedì - Venerdì'
+      },
+      hours: '12:30 - 21:30',
+      isClosed: false
+    };
+    setLocalScheduleItems(prev => [...prev, newItem]);
+  };
+
+  const handleRemoveScheduleItem = (index: number) => {
+    if (localScheduleItems.length <= 1) return;
+    setLocalScheduleItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSaveSchedule = async () => {
+    setIsSavingSchedule(true);
+    setScheduleSaveFeedback(null);
+    try {
+      const res = await updateSchedule({
+        items: localScheduleItems,
+        updatedAt: new Date().toISOString()
+      });
+      if (res.success) {
+        setScheduleSaveFeedback({ type: 'success', text: '¡Horarios guardados y sincronizados correctamente!' });
+      } else {
+        setScheduleSaveFeedback({ type: 'error', text: res.error || 'Error al sincronizar horarios' });
+      }
+    } catch (err: any) {
+      setScheduleSaveFeedback({ type: 'error', text: err?.message || 'Error inesperado al guardar los horarios' });
+    } finally {
+      setIsSavingSchedule(false);
+      setTimeout(() => {
+        setScheduleSaveFeedback(null);
+      }, 4000);
+    }
+  };
 
   // Estado de configuración de Google Sheets
   const [inputSheetsUrl, setInputSheetsUrl] = useState(sheetsUrl || '');
@@ -2082,6 +2196,306 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-5 sm:space-y-6">
             
+            {/* Gestión de Horarios de Apertura (Pie de Página) */}
+            <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-orange-950/60 border border-orange-800/50 text-[#C2410C] shrink-0">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span>Horarios de Apertura (Pie de Página)</span>
+                    </h3>
+                    <p className="text-xs text-zinc-400">
+                      Configura los días, horas de apertura o días de descanso mostrados en la carta digital y pie de página.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista de Filas de Horarios */}
+              <div className="space-y-4">
+                {localScheduleItems.map((item, index) => (
+                  <div
+                    key={item.id || index}
+                    className="p-4 rounded-xl bg-zinc-800/40 border border-zinc-800/80 space-y-3.5 transition-colors"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
+                        <span className="w-5 h-5 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[11px] text-zinc-300 font-mono">
+                          {index + 1}
+                        </span>
+                        <span>Fila de Horario</span>
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        {/* Selector de Presets */}
+                        <select
+                          defaultValue=""
+                          onChange={(e) => {
+                            if (e.target.value !== '') {
+                              handleApplyPreset(index, Number(e.target.value));
+                              e.target.value = '';
+                            }
+                          }}
+                          className="text-xs bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1 text-zinc-300 hover:text-white focus:outline-none focus:border-[#C2410C] cursor-pointer"
+                        >
+                          <option value="" disabled>Seleccionar preset rápido...</option>
+                          {SCHEDULE_PRESETS.map((preset, pIdx) => (
+                            <option key={pIdx} value={pIdx}>
+                              {preset.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        {/* Botón papelera para eliminar fila (si localScheduleItems.length > 1) */}
+                        {localScheduleItems.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveScheduleItem(index)}
+                            title="Eliminar esta línea de horario"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-950/40 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Días en Español + Botón destellos IA para auto-traducir a EN/IT */}
+                    <div>
+                      <label className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider mb-1 block">
+                        Días (Español)
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={item.days.es}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setLocalScheduleItems(prev => {
+                              const next = [...prev];
+                              next[index] = { ...next[index], days: { ...next[index].days, es: val } };
+                              return next;
+                            });
+                          }}
+                          placeholder="Ej. Lunes - Domingo"
+                          className="flex-1 bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#C2410C]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleTranslateScheduleItem(index)}
+                          disabled={translatingItemId === item.id || !item.days.es.trim()}
+                          title="Auto-traducir días a Inglés e Italiano con IA"
+                          className="px-3 py-2 rounded-xl bg-orange-950/40 border border-orange-800/60 text-[#C2410C] hover:bg-orange-900/50 hover:text-orange-300 transition-colors disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed shrink-0 flex items-center gap-1.5 text-xs font-semibold"
+                        >
+                          {translatingItemId === item.id ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <span className="hidden sm:inline">Traduciendo...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4" />
+                              <span className="hidden sm:inline">Traducir IA</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mini acordeón o inputs para EN e IT */}
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedScheduleItemId(expandedScheduleItemId === item.id ? null : item.id)}
+                        className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-0.5 cursor-pointer select-none"
+                      >
+                        {expandedScheduleItemId === item.id ? (
+                          <ChevronUp className="w-3.5 h-3.5 text-[#C2410C]" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
+                        )}
+                        <span className="font-medium">
+                          Traducciones multilenguaje ({item.days.en ? 'EN: ' + item.days.en : 'EN: pendiente'} • {item.days.it ? 'IT: ' + item.days.it : 'IT: pendiente'})
+                        </span>
+                      </button>
+
+                      {expandedScheduleItemId === item.id && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 pl-3 border-l-2 border-orange-900/40 mt-1.5">
+                          <div>
+                            <label className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider mb-1 block">
+                              Días en Inglés (EN)
+                            </label>
+                            <input
+                              type="text"
+                              value={item.days.en}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setLocalScheduleItems(prev => {
+                                  const next = [...prev];
+                                  next[index] = { ...next[index], days: { ...next[index].days, en: val } };
+                                  return next;
+                                });
+                              }}
+                              placeholder="Ej. Monday - Sunday"
+                              className="w-full bg-zinc-900 border border-zinc-700/80 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#C2410C]"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider mb-1 block">
+                              Días en Italiano (IT)
+                            </label>
+                            <input
+                              type="text"
+                              value={item.days.it}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setLocalScheduleItems(prev => {
+                                  const next = [...prev];
+                                  next[index] = { ...next[index], days: { ...next[index].days, it: val } };
+                                  return next;
+                                });
+                              }}
+                              placeholder="Ej. Lunedì - Domenica"
+                              className="w-full bg-zinc-900 border border-zinc-700/80 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#C2410C]"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Campo de horas y Toggle / Checkbox Marcar como Cerrado */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end pt-1">
+                      <div>
+                        <label className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider mb-1 block">
+                          Campo de Horas
+                        </label>
+                        <input
+                          type="text"
+                          value={item.hours}
+                          disabled={item.isClosed}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setLocalScheduleItems(prev => {
+                              const next = [...prev];
+                              next[index] = { ...next[index], hours: val };
+                              return next;
+                            });
+                          }}
+                          placeholder={item.isClosed ? 'Cerrado' : 'Ej. 12:30 - 21:30'}
+                          className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#C2410C] disabled:opacity-40 disabled:cursor-not-allowed"
+                        />
+                      </div>
+
+                      <div className="flex items-center h-[38px]">
+                        <label className="flex items-center gap-2 cursor-pointer select-none bg-zinc-900/80 border border-zinc-700/70 hover:border-zinc-600 rounded-xl px-3 py-2 w-full transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={!!item.isClosed}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setLocalScheduleItems(prev => {
+                                const next = [...prev];
+                                next[index] = { ...next[index], isClosed: checked };
+                                return next;
+                              });
+                            }}
+                            className="w-4 h-4 rounded border-zinc-700 text-[#C2410C] focus:ring-[#C2410C] focus:ring-offset-zinc-900 bg-zinc-800 accent-[#C2410C]"
+                          />
+                          <span className={`text-xs font-medium ${item.isClosed ? 'text-amber-400 font-semibold' : 'text-zinc-300'}`}>
+                            {item.isClosed ? 'Día de descanso (Cerrado)' : 'Marcar como Cerrado'}
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Botón + Añadir Línea de Horario */}
+              <button
+                type="button"
+                onClick={handleAddScheduleItem}
+                className="w-full py-2.5 px-4 border border-dashed border-zinc-700 hover:border-[#C2410C] rounded-xl text-zinc-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer bg-zinc-800/30 hover:bg-zinc-800/60"
+              >
+                <Plus className="w-4 h-4 text-[#C2410C]" />
+                <span>+ Añadir Línea de Horario</span>
+              </button>
+
+              {/* Live Preview que replica el diseño del pie de página */}
+              <div className="bg-zinc-950/80 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-zinc-800/60">
+                  <span className="text-xs uppercase tracking-widest font-semibold text-zinc-400 flex items-center gap-1.5">
+                    <Eye className="w-3.5 h-3.5 text-[#C2410C]" />
+                    Vista Previa (Diseño Pie de Página)
+                  </span>
+                  <span className="text-[10px] text-zinc-500 font-mono">Live Preview</span>
+                </div>
+
+                <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-900 max-w-sm mx-auto sm:mx-0">
+                  <h4 className="text-white font-semibold text-xs tracking-widest uppercase mb-3">
+                    Horario
+                  </h4>
+                  <ul className="space-y-3 text-sm text-zinc-400">
+                    {localScheduleItems.map((item, idx) => (
+                      <li key={item.id || idx} className="flex items-start gap-3">
+                        <Clock className="w-4 h-4 mt-0.5 text-[#C2410C] shrink-0" />
+                        <div className="flex flex-col w-full">
+                          <div className="flex justify-between w-full gap-4 items-baseline">
+                            <span className="text-zinc-300">{item.days.es || 'Sin especificar'}</span>
+                            {item.isClosed ? (
+                              <span className="text-amber-500 font-semibold text-xs uppercase tracking-wider">Cerrado</span>
+                            ) : (
+                              <span className="text-white text-right font-medium">{item.hours || '12:30 - 21:30'}</span>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Botón Guardar Horarios en la Nube con spinner y feedback */}
+              <div className="pt-2 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={handleSaveSchedule}
+                  disabled={isSavingSchedule}
+                  className="w-full py-3 px-4 bg-[#C2410C] hover:bg-orange-600 disabled:opacity-50 text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-950/40 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed"
+                >
+                  {isSavingSchedule ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Guardando y Sincronizando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Cloud className="w-4 h-4" />
+                      <span>Guardar Horarios en la Nube</span>
+                    </>
+                  )}
+                </button>
+
+                {scheduleSaveFeedback && (
+                  <div className={`p-3 text-xs rounded-xl border flex items-center gap-2 break-words ${
+                    scheduleSaveFeedback.type === 'success'
+                      ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800'
+                      : 'bg-red-950/40 text-red-400 border-red-800'
+                  }`}>
+                    {scheduleSaveFeedback.type === 'success' ? (
+                      <Check className="w-4 h-4 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                    )}
+                    <span>{scheduleSaveFeedback.text}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Sincronización en la Nube con Google Sheets */}
             <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
