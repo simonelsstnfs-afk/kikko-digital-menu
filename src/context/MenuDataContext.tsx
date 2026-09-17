@@ -75,7 +75,20 @@ const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined
 export function MenuDataProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<MenuCategory[]>(ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData))));
   const [promoPill, setPromoPill] = useState<PromoPillConfig>(defaultPromoPill);
-  const [schedule, setSchedule] = useState<ScheduleConfig>(defaultScheduleConfig);
+  const [schedule, setSchedule] = useState<ScheduleConfig>(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const cached = localStorage.getItem('kikko_persisted_schedule');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+            return parsed;
+          }
+        }
+      }
+    } catch (e) {}
+    return defaultScheduleConfig;
+  });
   const [adminPin, setAdminPin] = useState<string>('kikko2026');
   
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -160,8 +173,13 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         setCategories(ensureAllergensInCategories(remoteData.categories));
         if (remoteData.promoPill) setPromoPill(remoteData.promoPill);
         if (remoteData.pinAdmin) setAdminPin(remoteData.pinAdmin);
-        if (remoteData.schedule && Array.isArray(remoteData.schedule.items)) {
+        if (remoteData.schedule && Array.isArray(remoteData.schedule.items) && remoteData.schedule.items.length > 0) {
           setSchedule(remoteData.schedule);
+          try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+              localStorage.setItem('kikko_persisted_schedule', JSON.stringify(remoteData.schedule));
+            }
+          } catch (e) {}
         }
         setLastSyncedAt(new Date());
         setSyncStatus('saved');
@@ -334,12 +352,29 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     }
     setSchedule(newSchedule);
     try {
-      const result = await sendMenuToSheets(categories, promoPill, adminPin, sheetsUrl, newSchedule);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('kikko_persisted_schedule', JSON.stringify(newSchedule));
+      }
+    } catch (e) {}
+
+    setSyncStatus('syncing');
+    try {
+      const updatedCategories = categories.map((cat, idx) => {
+        if (idx === 0) return { ...cat, schedule: newSchedule };
+        return cat;
+      });
+      setCategories(updatedCategories);
+
+      const result = await sendMenuToSheets(updatedCategories, promoPill, adminPin, sheetsUrl, newSchedule);
       if (!result.success) {
+        setSyncStatus('error');
         return { success: false, error: result.error || 'Error al sincronizar horarios con Google Sheets' };
       }
+      setSyncStatus('saved');
+      setLastSyncedAt(new Date());
       return { success: true };
     } catch (e: any) {
+      setSyncStatus('error');
       return { success: false, error: e.message || 'Error de conexión al sincronizar horarios' };
     }
   };

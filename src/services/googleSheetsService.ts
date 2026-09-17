@@ -64,11 +64,12 @@ export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Prom
 
       const data = await response.json();
       if (data && Array.isArray(data.categories) && data.categories.length > 0) {
+        const resolvedSchedule = data.schedule || (data.categories[0] as any)?.schedule || undefined;
         return {
           categories: data.categories,
           promoPill: data.promoPill,
           pinAdmin: data.pinAdmin,
-          schedule: data.schedule
+          schedule: resolvedSchedule
         };
       }
       return null;
@@ -97,6 +98,15 @@ export async function sendMenuToSheets(
   }
 
   try {
+    // Para compatibilidad garantizada con el script desplegado en Google Apps Script,
+    // inyectamos schedule tanto en categories[0] (persistido en _RAW_DATA) como en la raíz
+    const categoriesPayload = categories.map((cat, idx) => {
+      if (idx === 0 && schedule) {
+        return { ...cat, schedule };
+      }
+      return cat;
+    });
+
     const response = await fetch(url, {
       method: 'POST',
       redirect: 'follow',
@@ -105,7 +115,7 @@ export async function sendMenuToSheets(
       },
       cache: 'no-store',
       body: JSON.stringify({
-        categories,
+        categories: categoriesPayload,
         promoPill,
         pinAdmin,
         schedule,

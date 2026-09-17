@@ -57,7 +57,7 @@ function doPost(e) {
         configSheet.appendRow(['pin_admin', payload.pinAdmin]);
       }
     } else if (payload.categories && Array.isArray(payload.categories)) {
-      writeDataToSheet(ss, payload.categories, payload.promoPill, payload.pinAdmin);
+      writeDataToSheet(ss, payload.categories, payload.promoPill, payload.pinAdmin, payload.schedule);
     }
     
     return ContentService.createTextOutput(JSON.stringify({
@@ -86,12 +86,13 @@ function getOrCreateSheet(ss, name) {
   return sheet;
 }
 
-function writeDataToSheet(ss, categories, promoPill, pinAdmin) {
+function writeDataToSheet(ss, categories, promoPill, pinAdmin, schedule) {
   // 1. Guardar copia JSON completa para fidelidad absoluta
   var rawSheet = getOrCreateSheet(ss, "_RAW_DATA");
   rawSheet.getRange("A1").setValue(JSON.stringify({
     categories: categories,
     promoPill: promoPill,
+    schedule: schedule || null,
     updatedAt: new Date().toISOString()
   }));
   
@@ -255,7 +256,8 @@ function readDataFromSheet(ss) {
     return {
       categories: rawDataObj.categories,
       promoPill: promoPill, // Siempre primamos la config leida
-      pinAdmin: pinAdmin
+      pinAdmin: pinAdmin,
+      schedule: rawDataObj.schedule || null
     };
   }
 
