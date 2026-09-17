@@ -1,7 +1,7 @@
-import { MenuItem, Review } from './types';
+import { MenuItem } from './types';
 
-export const GOOGLE_MAPS_REVIEW_URL = 'https://maps.app.goo.gl/kikkoPizzeriaTenerife';
-export const PHONE_WHATSAPP = '34600000000';
+export const GOOGLE_MAPS_REVIEW_URL = 'https://g.page/r/CTkP71YejfMQEBM/review';
+export const PHONE_WHATSAPP = '34611873391';
 
 export const STARTERS: MenuItem[] = [
   { id: 's1', name: { es: 'Croquetas Mixtas Pollo y Jamón (6 unidades)', en: 'Mixed Croquettes Chicken and Ham (6 units)', it: 'Crocchette Miste Pollo e Prosciutto (6 unità)' }, description: { es: '', en: '', it: '' }, price: 6.00 },
@@ -160,39 +160,4 @@ export const DRINKS: MenuItem[] = [
   { id: 'dr64', name: { es: 'Averna (Chupito)', en: 'Averna (Shot)', it: 'Averna (Cicchetto)' }, description: { es: '', en: '', it: '' }, price: 2.00, subcategory: 'Amaros' },
   { id: 'dr65', name: { es: 'Baileys (Copa)', en: 'Baileys (Glass)', it: 'Baileys (Calice)' }, description: { es: '', en: '', it: '' }, price: 4.00, subcategory: 'Amaros' },
   { id: 'dr66', name: { es: 'Baileys (Chupito)', en: 'Baileys (Shot)', it: 'Baileys (Cicchetto)' }, description: { es: '', en: '', it: '' }, price: 2.00, subcategory: 'Amaros' },
-];
-
-export const REVIEWS: Review[] = [
-  {
-    id: "r1",
-    authorName: "Lina Oliveira",
-    rating: 5,
-    text: "¡Todo excelente! Muy recomendable. Buena pizza, buena hamburguesa, y lo mejor el trato excelente, Francesco un trabajador muy amable. El mejor sitio en el que hemos estado en la zona de Puerto Santiago.",
-    time: "Hace 2 meses",
-    profilePhotoUrl: "https://ui-avatars.com/api/?name=Lina+Oliveira&background=3F6212&color=fff"
-  },
-  {
-    id: "r2",
-    authorName: "Angela Aranega",
-    rating: 5,
-    text: "¡Si quieres comer una auténtica pizza italiana, tienes que probarla! Masa fina, buenos ingredientes y ellos muy amables en el trato.",
-    time: "Hace 2 meses",
-    profilePhotoUrl: "https://ui-avatars.com/api/?name=Angela+Aranega&background=C2410C&color=fff"
-  },
-  {
-    id: "r3",
-    authorName: "NSR 75cc",
-    rating: 5,
-    text: "La masa de pizza increíblemente buena, el tomate riquísimo, la carbonara espectacular con su huevo y su guanciale, todos los ingredientes súper frescos y de calidad. El personal muy agradable. Muy bien de precio.",
-    time: "Hace 9 meses",
-    profilePhotoUrl: "https://ui-avatars.com/api/?name=NSR+75cc&background=3F6212&color=fff"
-  },
-  {
-    id: "r4",
-    authorName: "Enza Bari",
-    rating: 5,
-    text: "¡Una pizza casera riquísima! Ingredientes frescos, y la masa una delicia. El servicio óptimo y súper rápido. Es de recomendación absoluta hasta por los precios. ¡Le doy un 10! 😍",
-    time: "Hace 2 años",
-    profilePhotoUrl: "https://ui-avatars.com/api/?name=Enza+Bari&background=C2410C&color=fff"
-  }
 ];

@@ -409,6 +409,10 @@ export function detectAllergensFromText(
     detected.add('sulfitos');
   }
 
+  if (/altramuz|altramuces|lupin|lupini/i.test(fullText)) {
+    detected.add('altramuces');
+  }
+
   // Postres específicos
   if (/nutella/.test(fullText)) {
     detected.add('frutoscascara');

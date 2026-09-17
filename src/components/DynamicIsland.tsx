@@ -13,8 +13,7 @@ import {
   ArrowRight,
   UtensilsCrossed
 } from 'lucide-react';
-
-const GOOGLE_MAPS_REVIEW_URL = "https://g.page/r/CTkP71YejfMQEBM/review";
+import { GOOGLE_MAPS_REVIEW_URL } from '../products';
 
 const GoogleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

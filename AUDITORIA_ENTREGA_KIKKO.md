@@ -35,6 +35,25 @@ La suite de auditoría técnica automatizada (`npm run test:audit`) ha verificad
 
 ---
 
+## 2.1. Matriz de Remediación y Resolución de Hallazgos de Auditoría Externa
+
+Tras el análisis de la auditoría externa preliminar, se implementó el plan de remediación integral con los siguientes resultados certificados:
+
+| Código | Hallazgo Reportado | Estado de Verificación y Remediación |
+| :--- | :--- | :---: |
+| **C1 / A1** | Discrepancia en Teléfono de WhatsApp | ✅ **RESUELTO (SSOT)**: Centralizado en `src/products.ts` con `PHONE_WHATSAPP = '34611873391'`. Formulario de reservas consume la constante directamente y bloquea fechas pasadas (`min={today}`). |
+| **C2 / A2** | Endpoint Google Sheets Live | ✅ **VERIFICADO**: Webhook Apps Script operativo en vivo con `doGet` y `doPost` sin preflight CORS y con auto-rollback transaccional verificado en tests. |
+| **C3 / A3** | Persistencia de Idioma | ✅ **RESUELTO**: Implementado en `src/LanguageContext.tsx` con `localStorage` (`kikko_preferred_lang`), detección de `navigator.language` y salvaguardas SSR. |
+| **C4 / A4** | Cabeceras de Seguridad HTTP | ✅ **RESUELTO**: Configuradas en `vercel.json` (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`). |
+| **C5 / A5** | Optimización de Bundle (>500 kB) | ✅ **RESUELTO**: Configurado `manualChunks` en `vite.config.ts`. Bundle principal reducido de 551 kB a **424 kB**, eliminando todas las advertencias de Vite. |
+| **C6 / A6** | Tipado Estricto de TypeScript | ✅ **RESUELTO**: Activado `"strict": true` en `tsconfig.json`, instaladas definiciones `@types/react` y `@types/react-dom`. 0 errores en `tsc --noEmit`. |
+| **C7 / A7** | Catálogo de Alérgenos UE 1169/2011 | ✅ **RESUELTO**: Añadida detección de altramuces/lupin en `src/allergens.ts`. Los 14 alérgenos oficiales están 100% operativos. |
+| **C8 / A8** | Código Muerto de Reseñas y Fecha Relativa | ✅ **RESUELTO**: Aclarado con el usuario que la web pública no muestra tarjetas individuales de reseñas (solo CTA a Google Maps). Eliminado el array residual `REVIEWS` de `src/products.ts`. Unificada la URL oficial en `GOOGLE_MAPS_REVIEW_URL`. |
+| **C9 / A9** | Textos en Inglés Invertidos en Hero | ✅ **RESUELTO**: Corregido el cruce de claves en `src/translations.ts` (`heroSabor` = 'Flavor', `heroAutentico` = 'Authentic'). |
+| **C10 / A10** | SEO, OpenGraph y Favicon | ✅ **RESUELTO**: Añadidos meta description, OpenGraph (`og:*`), Twitter Cards y favicon SVG en `index.html`. Actualizado `metadata.json` con el nombre oficial del restaurante. |
+
+---
+
 ## 3. Protocolo de Verificación y Aceptación para el Administrador (Fase B: Post-Deploy)
 
 El futuro administrador o encargado del restaurante debe realizar las siguientes 8 pruebas prácticas para familiarizarse y certificar que todo funciona según lo acordado:

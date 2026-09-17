@@ -1,6 +1,6 @@
 {
-  "name": "La Vera - Menú de Pizzería",
-  "description": "Una aplicación web de diseño responsivo y moderno para una pizzería, que incluye carta navegable, reservas online y botones a redes sociales y reseñas de Google Maps.",
+  "name": "Kikko - Carta Digital Gourmet",
+  "description": "Carta Digital Gourmet y reservas en mesa para Kikko Restaurante Pizzería en Tenerife. Auténtica gastronomía italiana, pizzas artesanales con fermentación de 48h, pastas frescas, risottos, consulta de alérgenos y reservas directas por WhatsApp.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

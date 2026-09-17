@@ -1,6 +1,7 @@
 import { Calendar, Clock, Users, User, Phone, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
+import { PHONE_WHATSAPP } from '../products';
 
 export default function ReservationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -57,7 +58,7 @@ export default function ReservationForm() {
 ⏰ Hora: ${formData.time}${formData.notes ? `\n📝 Notas: ${formData.notes}` : ''}`;
 
     const encodedMessage = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/34611873391?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${PHONE_WHATSAPP}?text=${encodedMessage}`;
     
     window.open(whatsappUrl, '_blank');
     
@@ -68,7 +69,8 @@ export default function ReservationForm() {
         date: '',
         time: '',
         persons: '',
-        name: ''
+        name: '',
+        notes: ''
       });
     }, 5000);
   };

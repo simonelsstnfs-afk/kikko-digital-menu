@@ -128,7 +128,7 @@ export default function MenuSection() {
                       isActive ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'
                     }`}
                   >
-                    {t(category.titleKey)}
+                    {t(category.titleKey as any)}
                   </a>
                   {isActive && (
                     <motion.div 
@@ -184,7 +184,7 @@ export default function MenuSection() {
                     viewport={{ once: true }}
                     className="font-serif text-5xl md:text-7xl text-white font-bold tracking-tight relative z-10"
                   >
-                    {t(category.titleKey)}
+                    {t(category.titleKey as any)}
                   </motion.h4>
                   <motion.span 
                     initial={{ opacity: 0 }}

@@ -131,7 +131,7 @@ export const translations = {
     dynamicIslandBookingBubble: 'RESERVAR',
   },
   en: {
-    heroSabor: 'Authentic',
+    heroSabor: 'Flavor',
     digitalMenuHeroSub: 'Authentic Italian tradition: three-flour dough with 48h fermentation, homemade bread and pastas. Premium quality ingredients in every preparation.',
     digitalMenuBtn: 'View Menu',
     resSubtitle: 'Book your table',
@@ -160,7 +160,7 @@ export const translations = {
     tabBurgers: 'Burgers',
     tabDesserts: 'Desserts',
     tabDrinks: 'Drinks',
-    heroAutentico: 'Flavor',
+    heroAutentico: 'Authentic',
     heroPuerta: 'At Your Door',
     heroSub: 'Sourdough, fresh ingredients, and perfectly baked. Order now and enjoy the best pizza in town without leaving home.',
     heroBtn: 'View Menu & Order',

@@ -45,7 +45,7 @@ interface MenuDataContextType {
   updatePromoPill: (config: Partial<PromoPillConfig>) => Promise<{ success: boolean; error?: string }>;
   resetToDefaults: () => void;
   exportBackup: () => string;
-  importBackup: (jsonString: string) => boolean;
+  importBackup: (jsonString: string) => boolean | Promise<boolean>;
   reorderItems: (categoryId: string, newItems: MenuItem[]) => void;
   isSandboxMode: boolean;
   toggleSandboxMode: () => void;

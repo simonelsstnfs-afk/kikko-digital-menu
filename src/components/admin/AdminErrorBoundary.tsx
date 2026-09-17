@@ -11,11 +11,7 @@ interface State {
   error: Error | null;
 }
 
-export class AdminErrorBoundary extends (React.Component as new (props: Props) => {
-  props: Props;
-  state: State;
-  setState: (state: Partial<State>) => void;
-}) {
+export class AdminErrorBoundary extends React.Component<Props, State> {
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
