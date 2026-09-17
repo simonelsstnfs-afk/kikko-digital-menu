@@ -5,7 +5,7 @@
 
 import { autoTranslateProduct } from '../src/utils/translateService';
 import { menuData as initialMenuData } from '../src/data';
-import { MenuItem, MenuCategory, PromoPillConfig } from '../src/types';
+import { MenuItem, MenuCategory, PromoPillConfig, ScheduleConfig, ScheduleItem, defaultScheduleConfig } from '../src/types';
 import { ALLERGENS, detectAllergensFromText } from '../src/allergens';
 
 async function runAdminFunctionalTests() {
@@ -320,6 +320,59 @@ async function runAdminFunctionalTests() {
     restoredPromo.type === 'google_review' && restoredPromo.targetType === 'google_review',
     'Configuración de aviso no comercial se serializa y restaura íntegramente',
     `Restaurado: ${restoredPromo.type} con tag "${typeof restoredPromo.tag === 'object' ? restoredPromo.tag.es : restoredPromo.tag}"`
+  );
+
+  // -------------------------------------------------------------
+  // TEST 9: SISTEMA DE GESTIÓN DINÁMICA DE HORARIOS
+  // -------------------------------------------------------------
+  console.log('\n🔹 9. Probando Sistema de Gestión de Horarios...');
+  
+  assert(
+    defaultScheduleConfig.items.length >= 1 && defaultScheduleConfig.items[0].days.es === 'Lunes - Domingo',
+    'Configuración por defecto de horarios inicializa correctamente',
+    `Línea 1: "${defaultScheduleConfig.items[0].days.es}" (${defaultScheduleConfig.items[0].hours})`
+  );
+
+  const customSchedule: ScheduleConfig = {
+    items: [
+      ...defaultScheduleConfig.items,
+      {
+        id: 'sched_weekend_test',
+        days: {
+          es: 'Viernes - Domingo',
+          en: 'Friday - Sunday',
+          it: 'Venerdì - Domenica'
+        },
+        hours: '12:30 - 23:30',
+        isClosed: false
+      },
+      {
+        id: 'sched_closed_test',
+        days: {
+          es: 'Martes',
+          en: 'Tuesday',
+          it: 'Martedì'
+        },
+        hours: '',
+        isClosed: true
+      }
+    ]
+  };
+
+  assert(
+    customSchedule.items.length === 3 && customSchedule.items[2].isClosed === true,
+    'Creación y personalización de múltiples líneas de horarios con estado Cerrado',
+    `Total líneas: ${customSchedule.items.length}, Línea 3 cerrada: ${customSchedule.items[2].isClosed}`
+  );
+
+  // Serialización y restauración en copias de seguridad
+  const backupWithSchedule = JSON.stringify({ schedule: customSchedule });
+  const restoredSchedule = JSON.parse(backupWithSchedule).schedule as ScheduleConfig;
+
+  assert(
+    restoredSchedule.items.length === 3 && restoredSchedule.items[1].hours === '12:30 - 23:30',
+    'Integridad de horarios preservada íntegramente en copias de seguridad JSON',
+    `Restaurado: Línea 2 "${restoredSchedule.items[1].days.es}" con horario ${restoredSchedule.items[1].hours}`
   );
 
   // -------------------------------------------------------------
