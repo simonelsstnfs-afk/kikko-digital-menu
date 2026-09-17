@@ -5,14 +5,16 @@ export const DEFAULT_GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKf
 
 export function getStoredSheetsUrl(): string {
   try {
-    const fromStorage = localStorage.getItem(GOOGLE_SHEETS_URL_STORAGE_KEY);
-    if (fromStorage && fromStorage.trim()) {
-      return fromStorage.trim();
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      const fromStorage = localStorage.getItem(GOOGLE_SHEETS_URL_STORAGE_KEY);
+      if (fromStorage && fromStorage.trim()) {
+        return fromStorage.trim();
+      }
     }
   } catch (e) {
-    console.error('Error reading sheets URL from localStorage:', e);
+    // Silencioso en entornos que no soportan localStorage
   }
-  const envUrl = (import.meta as any).env?.VITE_GOOGLE_SHEETS_URL;
+  const envUrl = (typeof import.meta !== 'undefined' && (import.meta as any).env) ? (import.meta as any).env?.VITE_GOOGLE_SHEETS_URL : undefined;
   if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
     return envUrl.trim();
   }
@@ -21,9 +23,11 @@ export function getStoredSheetsUrl(): string {
 
 export function saveStoredSheetsUrl(url: string): void {
   try {
-    localStorage.setItem(GOOGLE_SHEETS_URL_STORAGE_KEY, url.trim());
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      localStorage.setItem(GOOGLE_SHEETS_URL_STORAGE_KEY, url.trim());
+    }
   } catch (e) {
-    console.error('Error saving sheets URL to localStorage:', e);
+    // Silencioso en entornos que no soportan localStorage
   }
 }
 
@@ -33,38 +37,49 @@ export interface SheetsResponse {
   pinAdmin?: string;
 }
 
-export async function fetchMenuFromSheets(customUrl?: string): Promise<SheetsResponse | null> {
+export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Promise<SheetsResponse | null> {
   const url = customUrl || getStoredSheetsUrl();
   if (!url) return null;
 
-  try {
-    const separator = url.includes('?') ? '&' : '?';
-    const freshUrl = `${url}${separator}_t=${Date.now()}`;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const separator = url.includes('?') ? '&' : '?';
+      const freshUrl = `${url}${separator}_t=${Date.now()}`;
 
-    const response = await fetch(freshUrl, {
-      method: 'GET',
-      redirect: 'follow',
-      cache: 'no-store'
-    });
+      const response = await fetch(freshUrl, {
+        method: 'GET',
+        redirect: 'follow',
+        cache: 'no-store'
+      });
 
-    if (!response.ok) {
-      console.warn(`Google Sheets respondió con status: ${response.status}`);
+      if (!response.ok) {
+        console.warn(`Google Sheets respondió con status: ${response.status} (intento ${attempt + 1}/${retries + 1})`);
+        if (attempt < retries) {
+          await new Promise(res => setTimeout(res, 1500));
+          continue;
+        }
+        return null;
+      }
+
+      const data = await response.json();
+      if (data && Array.isArray(data.categories) && data.categories.length > 0) {
+        return {
+          categories: data.categories,
+          promoPill: data.promoPill,
+          pinAdmin: data.pinAdmin
+        };
+      }
+      return null;
+    } catch (error) {
+      console.warn(`Error al obtener datos de Google Sheets (intento ${attempt + 1}/${retries + 1}):`, error);
+      if (attempt < retries) {
+        await new Promise(res => setTimeout(res, 1500));
+        continue;
+      }
       return null;
     }
-
-    const data = await response.json();
-    if (data && Array.isArray(data.categories) && data.categories.length > 0) {
-      return {
-        categories: data.categories,
-        promoPill: data.promoPill,
-        pinAdmin: data.pinAdmin
-      };
-    }
-    return null;
-  } catch (error) {
-    console.warn('Error al obtener datos de Google Sheets:', error);
-    return null;
   }
+  return null;
 }
 
 export async function sendMenuToSheets(
