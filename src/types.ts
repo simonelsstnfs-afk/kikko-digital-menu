@@ -46,3 +46,33 @@ export interface Review {
   profilePhotoUrl: string;
 }
 
+export interface ScheduleItem {
+  id: string;
+  days: {
+    es: string;
+    en: string;
+    it: string;
+  };
+  hours: string;
+  isClosed?: boolean;
+}
+
+export interface ScheduleConfig {
+  items: ScheduleItem[];
+  updatedAt?: string;
+}
+
+export const defaultScheduleConfig: ScheduleConfig = {
+  items: [
+    {
+      id: 'sched_default_1',
+      days: {
+        es: 'Lunes - Domingo',
+        en: 'Monday - Sunday',
+        it: 'Lunedì - Domenica'
+      },
+      hours: '12:30 - 21:30',
+      isClosed: false
+    }
+  ]
+};
