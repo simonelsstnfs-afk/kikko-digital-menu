@@ -1,8 +1,13 @@
-import { MapPin, Instagram, Facebook, Phone, Clock, Lock } from 'lucide-react';
+import { MapPin, Instagram, Phone, Clock, Lock } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
+import { useMenuData } from '../context/MenuDataContext';
+import { defaultScheduleConfig } from '../types';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { schedule } = useMenuData();
+
+  const scheduleItems = schedule?.items && schedule.items.length > 0 ? schedule.items : defaultScheduleConfig.items;
 
   return (
     <footer id="footer" className="bg-zinc-950 text-zinc-400 pt-20 pb-24 lg:pb-32 border-t border-zinc-900">
@@ -25,17 +30,26 @@ export default function Footer() {
 
           <div className="text-center md:text-left">
             <h4 className="text-white font-semibold text-sm tracking-widest uppercase mb-6">{t('footerHours')}</h4>
-            <ul className="space-y-4 text-base text-zinc-400 inline-block text-left md:w-full w-full max-w-[280px] md:max-w-none">
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 mt-0.5 text-[#C2410C] shrink-0" />
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between w-full gap-4">
-                    <span>{t('footerWeek')}</span>
-                    <span className="text-white text-right">12:30 - 21:30</span>
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <div className="inline-flex items-start gap-3 text-left w-full max-w-sm md:max-w-none">
+              <Clock className="w-5 h-5 mt-0.5 text-[#C2410C] shrink-0" />
+              <div className="flex flex-col gap-2.5 w-full">
+                {scheduleItems.map((item) => {
+                  const daysText = (item.days && (item.days[language as 'es' | 'en' | 'it'] || item.days.es)) || t('footerWeek');
+                  return (
+                    <div key={item.id} className="flex justify-between items-center w-full gap-3 text-sm sm:text-base border-b border-zinc-900/60 pb-1.5 last:border-0 last:pb-0">
+                      <span className="text-zinc-300 font-medium">{daysText}</span>
+                      {item.isClosed ? (
+                        <span className="text-rose-400 font-semibold text-xs tracking-wider uppercase bg-rose-950/40 px-2 py-0.5 rounded border border-rose-800/50">
+                          {language === 'en' ? 'Closed' : language === 'it' ? 'Chiuso' : 'Cerrado'}
+                        </span>
+                      ) : (
+                        <span className="text-white text-right font-medium whitespace-nowrap">{item.hours}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col items-center md:items-start space-y-6">
