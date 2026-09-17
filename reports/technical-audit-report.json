@@ -1,0 +1,118 @@
+{
+  "title": "Informe Técnico de Auditoría de Entrega Final — Carta Web Kikko",
+  "date": "2026-09-17T10:38:05.843Z",
+  "status": "PASSED_CERTIFIED",
+  "summary": {
+    "totalAssertions": 16,
+    "passedAssertions": 16,
+    "failedAssertions": 0,
+    "successRatePercent": 100,
+    "totalDurationMs": 54954
+  },
+  "modules": {
+    "modulo1_healthcheck": [
+      {
+        "module": "MÓDULO 1: Conectividad",
+        "name": "Respuesta satisfactoria desde Google Apps Script (GET)",
+        "passed": true,
+        "details": "Endpoint: https://script.google.com/macros/s/AKfycbwg8LkEU_r4YU610af0m... (4620ms)",
+        "durationMs": 4620
+      },
+      {
+        "module": "MÓDULO 1: Rendimiento",
+        "name": "Latencia de lectura en vivo dentro de umbral operativo de Apps Script",
+        "passed": true,
+        "details": "Tiempo de respuesta: 4620ms (Umbral admisible < 6000ms)",
+        "durationMs": 4620
+      },
+      {
+        "module": "MÓDULO 1: Estructura de Datos",
+        "name": "La base de datos contiene categorías gastronómicas activas",
+        "passed": true,
+        "details": "Total categorías recibidas: 8"
+      },
+      {
+        "module": "MÓDULO 1: Dynamic Island",
+        "name": "Objeto de configuración de Dynamic Island recibido correctamente",
+        "passed": true
+      },
+      {
+        "module": "MÓDULO 1: Seguridad",
+        "name": "PIN de administración maestro recibido y sincronizado desde la nube",
+        "passed": true
+      }
+    ],
+    "modulo2_rollback_transaccional": [
+      {
+        "module": "MÓDULO 2: Escritura POST",
+        "name": "Escritura en Google Sheets confirmada con éxito (200 OK)",
+        "passed": true,
+        "details": "Duración: 7355ms",
+        "durationMs": 7355
+      },
+      {
+        "module": "MÓDULO 2: Sincronización Remota",
+        "name": "La base de datos remota devolvió exactamente la mutación de prueba",
+        "passed": true,
+        "details": "Esperado: \"[AUDIT_VERIFIED_1789641435510]\", Obtenido: \"[AUDIT_VERIFIED_1789641435510]\" (4183ms)",
+        "durationMs": 4183
+      },
+      {
+        "module": "MÓDULO 2: Auto-Rollback",
+        "name": "Auto-Rollback completado con éxito — Base de datos restaurada al 100%",
+        "passed": true,
+        "details": "Tag restaurado: \"RESERVAS\" === \"RESERVAS\" (37185ms)",
+        "durationMs": 37185
+      }
+    ],
+    "modulo3_personalizacion_modelos": [
+      {
+        "module": "MÓDULO 3: Alérgenos",
+        "name": "El sistema contiene exactamente los 14 alérgenos oficiales de la UE 1169/2011",
+        "passed": true,
+        "details": "Total registrados: 14 (gluten, huevos, moluscos, sesamo, crustaceos...)"
+      },
+      {
+        "module": "MÓDULO 3: Asistente IA de Alérgenos",
+        "name": "El detector automático identifica correctamente gluten, lácteos y frutos de cáscara",
+        "passed": true,
+        "details": "Detectados: gluten, lacteos, frutoscascara"
+      },
+      {
+        "module": "MÓDULO 3: Dynamic Island Presets",
+        "name": "Presets evergreen (Reseñas Google y Reservas WhatsApp) configurados correctamente",
+        "passed": true,
+        "details": "TargetTypes: google_review y reservation"
+      },
+      {
+        "module": "MÓDULO 3: Reordenación de Carta",
+        "name": "La lógica de reordenación permuta correctamente los platos sin pérdida de datos",
+        "passed": true,
+        "details": "Nuevo orden: [s2, s1]"
+      },
+      {
+        "module": "MÓDULO 3: Copias de Seguridad",
+        "name": "Exportación e importación de respaldo JSON mantiene integridad total del esquema",
+        "passed": true
+      }
+    ],
+    "modulo4_seguridad_resiliencia": [
+      {
+        "module": "MÓDULO 4: Seguridad por PIN",
+        "name": "El sistema valida el PIN maestro correcto y rechaza credenciales no autorizadas",
+        "passed": true
+      },
+      {
+        "module": "MÓDULO 4: Sanitización XSS",
+        "name": "Los campos de personalización sanitizan y neutralizan etiquetas ejecutables de código",
+        "passed": true,
+        "details": "Entrada: \"<script>alert(\"xss\")</script><img src=\"x\" onerror=\"steal()\"/> Pizza Peligrosa\" -> Salida: \"alert(\"xss\") Pizza Peligrosa\""
+      },
+      {
+        "module": "MÓDULO 4: Resiliencia de Red",
+        "name": "El servicio maneja errores de red retornando null limpiamente sin generar excepciones no capturadas",
+        "passed": true
+      }
+    ]
+  }
+}

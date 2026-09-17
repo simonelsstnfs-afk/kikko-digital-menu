@@ -15,7 +15,11 @@ import AdminPanel from './components/admin/AdminPanel';
 import AdminErrorBoundary from './components/admin/AdminErrorBoundary';
 import { MenuDataProvider } from './context/MenuDataContext';
 
+import { useMenuData } from './context/MenuDataContext';
+import { Loader2 } from 'lucide-react';
+
 function AppContent() {
+  const { isLoading, syncStatus } = useMenuData();
   const [isAdminView, setIsAdminView] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname.toLowerCase();
@@ -40,7 +44,7 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    if (!isAdminView && window.location.hash && window.location.hash !== '#admin') {
+    if (!isAdminView && !isLoading && window.location.hash && window.location.hash !== '#admin') {
       const id = window.location.hash.substring(1);
       const element = document.getElementById(id);
       if (element) {
@@ -49,7 +53,7 @@ function AppContent() {
         }, 100);
       }
     }
-  }, [isAdminView]);
+  }, [isAdminView, isLoading]);
 
   if (isAdminView) {
     const handleBack = () => {
@@ -62,6 +66,26 @@ function AppContent() {
       <AdminErrorBoundary onBackToMenu={handleBack}>
         <AdminPanel onBackToMenu={handleBack} />
       </AdminErrorBoundary>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-10 h-10 text-[#C2410C] animate-spin mb-4" />
+        <p className="text-zinc-400 font-serif tracking-wide">Cargando carta actualizada...</p>
+      </div>
+    );
+  }
+
+  if (syncStatus === 'error') {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-[#141A0F] border border-red-900/40 p-6 rounded-2xl max-w-sm text-center">
+          <p className="text-red-400 font-medium mb-2">Error de conexión</p>
+          <p className="text-zinc-400 text-sm">No pudimos descargar la carta desde el servidor central. Por favor, recarga la página o inténtalo más tarde.</p>
+        </div>
+      </div>
     );
   }
 
