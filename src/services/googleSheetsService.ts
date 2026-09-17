@@ -40,7 +40,7 @@ export interface SheetsResponse {
   updatedAt?: string;
 }
 
-export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Promise<SheetsResponse | null> {
+export async function fetchMenuFromSheets(customUrl?: string, retries = 2): Promise<SheetsResponse | null> {
   const url = customUrl || getStoredSheetsUrl();
   if (!url) return null;
 
@@ -52,11 +52,6 @@ export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Prom
 
       const response = await fetch(freshUrl, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        },
         redirect: 'follow',
         cache: 'no-store'
       });

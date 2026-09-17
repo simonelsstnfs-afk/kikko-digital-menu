@@ -19,7 +19,7 @@ import { useMenuData } from './context/MenuDataContext';
 import { Loader2 } from 'lucide-react';
 
 function AppContent() {
-  const { isLoading, syncStatus } = useMenuData();
+  const { isLoading, syncStatus, categories } = useMenuData();
   const [isAdminView, setIsAdminView] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname.toLowerCase();
@@ -78,7 +78,7 @@ function AppContent() {
     );
   }
 
-  if (syncStatus === 'error') {
+  if (syncStatus === 'error' && (!categories || categories.length === 0)) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
         <div className="bg-[#141A0F] border border-red-900/40 p-6 rounded-2xl max-w-sm text-center">
