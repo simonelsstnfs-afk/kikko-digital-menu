@@ -149,7 +149,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       if (remoteData && remoteData.categories?.length) {
         setCategories(ensureAllergensInCategories(remoteData.categories));
         if (remoteData.promoPill) setPromoPill(remoteData.promoPill);
-        if (remoteData.pinAdmin) setAdminPin(remote.pinAdmin);
+        if (remoteData.pinAdmin) setAdminPin(remoteData.pinAdmin);
         setLastSyncedAt(new Date());
         setSyncStatus('saved');
         return true;

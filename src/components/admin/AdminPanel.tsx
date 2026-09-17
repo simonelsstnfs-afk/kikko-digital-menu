@@ -301,7 +301,10 @@ export default function AdminPanel({ onBackToMenu }: AdminPanelProps) {
     isSandboxMode,
     toggleSandboxMode,
     exitSandboxMode,
-    reorderItems
+    reorderItems,
+    adminPin,
+    updateAdminPin,
+    isLoading
   } = useMenuData();
 
   // Autenticación por PIN
