@@ -1,4 +1,4 @@
-import { MenuCategory, PromoPillConfig } from '../types';
+import { MenuCategory, PromoPillConfig, ScheduleConfig } from '../types';
 
 export const GOOGLE_SHEETS_URL_STORAGE_KEY = 'kikko_google_sheets_url_v1';
 export const DEFAULT_GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwg8LkEU_r4YU610af0mnzwV2jsnZZTfo0Z4bZKWsuxdayPubJGjArqcjdei-Ydi7j5/exec';
@@ -35,6 +35,7 @@ export interface SheetsResponse {
   categories: MenuCategory[];
   promoPill?: PromoPillConfig;
   pinAdmin?: string;
+  schedule?: ScheduleConfig;
 }
 
 export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Promise<SheetsResponse | null> {
@@ -66,7 +67,8 @@ export async function fetchMenuFromSheets(customUrl?: string, retries = 1): Prom
         return {
           categories: data.categories,
           promoPill: data.promoPill,
-          pinAdmin: data.pinAdmin
+          pinAdmin: data.pinAdmin,
+          schedule: data.schedule
         };
       }
       return null;
@@ -86,7 +88,8 @@ export async function sendMenuToSheets(
   categories: MenuCategory[],
   promoPill: PromoPillConfig,
   pinAdmin?: string,
-  customUrl?: string
+  customUrl?: string,
+  schedule?: ScheduleConfig
 ): Promise<{ success: boolean; error?: string }> {
   const url = customUrl || getStoredSheetsUrl();
   if (!url) {
@@ -105,6 +108,7 @@ export async function sendMenuToSheets(
         categories,
         promoPill,
         pinAdmin,
+        schedule,
         timestamp: new Date().toISOString()
       })
     });

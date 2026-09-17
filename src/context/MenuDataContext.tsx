@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
-import { MenuCategory, MenuItem, PromoPillConfig } from '../types';
+import { MenuCategory, MenuItem, PromoPillConfig, ScheduleConfig, defaultScheduleConfig } from '../types';
 import { menuData as initialMenuData } from '../data';
 import { detectAllergensFromText } from '../allergens';
 import {
@@ -31,6 +31,8 @@ export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error';
 interface MenuDataContextType {
   categories: MenuCategory[];
   promoPill: PromoPillConfig;
+  schedule: ScheduleConfig;
+  updateSchedule: (config: ScheduleConfig) => Promise<{ success: boolean; error?: string }>;
   syncStatus: SyncStatus;
   lastSyncedAt: Date | null;
   sheetsUrl: string;
@@ -73,6 +75,7 @@ const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined
 export function MenuDataProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<MenuCategory[]>(ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData))));
   const [promoPill, setPromoPill] = useState<PromoPillConfig>(defaultPromoPill);
+  const [schedule, setSchedule] = useState<ScheduleConfig>(defaultScheduleConfig);
   const [adminPin, setAdminPin] = useState<string>('kikko2026');
   
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -86,13 +89,14 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     return sessionStorage.getItem('kikko_sandbox_mode') === 'true';
   });
 
-  const sandboxRealBackupRef = useRef<{ categories: MenuCategory[]; promoPill: PromoPillConfig } | null>(null);
+  const sandboxRealBackupRef = useRef<{ categories: MenuCategory[]; promoPill: PromoPillConfig; schedule: ScheduleConfig } | null>(null);
 
   const toggleSandboxMode = () => {
     if (!isSandboxMode) {
       sandboxRealBackupRef.current = {
         categories: JSON.parse(JSON.stringify(categories)),
-        promoPill: JSON.parse(JSON.stringify(promoPill))
+        promoPill: JSON.parse(JSON.stringify(promoPill)),
+        schedule: JSON.parse(JSON.stringify(schedule))
       };
       try {
         sessionStorage.setItem('kikko_sandbox_backup', JSON.stringify(sandboxRealBackupRef.current));
@@ -114,12 +118,18 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       if (savedBackup) {
         setCategories(savedBackup.categories);
         setPromoPill(savedBackup.promoPill);
+        if (savedBackup.schedule) {
+          setSchedule(savedBackup.schedule);
+        }
       } else if (sheetsUrl) {
         fetchMenuFromSheets(sheetsUrl).then(remote => {
           if (remote?.categories?.length) {
             setCategories(remote.categories);
             if (remote.promoPill) setPromoPill(remote.promoPill);
             if (remote.pinAdmin) setAdminPin(remote.pinAdmin);
+            if (remote.schedule && Array.isArray(remote.schedule.items)) {
+              setSchedule(remote.schedule);
+            }
           }
         });
       }
@@ -131,10 +141,10 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     setIsSandboxMode(false);
   };
 
-  const latestDataRef = useRef({ categories, promoPill, adminPin });
+  const latestDataRef = useRef({ categories, promoPill, adminPin, schedule });
   useEffect(() => {
-    latestDataRef.current = { categories, promoPill, adminPin };
-  }, [categories, promoPill, adminPin]);
+    latestDataRef.current = { categories, promoPill, adminPin, schedule };
+  }, [categories, promoPill, adminPin, schedule]);
 
   const setSheetsUrl = (url: string) => {
     setSheetsUrlState(url);
@@ -150,6 +160,9 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         setCategories(ensureAllergensInCategories(remoteData.categories));
         if (remoteData.promoPill) setPromoPill(remoteData.promoPill);
         if (remoteData.pinAdmin) setAdminPin(remoteData.pinAdmin);
+        if (remoteData.schedule && Array.isArray(remoteData.schedule.items)) {
+          setSchedule(remoteData.schedule);
+        }
         setLastSyncedAt(new Date());
         setSyncStatus('saved');
         return true;
@@ -204,7 +217,8 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
         latestDataRef.current.categories,
         latestDataRef.current.promoPill,
         latestDataRef.current.adminPin,
-        sheetsUrl
+        sheetsUrl,
+        latestDataRef.current.schedule
       );
       if (res.success) {
         setSyncStatus('saved');
@@ -228,7 +242,7 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     }
     setSyncStatus('syncing');
     try {
-      const res = await sendMenuToSheets(newCats, newPill, latestDataRef.current.adminPin, sheetsUrl);
+      const res = await sendMenuToSheets(newCats, newPill, latestDataRef.current.adminPin, sheetsUrl, schedule);
       if (res.success) {
         setCategories(newCats);
         setPromoPill(newPill);
@@ -313,13 +327,30 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     await executePessimisticUpdate(updated, promoPill);
   };
 
+  const updateSchedule = async (newSchedule: ScheduleConfig): Promise<{ success: boolean; error?: string }> => {
+    if (isSandboxMode) {
+      setSchedule(newSchedule);
+      return { success: true };
+    }
+    setSchedule(newSchedule);
+    try {
+      const result = await sendMenuToSheets(categories, promoPill, adminPin, sheetsUrl, newSchedule);
+      if (!result.success) {
+        return { success: false, error: result.error || 'Error al sincronizar horarios con Google Sheets' };
+      }
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.message || 'Error de conexión al sincronizar horarios' };
+    }
+  };
+
   const resetToDefaults = async () => {
     const factoryCategories = ensureAllergensInCategories(JSON.parse(JSON.stringify(initialMenuData)));
     await executePessimisticUpdate(factoryCategories, defaultPromoPill);
   };
 
   const exportBackup = (): string => {
-    const data = { version: '1.0', exportedAt: new Date().toISOString(), promoPill, categories };
+    const data = { version: '1.0', exportedAt: new Date().toISOString(), promoPill, categories, schedule };
     return JSON.stringify(data, null, 2);
   };
 
@@ -327,6 +358,9 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed && Array.isArray(parsed.categories)) {
+        if (parsed.schedule && Array.isArray(parsed.schedule.items)) {
+          setSchedule(parsed.schedule);
+        }
         const sanitizedCats = ensureAllergensInCategories(parsed.categories);
         const res = await executePessimisticUpdate(sanitizedCats, parsed.promoPill || promoPill);
         return res.success;
@@ -366,6 +400,8 @@ export function MenuDataProvider({ children }: { children: ReactNode }) {
       value={{
         categories,
         promoPill,
+        schedule,
+        updateSchedule,
         syncStatus,
         lastSyncedAt,
         sheetsUrl,
