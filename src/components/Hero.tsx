@@ -37,6 +37,7 @@ export default function Hero() {
           </div>
 
           {/* Logo Kikko con proporciones naturales sin relleno transparente sobrante */}
+          <h1 className="sr-only">Kikko: Restaurante y Pizzería Italiana en Puerto de Santiago</h1>
           <img 
             src="/logo-kikko-tight.png" 
             alt="Kikko Restaurante Pizzeria Italiano" 
