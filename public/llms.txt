@@ -1,0 +1,11 @@
+# Kikko Restaurante Pizzería Italiano
+
+> Auténtica cocina italiana y pizzería artesanal en Puerto de Santiago, Tenerife Sur.
+
+## Información General
+- Nombre: Kikko Restaurante Pizzería Italiano
+- Ubicación: C. los Ángeles, 48 (Planta 0 · Vigilia Park), 38683 Puerto de Santiago, Santa Cruz de Tenerife, España
+- Tipo de Cocina: Italiana tradicional (masa de tres harinas con 48 h de fermentación, pastas frescas caseras, risottos, carnes y postres)
+- Reservas WhatsApp: +34 611 87 33 91
+- URL Oficial: https://kikko-menu.vercel.app/
+- Carta Digital y Alérgenos: https://kikko-menu.vercel.app/#carta
