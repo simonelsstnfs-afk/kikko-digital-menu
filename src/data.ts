@@ -6,7 +6,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'entrantes',
     titleKey: 'tabStarters',
-    categoryImage: '/entrantes_1785956033574.jpg',
+    categoryImage: '/entrantes_1785956033574.webp',
     items: STARTERS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'entrantes')
@@ -15,7 +15,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'pizzas',
     titleKey: 'tabPizzas',
-    categoryImage: '/pizzas_1785956040596.jpg',
+    categoryImage: '/pizzas_1785956040596.webp',
     items: PIZZAS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'pizzas')
@@ -24,7 +24,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'pastas',
     titleKey: 'tabPastas',
-    categoryImage: '/pastas_1785956047802.jpg',
+    categoryImage: '/pastas_1785956047802.webp',
     items: PASTAS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'pastas')
@@ -33,7 +33,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'risottos',
     titleKey: 'tabRisottos',
-    categoryImage: '/risottos_1785956058315.jpg',
+    categoryImage: '/risottos_1785956058315.webp',
     items: RISOTTOS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'risottos')
@@ -42,7 +42,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'segundos',
     titleKey: 'tabSecondi',
-    categoryImage: '/segundos_1785956066731.jpg',
+    categoryImage: '/segundos_1785956066731.webp',
     items: SECONDI.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'segundos')
@@ -51,7 +51,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'hamburguesas',
     titleKey: 'tabBurgers',
-    categoryImage: '/hamburguesas_1785956074332.jpg',
+    categoryImage: '/hamburguesas_1785956074332.webp',
     items: BURGERS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'hamburguesas')
@@ -60,7 +60,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'postres',
     titleKey: 'tabDesserts',
-    categoryImage: '/postres_1785956082582.jpg',
+    categoryImage: '/postres_1785956082582.webp',
     items: DESSERTS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'postres')
@@ -69,7 +69,7 @@ export const menuData: MenuCategory[] = [
   {
     id: 'bebidas',
     titleKey: 'tabDrinks',
-    categoryImage: '/bebidas_1785956091901.jpg',
+    categoryImage: '/bebidas_1785956091901.webp',
     items: DRINKS.map(item => ({
       ...item,
       allergens: item.allergens ?? detectAllergensFromText(item.name, item.description, 'bebidas')
