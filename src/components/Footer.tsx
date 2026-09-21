@@ -1,4 +1,4 @@
-import { MapPin, Instagram, Phone, Clock, Lock } from 'lucide-react';
+import { MapPin, Instagram, Phone, Clock } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 import { useMenuData } from '../context/MenuDataContext';
 import { defaultScheduleConfig } from '../types';
@@ -73,21 +73,6 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} {t('footerRights')}</p>
           <div className="flex items-center space-x-6">
             <span className="flex items-center gap-1">{t('footerBuilt')} Kikko</span>
-            <span className="text-zinc-800">•</span>
-            <a
-              href="/admin"
-              onClick={(e) => {
-                e.preventDefault();
-                window.history.pushState({}, '', '/admin');
-                window.dispatchEvent(new PopStateEvent('popstate'));
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="text-zinc-600 hover:text-zinc-400 transition-colors flex items-center gap-1 normal-case text-[11px] opacity-50 hover:opacity-100 cursor-pointer"
-              title="Panel de Administración"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Admin</span>
-            </a>
           </div>
         </div>
       </div>
