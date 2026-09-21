@@ -6,6 +6,7 @@ import { MenuItem } from '../types';
 import AllergenBadge from './AllergenBadge';
 import AllergenGuideModal from './AllergenGuideModal';
 import { Info } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const categorySubtitles: Record<string, Record<string, string>> = {
   entrantes: { es: 'Para Empezar Bien', en: 'To Start Well', it: 'Per Iniziare Bene' },
@@ -148,7 +149,10 @@ export default function MenuSection() {
       <div className="max-w-4xl mx-auto px-4 pt-4 sm:pt-6 pb-2 flex justify-center">
         <button
           type="button"
-          onClick={() => setIsAllergenGuideOpen(true)}
+          onClick={() => {
+            trackEvent('allergen_guide_opened', { lang: language });
+            setIsAllergenGuideOpen(true);
+          }}
           className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 hover:border-amber-500/60 text-amber-300 text-xs sm:text-sm font-medium transition-all shadow-sm active:scale-95 cursor-pointer"
         >
           <Info className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />

@@ -1,6 +1,14 @@
 {
   "framework": "vite",
   "rewrites": [
+    {
+      "source": "/stats/telemetry.js",
+      "destination": "https://analytics.onvivo.cloud/script.js"
+    },
+    {
+      "source": "/stats/api/send",
+      "destination": "https://analytics.onvivo.cloud/api/send"
+    },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [

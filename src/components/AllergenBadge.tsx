@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getAllergen } from '../allergens';
 import { useLanguage } from '../LanguageContext';
+import { trackEvent } from '../utils/analytics';
 
 interface AllergenBadgeProps {
   key?: React.Key;
@@ -51,6 +52,9 @@ export default function AllergenBadge({
         type="button"
         onClick={(e) => {
           e.stopPropagation();
+          if (!isOpen) {
+            trackEvent('allergen_badge_clicked', { allergen: allergenId });
+          }
           setIsOpen(prev => !prev);
         }}
         onMouseEnter={() => setIsOpen(true)}

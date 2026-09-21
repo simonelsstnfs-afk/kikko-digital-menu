@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { translations, Language } from './translations';
+import { trackEvent } from './utils/analytics';
 
 interface LanguageContextProps {
   language: Language;
@@ -39,6 +40,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
+    trackEvent('language_changed', { lang });
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
         localStorage.setItem('kikko_preferred_lang', lang);

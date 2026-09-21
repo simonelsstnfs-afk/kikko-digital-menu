@@ -2,6 +2,7 @@ import { MapPin, Instagram, Phone, Clock, Lock } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 import { useMenuData } from '../context/MenuDataContext';
 import { defaultScheduleConfig } from '../types';
+import { trackEvent } from '../utils/analytics';
 
 export default function Footer() {
   const { t, language } = useLanguage();
@@ -23,7 +24,13 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#C2410C]" />
-                <a href="tel:611873391" className="hover:text-white transition-colors">611 87 33 91</a>
+                <a 
+                  href="tel:611873391" 
+                  onClick={() => trackEvent('phone_call_clicked', { phone: '611873391' })}
+                  className="hover:text-white transition-colors"
+                >
+                  611 87 33 91
+                </a>
               </li>
             </ul>
           </div>

@@ -2,6 +2,7 @@ import { Calendar, Clock, Users, User, Phone, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { PHONE_WHATSAPP } from '../products';
+import { trackEvent } from '../utils/analytics';
 
 export default function ReservationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -60,14 +61,12 @@ export default function ReservationForm() {
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/${PHONE_WHATSAPP}?text=${encodedMessage}`;
     
-    // Tracking analítica en Umami
-    if (typeof window !== 'undefined' && (window as any).umami) {
-      (window as any).umami.track('Reserva WhatsApp Enviada', {
-        personas: formData.persons,
-        hora: formData.time,
-        fecha: formData.date
-      });
-    }
+    // Tracking fidedigno de reserva en Umami
+    trackEvent('reservation_submitted', {
+      persons: formData.persons,
+      time: formData.time,
+      date: formData.date
+    });
 
     window.open(whatsappUrl, '_blank');
     
@@ -218,7 +217,6 @@ export default function ReservationForm() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    data-umami-event="Click Confirmar Reserva WhatsApp"
                     className="w-full py-3.5 bg-white text-zinc-950 text-sm uppercase tracking-widest font-bold rounded-xl hover:bg-zinc-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C] focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 flex items-center justify-center gap-3"
                   >
                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#25D366]" fill="currentColor">

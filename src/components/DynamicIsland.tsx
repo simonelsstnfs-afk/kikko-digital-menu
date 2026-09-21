@@ -14,6 +14,7 @@ import {
   UtensilsCrossed
 } from 'lucide-react';
 import { GOOGLE_MAPS_REVIEW_URL } from '../products';
+import { trackEvent } from '../utils/analytics';
 
 const GoogleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -202,13 +203,11 @@ export default function DynamicIsland() {
     e.stopPropagation();
     setIsExpanded(false);
 
-    // Tracking analítica en Umami
-    if (typeof window !== 'undefined' && (window as any).umami) {
-      (window as any).umami.track('Click Accion Isla Flotante', {
-        tipo_promo: promoType,
-        boton: visuals.btnText || 'Ir al plato en la carta'
-      });
-    }
+    // Tracking analítica fidedigna en Umami
+    trackEvent('dynamic_island_action', {
+      tipo: promoType,
+      boton: visuals.btnText || 'Ir al plato en la carta'
+    });
 
     const targetType = promoPill.targetType || (promoPill.targetItemId ? 'dish' : 'category');
     const targetCategory = promoPill.targetCategory;
@@ -216,6 +215,7 @@ export default function DynamicIsland() {
 
     // Si es acción de Reseñas de Google
     if (promoType === 'google_review' || targetType === 'google_review') {
+      trackEvent('google_review_clicked', { source: 'dynamic_island' });
       window.open(GOOGLE_MAPS_REVIEW_URL, '_blank', 'noopener,noreferrer');
       const reviewEl = document.getElementById('resenas');
       if (reviewEl) {
@@ -382,7 +382,6 @@ export default function DynamicIsland() {
                 <button
                   type="button"
                   onClick={handleNavigate}
-                  data-umami-event="Click Accion Isla Flotante"
                   className={`w-full py-3 rounded-2xl bg-gradient-to-r ${visuals.btnGradient || 'from-amber-500 via-amber-600 to-amber-700 text-zinc-950 shadow-amber-500/20'} font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer`}
                 >
                   {visuals.btnIcon}
@@ -400,11 +399,8 @@ export default function DynamicIsland() {
               type="button"
               onClick={() => {
                 setIsExpanded(true);
-                if (typeof window !== 'undefined' && (window as any).umami) {
-                  (window as any).umami.track('Abrir Isla Flotante', { tipo: promoType, vista: 'scrolled' });
-                }
+                trackEvent('dynamic_island_opened', { tipo: promoType, vista: 'scrolled' });
               }}
-              data-umami-event="Abrir Isla Flotante"
               initial={{ opacity: 0, scale: 0.7, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.7, y: 20 }}
@@ -450,11 +446,8 @@ export default function DynamicIsland() {
                 type="button"
                 onClick={() => {
                   setIsExpanded(true);
-                  if (typeof window !== 'undefined' && (window as any).umami) {
-                    (window as any).umami.track('Abrir Isla Flotante', { tipo: promoType, vista: 'top' });
-                  }
+                  trackEvent('dynamic_island_opened', { tipo: promoType, vista: 'top' });
                 }}
-                data-umami-event="Abrir Isla Flotante"
                 initial={{ opacity: 0, y: 25, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
